@@ -1,7 +1,7 @@
 package org.blackcandy.android
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import dev.hotwire.turbo.activities.TurboActivity
 import dev.hotwire.turbo.delegates.TurboActivityDelegate
 
