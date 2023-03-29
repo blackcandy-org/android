@@ -1,0 +1,21 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test_lint:
+     runs-on: ubuntu-latest
+     steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - run: |
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/0.48.2/ktlint && chmod a+x ktlint && sudo mv ktlint /usr/local/bin/
+
+      - name: Kotlin lint
+        run: ktlint
+
+      - name: Android Lint
+        run: ./gradlew lint
