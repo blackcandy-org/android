@@ -5,11 +5,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/main_nav_host"
-        android:name="org.blackcandy.android.MainSessionNavHostFragment"
+    <ViewFlipper
+        android:id="@+id/nav_switcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="false" />
+        android:layout_height="0dp"
+        android:measureAllChildren="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        >
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/home_nav_host"
+            android:name="org.blackcandy.android.HomeNavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="false" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/library_nav_host"
+            android:name="org.blackcandy.android.LibraryNavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="false" />
+    </ViewFlipper>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
