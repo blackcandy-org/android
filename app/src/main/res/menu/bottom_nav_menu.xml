@@ -3,11 +3,11 @@
     <item
         android:id="@+id/nav_menu_home"
         android:enabled="true"
-        android:title="Home"
+        android:title="@string/home"
         android:icon="@drawable/baseline_home_24"/>
     <item
         android:id="@+id/nav_menu_library"
         android:enabled="true"
-        android:title="Library"
+        android:title="@string/library"
         android:icon="@drawable/baseline_library_music_24"/>
 </menu>
