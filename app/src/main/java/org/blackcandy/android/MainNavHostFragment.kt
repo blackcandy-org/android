@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import org.blackcandy.android.features.web.WebFragment
+import org.blackcandy.android.features.web.WebHomeFragment
 import kotlin.reflect.KClass
 
 open class MainNavHostFragment : TurboSessionNavHostFragment() {
@@ -20,6 +21,7 @@ open class MainNavHostFragment : TurboSessionNavHostFragment() {
     override val registeredFragments: List<KClass<out Fragment>>
         get() = listOf(
             WebFragment::class,
+            WebHomeFragment::class,
             // And any other TurboFragments in your app
         )
 
