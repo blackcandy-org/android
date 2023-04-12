@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ViewFlipper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import dev.hotwire.turbo.activities.TurboActivity
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         delegate = TurboActivityDelegate(this, R.id.home_nav_host)
@@ -25,6 +27,9 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
         bottomNav.setOnItemSelectedListener(this)
+
+        // Displaying edge-to-edge
+        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
