@@ -17,6 +17,7 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,5 +26,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

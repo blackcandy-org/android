@@ -16,11 +16,19 @@
     {
       "patterns": [
         "^$",
-        "^/$",
-        "^/library$"
+        "^/$"
       ],
       "properties": {
         "uri": "turbo://fragment/web/home",
+        "presentation": "replace_root"
+      }
+    },
+    {
+      "patterns": [
+        "^/library$"
+      ],
+      "properties": {
+        "uri": "turbo://fragment/web/library",
         "presentation": "replace_root"
       }
     }
