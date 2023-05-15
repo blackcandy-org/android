@@ -3,4 +3,5 @@
     <string name="home">Home</string>
     <string name="library">Library</string>
     <string name="search_hint">Search your library</string>
+    <string name="account">Account</string>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/top_bar_account"
+        android:icon="@drawable/outline_account_circle_30"
+        android:title="@string/account"
+        app:showAsAction="ifRoom"/>
+</menu>
