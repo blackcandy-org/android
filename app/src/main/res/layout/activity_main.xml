@@ -17,14 +17,14 @@
         >
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/home_nav_host"
-            android:name="org.blackcandy.android.HomeNavHostFragment"
+            android:name="org.blackcandy.android.fragments.navs.HomeNavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:defaultNavHost="false" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/library_nav_host"
-            android:name="org.blackcandy.android.LibraryNavHostFragment"
+            android:name="org.blackcandy.android.fragments.navs.LibraryNavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:defaultNavHost="false" />

@@ -1,4 +1,4 @@
-package org.blackcandy.android
+package org.blackcandy.android.fragments.navs
 
 class LibraryNavHostFragment : MainNavHostFragment() {
     override val sessionName = "library"

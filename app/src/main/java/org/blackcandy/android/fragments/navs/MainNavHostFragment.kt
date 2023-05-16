@@ -1,12 +1,13 @@
-package org.blackcandy.android
+package org.blackcandy.android.fragments.navs
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
-import org.blackcandy.android.features.web.WebFragment
-import org.blackcandy.android.features.web.WebHomeFragment
-import org.blackcandy.android.features.web.WebLibraryFragment
+import org.blackcandy.android.fragments.sheets.AccountSheetFragment
+import org.blackcandy.android.fragments.web.WebFragment
+import org.blackcandy.android.fragments.web.WebHomeFragment
+import org.blackcandy.android.fragments.web.WebLibraryFragment
 import kotlin.reflect.KClass
 
 open class MainNavHostFragment : TurboSessionNavHostFragment() {
@@ -24,6 +25,7 @@ open class MainNavHostFragment : TurboSessionNavHostFragment() {
             WebFragment::class,
             WebHomeFragment::class,
             WebLibraryFragment::class,
+            AccountSheetFragment::class,
             // And any other TurboFragments in your app
         )
 

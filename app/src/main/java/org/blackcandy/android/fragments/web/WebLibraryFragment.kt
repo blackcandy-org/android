@@ -1,4 +1,4 @@
-package org.blackcandy.android.features.web
+package org.blackcandy.android.fragments.web
 
 import android.os.Bundle
 import android.view.LayoutInflater
