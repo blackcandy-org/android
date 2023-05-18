@@ -1,3 +1,9 @@
+buildscript {
+    ext {
+        compose_compiler_version = '1.4.0'
+        activity_compose_version = '1.6.1'
+    }
+}
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id 'com.android.application' version '7.4.1' apply false

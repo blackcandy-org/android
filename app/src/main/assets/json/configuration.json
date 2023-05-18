@@ -31,6 +31,14 @@
         "uri": "turbo://fragment/web/library",
         "presentation": "replace_root"
       }
+    },
+    {
+      "patterns": [
+        "^/account$"
+      ],
+      "properties": {
+        "uri": "turbo://fragment/sheets/account"
+      }
     }
   ]
 }
