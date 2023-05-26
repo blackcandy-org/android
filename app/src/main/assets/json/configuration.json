@@ -39,6 +39,18 @@
       "properties": {
         "uri": "turbo://fragment/sheets/account"
       }
+    },
+    {
+      "patterns": [
+        "^/albums/[0-9]+/edit$",
+        "^/artists/[0-9]+/edit$",
+        "^/playlists/[0-9]+/edit$",
+        "^/playlists/new$",
+        "^/dialog/*"
+      ],
+      "properties": {
+        "uri": "turbo://fragment/web/bottom_sheet"
+      }
     }
   ]
 }

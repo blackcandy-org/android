@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.config.TurboPathConfiguration
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import org.blackcandy.android.fragments.sheets.AccountSheetFragment
+import org.blackcandy.android.fragments.web.WebBottomSheetFragment
 import org.blackcandy.android.fragments.web.WebFragment
 import org.blackcandy.android.fragments.web.WebHomeFragment
 import org.blackcandy.android.fragments.web.WebLibraryFragment
@@ -25,6 +26,7 @@ open class MainNavHostFragment : TurboSessionNavHostFragment() {
             WebFragment::class,
             WebHomeFragment::class,
             WebLibraryFragment::class,
+            WebBottomSheetFragment::class,
             AccountSheetFragment::class,
             // And any other TurboFragments in your app
         )
