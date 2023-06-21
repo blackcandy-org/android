@@ -1,9 +1,11 @@
 package org.blackcandy.android.compose.login
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -12,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,10 +28,18 @@ fun LoginConnectionForm(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(
-            dimensionResource(id = R.dimen.padding_medium),
+            dimensionResource(R.dimen.padding_small),
         ),
         modifier = modifier,
     ) {
+        Image(
+            painter = painterResource(R.drawable.black_candy_logo),
+            contentDescription = stringResource(R.string.logo_description),
+            modifier = Modifier
+                .width(dimensionResource(R.dimen.logo_width))
+                .padding(bottom = dimensionResource(R.dimen.padding_medium)),
+        )
+
         OutlinedTextField(
             value = "",
             label = { Text(text = stringResource(R.string.server_address)) },
@@ -52,7 +63,7 @@ fun LoginConnectionForm(
 @Composable
 fun LoginConnectionFormPreview() {
     LoginConnectionForm(
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
+        modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
         onConnectButtonClicked = {},
     )
 }

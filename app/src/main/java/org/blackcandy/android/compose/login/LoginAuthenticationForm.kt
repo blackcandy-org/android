@@ -22,7 +22,7 @@ fun LoginAuthenticationForm(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(
-            dimensionResource(id = R.dimen.padding_medium),
+            dimensionResource(id = R.dimen.padding_small),
         ),
         modifier = modifier,
     ) {
@@ -55,6 +55,6 @@ fun LoginAuthenticationForm(modifier: Modifier = Modifier) {
 @Composable
 fun LoginAuthenticationFormPreview() {
     LoginAuthenticationForm(
-        modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
+        modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
     )
 }
