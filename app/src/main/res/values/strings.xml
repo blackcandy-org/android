@@ -17,4 +17,5 @@
     <string name="authentication_title">Login to Black Candy</string>
     <string name="back_button_description">Back</string>
     <string name="logo_description">Logo Of Black Candy</string>
+    <string name="invalid_server_address">Invalid server address</string>
 </resources>

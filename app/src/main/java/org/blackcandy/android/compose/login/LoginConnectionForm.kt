@@ -22,8 +22,10 @@ import org.blackcandy.android.R
 
 @Composable
 fun LoginConnectionForm(
+    serverAddress: String,
     modifier: Modifier = Modifier,
     onConnectButtonClicked: () -> Unit,
+    onServerAddressChanged: (String) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -41,15 +43,16 @@ fun LoginConnectionForm(
         )
 
         OutlinedTextField(
-            value = "",
+            value = serverAddress,
             label = { Text(text = stringResource(R.string.server_address)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
-            onValueChange = { },
+            onValueChange = onServerAddressChanged,
             modifier = Modifier.fillMaxWidth(),
         )
 
         Button(
             modifier = Modifier.fillMaxWidth(),
+            enabled = serverAddress.isNotEmpty(),
             onClick = {
                 onConnectButtonClicked()
             },
@@ -63,7 +66,9 @@ fun LoginConnectionForm(
 @Composable
 fun LoginConnectionFormPreview() {
     LoginConnectionForm(
+        serverAddress = "",
         modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
         onConnectButtonClicked = {},
+        onServerAddressChanged = {},
     )
 }
