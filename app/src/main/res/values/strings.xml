@@ -8,4 +8,14 @@
     <string name="manage_users">Manage Users</string>
     <string name="update_profile">Update Profile</string>
     <string name="logout">Logout</string>
+    <string name="server_address">Server Address</string>
+    <string name="connect">Connect</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="connection_title">Connect to Black Candy</string>
+    <string name="authentication_title">Login to Black Candy</string>
+    <string name="back_button_description">Back</string>
+    <string name="logo_description">Logo Of Black Candy</string>
+    <string name="invalid_server_address">Invalid server address</string>
 </resources>
