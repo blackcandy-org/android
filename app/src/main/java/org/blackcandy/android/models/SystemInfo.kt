@@ -1,0 +1,22 @@
+package org.blackcandy.android.models
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class SystemInfo(
+    val version: Version,
+) {
+    companion object {
+        const val supportedMinimumMajorVersion = 3
+    }
+
+    val isSupported get() = version.major >= supportedMinimumMajorVersion
+
+    @Serializable
+    data class Version(
+        val major: Int,
+        val minor: Int,
+        val patch: Int,
+        val pre: String,
+    )
+}

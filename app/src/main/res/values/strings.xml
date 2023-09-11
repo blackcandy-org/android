@@ -18,4 +18,5 @@
     <string name="back_button_description">Back</string>
     <string name="logo_description">Logo Of Black Candy</string>
     <string name="invalid_server_address">Invalid server address</string>
+    <string name="unsupported_server">Unsupported Black Candy Server</string>
 </resources>

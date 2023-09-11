@@ -1,6 +1,5 @@
 package org.blackcandy.android.compose.login
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -32,12 +31,8 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.blackcandy.android.R
+import org.blackcandy.android.viewmodels.LoginRoute
 import org.blackcandy.android.viewmodels.LoginViewModel
-
-enum class LoginForm(@StringRes val title: Int) {
-    Connection(R.string.connection_title),
-    Authentication(R.string.authentication_title),
-}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -51,39 +46,43 @@ fun LoginScreen(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val uiState by viewModel.uiState.collectAsState()
 
-    val currentForm = LoginForm.valueOf(
-        backStackEntry?.destination?.route ?: LoginForm.Connection.name,
+    val currentRoute = LoginRoute.valueOf(
+        backStackEntry?.destination?.route ?: LoginRoute.Connection.name,
     )
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             LoginScreenAppBar(
-                currentForm = currentForm,
-                canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() },
+                currentRoute = currentRoute,
+                canNavigateBack = currentRoute != LoginRoute.Connection,
+                navigateUp = {
+                    navController.previousBackStackEntry?.destination?.route?.let {
+                        val previousRoute = LoginRoute.valueOf(it)
+                        viewModel.updateLoginRoute(previousRoute)
+                    }
+                },
             )
         },
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = LoginForm.Connection.name,
+            startDestination = LoginRoute.Connection.name,
             modifier = Modifier.padding(innerPadding),
         ) {
-            composable(route = LoginForm.Connection.name) {
+            composable(route = LoginRoute.Connection.name) {
                 LoginConnectionForm(
                     serverAddress = uiState.serverAddress,
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
                     onConnectButtonClicked = {
                         keyboardController?.hide()
                         viewModel.checkSystemInfo()
-                        // navController.navigate(LoginForm.Authentication.name)
                     },
                     onServerAddressChanged = { viewModel.updateServerAddress(it) },
                 )
             }
 
-            composable(route = LoginForm.Authentication.name) {
+            composable(route = LoginRoute.Authentication.name) {
                 LoginAuthenticationForm(
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
                 )
@@ -98,18 +97,22 @@ fun LoginScreen(
                 viewModel.snackbarMessageShown()
             }
         }
+
+        if (uiState.loginRoute != currentRoute) {
+            navController.navigate(uiState.loginRoute.name)
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreenAppBar(
-    currentForm: LoginForm,
+    currentRoute: LoginRoute,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
-        title = { Text(text = stringResource(currentForm.title)) },
+        title = { Text(text = stringResource(currentRoute.title)) },
         navigationIcon = {
             if (canNavigateBack) {
                 IconButton(onClick = navigateUp) {
