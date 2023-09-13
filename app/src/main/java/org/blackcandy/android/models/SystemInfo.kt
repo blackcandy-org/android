@@ -7,10 +7,10 @@ data class SystemInfo(
     val version: Version,
 ) {
     companion object {
-        const val supportedMinimumMajorVersion = 3
+        const val SUPPORTED_MINIMUM_MAJOR_VERSION = 3
     }
 
-    val isSupported get() = version.major >= supportedMinimumMajorVersion
+    val isSupported get() = version.major >= SUPPORTED_MINIMUM_MAJOR_VERSION
 
     @Serializable
     data class Version(

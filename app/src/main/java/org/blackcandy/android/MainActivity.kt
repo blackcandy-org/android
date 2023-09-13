@@ -7,6 +7,7 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
+import dagger.hilt.android.AndroidEntryPoint
 import dev.hotwire.turbo.activities.TurboActivity
 import dev.hotwire.turbo.delegates.TurboActivityDelegate
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
@@ -14,6 +15,7 @@ import org.blackcandy.android.databinding.ActivityMainBinding
 import org.blackcandy.android.fragments.navs.HomeNavHostFragment
 import org.blackcandy.android.fragments.navs.LibraryNavHostFragment
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener {
     private lateinit var binding: ActivityMainBinding
     override lateinit var delegate: TurboActivityDelegate
