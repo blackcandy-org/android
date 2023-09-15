@@ -33,13 +33,14 @@ import kotlinx.coroutines.launch
 import org.blackcandy.android.R
 import org.blackcandy.android.viewmodels.LoginRoute
 import org.blackcandy.android.viewmodels.LoginViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
     navController: NavHostController = rememberNavController(),
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    viewModel: LoginViewModel = viewModel(),
+    viewModel: LoginViewModel = koinViewModel(),
     scope: CoroutineScope = rememberCoroutineScope(),
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current,
 ) {

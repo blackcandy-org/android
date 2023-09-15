@@ -4,9 +4,8 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import org.blackcandy.android.data.ServerAddressRepository
-import javax.inject.Inject
 
-class ServerAddressInterceptor @Inject constructor(
+class ServerAddressInterceptor(
     private val serverAddressRepository: ServerAddressRepository,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
