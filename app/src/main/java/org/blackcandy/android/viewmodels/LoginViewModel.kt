@@ -11,12 +11,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.blackcandy.android.R
+import org.blackcandy.android.api.ApiException
 import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.data.SystemInfoRepository
+import org.blackcandy.android.models.AlertMessage
 
 data class LoginUiState(
     val serverAddress: String = "",
-    val userMessage: Int? = null,
+    val alertMessage: AlertMessage? = null,
     val loginRoute: LoginRoute = LoginRoute.Connection,
 )
 
@@ -49,25 +51,31 @@ class LoginViewModel(
         }
 
         if (!Patterns.WEB_URL.matcher(serverAddress).matches()) {
-            _uiState.update { it.copy(userMessage = R.string.invalid_server_address) }
+            _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.invalid_server_address)) }
             return
         }
 
         viewModelScope.launch {
             serverAddressRepository.updateServerAddress(serverAddress)
 
-            val systemInfo = systemInfoRepository.getSystemInfo()
+            try {
+                val systemInfo = systemInfoRepository.getSystemInfo()
 
-            if (!systemInfo.isSupported) {
-                _uiState.update { it.copy(userMessage = R.string.unsupported_server) }
-            } else {
-                _uiState.update { it.copy(loginRoute = LoginRoute.Authentication) }
+                if (!systemInfo.isSupported) {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.unsupported_server)) }
+                } else {
+                    _uiState.update { it.copy(loginRoute = LoginRoute.Authentication) }
+                }
+            } catch (exception: ApiException) {
+                exception.message?.let { message ->
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }
+                }
             }
         }
     }
 
     fun snackbarMessageShown() {
-        _uiState.update { it.copy(userMessage = null) }
+        _uiState.update { it.copy(alertMessage = null) }
     }
 
     fun updateLoginRoute(route: LoginRoute) {

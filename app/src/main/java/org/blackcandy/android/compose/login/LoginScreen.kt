@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.blackcandy.android.R
+import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.android.viewmodels.LoginRoute
 import org.blackcandy.android.viewmodels.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -90,8 +90,11 @@ fun LoginScreen(
             }
         }
 
-        uiState.userMessage?.let { userMessage ->
-            val snackbarText = stringResource(userMessage)
+        uiState.alertMessage?.let { alertMessage ->
+            val snackbarText = when (alertMessage) {
+                is AlertMessage.String -> alertMessage.value
+                is AlertMessage.StringResource -> stringResource(alertMessage.value)
+            }
 
             scope.launch {
                 snackbarHostState.showSnackbar(snackbarText)
