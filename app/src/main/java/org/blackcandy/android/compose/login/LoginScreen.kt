@@ -12,10 +12,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -27,8 +27,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.blackcandy.android.R
 import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.android.viewmodels.LoginRoute
@@ -41,7 +39,6 @@ fun LoginScreen(
     navController: NavHostController = rememberNavController(),
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     viewModel: LoginViewModel = koinViewModel(),
-    scope: CoroutineScope = rememberCoroutineScope(),
     keyboardController: SoftwareKeyboardController? = LocalSoftwareKeyboardController.current,
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -86,6 +83,14 @@ fun LoginScreen(
             composable(route = LoginRoute.Authentication.name) {
                 LoginAuthenticationForm(
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
+                    email = uiState.email,
+                    password = uiState.password,
+                    onEmailChanged = { viewModel.updateEmail(it) },
+                    onPasswordChanged = { viewModel.updatePassword(it) },
+                    onLoginButtonClicked = {
+                        keyboardController?.hide()
+                        viewModel.login()
+                    },
                 )
             }
         }
@@ -96,7 +101,7 @@ fun LoginScreen(
                 is AlertMessage.StringResource -> stringResource(alertMessage.value)
             }
 
-            scope.launch {
+            LaunchedEffect(snackbarHostState) {
                 snackbarHostState.showSnackbar(snackbarText)
                 viewModel.snackbarMessageShown()
             }

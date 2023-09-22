@@ -9,17 +9,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.blackcandy.android.R
-import org.blackcandy.android.api.ApiException
 import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.data.SystemInfoRepository
+import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.models.AlertMessage
+import java.lang.Exception
 
 data class LoginUiState(
     val serverAddress: String = "",
     val alertMessage: AlertMessage? = null,
     val loginRoute: LoginRoute = LoginRoute.Connection,
+    val email: String = "",
+    val password: String = "",
 )
 
 enum class LoginRoute(@StringRes val title: Int) {
@@ -30,17 +32,31 @@ enum class LoginRoute(@StringRes val title: Int) {
 class LoginViewModel(
     private val systemInfoRepository: SystemInfoRepository,
     private val serverAddressRepository: ServerAddressRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
-    private val serverAddress = runBlocking {
-        serverAddressRepository.getServerAddress()
-    }
+    private val _uiState = MutableStateFlow(LoginUiState())
 
-    private val _uiState = MutableStateFlow(LoginUiState(serverAddress = serverAddress))
-
+    val currentUserFlow = userRepository.getCurrentUserFlow()
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
+    fun initServerAddress() {
+        viewModelScope.launch {
+            if (uiState.value.serverAddress.isEmpty()) {
+                updateServerAddress(serverAddressRepository.getServerAddress())
+            }
+        }
+    }
 
     fun updateServerAddress(serverAddress: String) {
         _uiState.update { it.copy(serverAddress = serverAddress) }
+    }
+
+    fun updateEmail(email: String) {
+        _uiState.update { it.copy(email = email) }
+    }
+
+    fun updatePassword(password: String) {
+        _uiState.update { it.copy(password = password) }
     }
 
     fun checkSystemInfo() {
@@ -66,7 +82,19 @@ class LoginViewModel(
                 } else {
                     _uiState.update { it.copy(loginRoute = LoginRoute.Authentication) }
                 }
-            } catch (exception: ApiException) {
+            } catch (exception: Exception) {
+                exception.message?.let { message ->
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }
+                }
+            }
+        }
+    }
+
+    fun login() {
+        viewModelScope.launch {
+            try {
+                userRepository.authenticate(uiState.value.email, uiState.value.password)
+            } catch (exception: Exception) {
                 exception.message?.let { message ->
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }
                 }

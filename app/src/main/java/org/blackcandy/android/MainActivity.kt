@@ -1,20 +1,28 @@
 package org.blackcandy.android
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import dev.hotwire.turbo.activities.TurboActivity
 import dev.hotwire.turbo.delegates.TurboActivityDelegate
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
+import kotlinx.coroutines.launch
 import org.blackcandy.android.databinding.ActivityMainBinding
 import org.blackcandy.android.fragments.navs.HomeNavHostFragment
 import org.blackcandy.android.fragments.navs.LibraryNavHostFragment
+import org.blackcandy.android.viewmodels.MainViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener {
+    private val viewModel: MainViewModel by viewModel()
     private lateinit var binding: ActivityMainBinding
     override lateinit var delegate: TurboActivityDelegate
     lateinit var homeNav: TurboSessionNavHostFragment
@@ -22,6 +30,20 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.currentUserFlow.collect() {
+                    if (it == null) {
+                        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         homeNav = HomeNavHostFragment()
         libraryNav = LibraryNavHostFragment()

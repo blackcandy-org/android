@@ -11,9 +11,13 @@ import org.blackcandy.android.R
 import org.blackcandy.android.compose.account.AccountMenu
 import org.blackcandy.android.databinding.FragmentSheetAccountBinding
 import org.blackcandy.android.models.MenuItem
+import org.blackcandy.android.viewmodels.AccountSheetViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @TurboNavGraphDestination(uri = "turbo://fragment/sheets/account")
 class AccountSheetFragment : TurboBottomSheetDialogFragment() {
+    private val viewModel: AccountSheetViewModel by viewModel()
+
     private var _binding: FragmentSheetAccountBinding? = null
     private val binding get() = _binding!!
 
@@ -36,11 +40,11 @@ class AccountSheetFragment : TurboBottomSheetDialogFragment() {
         MenuItem(
             R.string.logout,
             R.drawable.baseline_exit_to_app_24,
-            {},
+            { viewModel.logout() },
         ),
     )
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSheetAccountBinding.inflate(inflater, container, false)
 
         binding.composeView.apply {

@@ -1,7 +1,11 @@
 package org.blackcandy.android.di
 
 import android.content.Context
+import android.webkit.CookieManager
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.core.Serializer
+import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
@@ -11,6 +15,8 @@ import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import org.blackcandy.android.api.ApiError
 import org.blackcandy.android.api.ApiException
@@ -18,23 +24,35 @@ import org.blackcandy.android.api.BlackCandyService
 import org.blackcandy.android.api.BlackCandyServiceImpl
 import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.data.SystemInfoRepository
+import org.blackcandy.android.data.UserRepository
+import org.blackcandy.android.models.User
+import org.blackcandy.android.viewmodels.AccountSheetViewModel
 import org.blackcandy.android.viewmodels.LoginViewModel
+import org.blackcandy.android.viewmodels.MainViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import java.lang.Exception
+import java.io.InputStream
+import java.io.OutputStream
 
 val appModule = module {
     single { provideJson() }
-    single { provideDataStore(androidContext()) }
+    single { provideCookieManager() }
+    single(named("PreferencesDataStore")) { provideDataStore(androidContext()) }
+    single(named("UserDataStore")) { provideUserDataStore(androidContext()) }
     single { provideHttpClient(get()) }
     single<BlackCandyService> { BlackCandyServiceImpl(get(), get()) }
-    single { ServerAddressRepository(get()) }
+    single { ServerAddressRepository(get(named("PreferencesDataStore"))) }
     single { SystemInfoRepository(get()) }
-    viewModel { LoginViewModel(get(), get()) }
+    single { UserRepository(get(), get(), get(), get(named("UserDataStore"))) }
+    viewModel { LoginViewModel(get(), get(), get()) }
+    viewModel { MainViewModel(get()) }
+    viewModel { AccountSheetViewModel(get()) }
 }
 
 private const val DATASTORE_PREFERENCES_NAME = "user_preferences"
+private const val USER_DATASTORE_FILE_NAME = "user.json"
 
 private fun provideHttpClient(json: Json): HttpClient {
     return HttpClient() {
@@ -45,13 +63,13 @@ private fun provideHttpClient(json: Json): HttpClient {
         }
 
         HttpResponseValidator {
-            handleResponseExceptionWithRequest { exception, request ->
+            handleResponseExceptionWithRequest { exception, _ ->
                 when (exception) {
                     is ClientRequestException -> {
                         val responseText = exception.response.bodyAsText()
 
                         val apiError = try {
-                            json.decodeFromString(ApiError.serializer(), responseText)
+                            json.decodeFromString<ApiError>(responseText)
                         } catch (e: Exception) {
                             null
                         }
@@ -72,6 +90,45 @@ private fun provideDataStore(appContext: Context): DataStore<Preferences> {
     return PreferenceDataStoreFactory.create(
         produceFile = { appContext.preferencesDataStoreFile(DATASTORE_PREFERENCES_NAME) },
     )
+}
+
+private fun provideUserDataStore(appContext: Context): DataStore<User?> {
+    val serializer = object : Serializer<User?> {
+        override val defaultValue: User?
+            get() = null
+
+        override suspend fun readFrom(input: InputStream): User? {
+            try {
+                return Json.decodeFromString(
+                    User.serializer(),
+                    input.readBytes().decodeToString(),
+                )
+            } catch (e: Exception) {
+                return null
+            }
+        }
+
+        override suspend fun writeTo(t: User?, output: OutputStream) {
+            val data = if (t == null) {
+                "{}".encodeToByteArray()
+            } else {
+                Json.encodeToString(User.serializer(), t).encodeToByteArray()
+            }
+
+            withContext(Dispatchers.IO) {
+                output.write(data)
+            }
+        }
+    }
+
+    return DataStoreFactory.create(
+        serializer = serializer,
+        produceFile = { appContext.dataStoreFile(USER_DATASTORE_FILE_NAME) },
+    )
+}
+
+private fun provideCookieManager(): CookieManager {
+    return CookieManager.getInstance()
 }
 
 private fun provideJson() = Json {

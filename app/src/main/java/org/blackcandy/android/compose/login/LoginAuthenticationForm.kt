@@ -14,11 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import org.blackcandy.android.R
 
 @Composable
-fun LoginAuthenticationForm(modifier: Modifier = Modifier) {
+fun LoginAuthenticationForm(
+    modifier: Modifier = Modifier,
+    email: String,
+    password: String,
+    onLoginButtonClicked: () -> Unit,
+    onEmailChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(
@@ -27,24 +35,26 @@ fun LoginAuthenticationForm(modifier: Modifier = Modifier) {
         modifier = modifier,
     ) {
         OutlinedTextField(
-            value = "",
+            value = email,
             label = { Text(text = stringResource(R.string.email)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            onValueChange = { },
+            onValueChange = onEmailChanged,
             modifier = Modifier.fillMaxWidth(),
         )
 
         OutlinedTextField(
-            value = "",
+            value = password,
             label = { Text(text = stringResource(R.string.password)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { },
+            visualTransformation = PasswordVisualTransformation(),
+            onValueChange = onPasswordChanged,
             modifier = Modifier.fillMaxWidth(),
         )
 
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {},
+            enabled = email.isNotEmpty() && password.isNotEmpty(),
+            onClick = { onLoginButtonClicked() },
         ) {
             Text(text = stringResource(R.string.login))
         }
@@ -56,5 +66,10 @@ fun LoginAuthenticationForm(modifier: Modifier = Modifier) {
 fun LoginAuthenticationFormPreview() {
     LoginAuthenticationForm(
         modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
+        email = "",
+        password = "",
+        onEmailChanged = {},
+        onPasswordChanged = {},
+        onLoginButtonClicked = {},
     )
 }
