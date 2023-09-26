@@ -9,11 +9,15 @@ import org.blackcandy.android.fragments.web.WebBottomSheetFragment
 import org.blackcandy.android.fragments.web.WebFragment
 import org.blackcandy.android.fragments.web.WebHomeFragment
 import org.blackcandy.android.fragments.web.WebLibraryFragment
+import org.blackcandy.android.viewmodels.NavHostViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.reflect.KClass
 
 open class MainNavHostFragment : TurboSessionNavHostFragment() {
+    private val viewModel: NavHostViewModel by viewModel()
+
     override val sessionName = "main"
-    override val startLocation = "http://10.0.2.2:3000"
+    override val startLocation get() = viewModel.serverAddress
 
     override val registeredActivities: List<KClass<out AppCompatActivity>>
         get() = listOf(

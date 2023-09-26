@@ -25,12 +25,12 @@ class AccountSheetFragment : TurboBottomSheetDialogFragment() {
         MenuItem(
             R.string.settings,
             R.drawable.baseline_settings_24,
-            { navigate("http://10.0.2.2:3000/setting") },
+            { navigate("${viewModel.serverAddress}/setting") },
         ),
         MenuItem(
             R.string.manage_users,
             R.drawable.baseline_people_24,
-            { navigate("http://10.0.2.2:3000/users") },
+            { navigate("${viewModel.serverAddress}/users") },
         ),
         MenuItem(
             R.string.update_profile,

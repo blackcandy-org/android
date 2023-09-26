@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dev.hotwire.turbo.fragments.TurboWebFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import org.blackcandy.android.databinding.FragmentWebLibraryBinding
 
 @TurboNavGraphDestination(uri = "turbo://fragment/web/library")
-open class WebLibraryFragment : TurboWebFragment() {
+open class WebLibraryFragment : WebFragment() {
     private var _binding: FragmentWebLibraryBinding? = null
     private val binding get() = _binding!!
 

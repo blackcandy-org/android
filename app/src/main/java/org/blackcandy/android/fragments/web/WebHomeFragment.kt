@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import org.blackcandy.android.R
 import org.blackcandy.android.databinding.FragmentWebHomeBinding
+import org.blackcandy.android.viewmodels.WebViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @TurboNavGraphDestination(uri = "turbo://fragment/web/home")
 class WebHomeFragment : WebFragment() {
+    private val viewModel: WebViewModel by viewModel()
     private var _binding: FragmentWebHomeBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWebHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -24,7 +27,7 @@ class WebHomeFragment : WebFragment() {
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.top_bar_account -> {
-                    navigate("http://10.0.2.2:3000/account")
+                    navigate("${viewModel.serverAddress}/account")
                     true
                 }
 
