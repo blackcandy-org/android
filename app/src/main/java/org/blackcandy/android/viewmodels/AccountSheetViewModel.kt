@@ -11,6 +11,8 @@ class AccountSheetViewModel(
     private val userRepository: UserRepository,
     private val serverAddressRepository: ServerAddressRepository,
 ) : ViewModel() {
+    val currentUserFlow = userRepository.getCurrentUserFlow()
+
     val serverAddress = runBlocking {
         serverAddressRepository.getServerAddress()
     }
