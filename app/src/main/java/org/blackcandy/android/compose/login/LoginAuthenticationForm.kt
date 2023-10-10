@@ -29,9 +29,10 @@ fun LoginAuthenticationForm(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            dimensionResource(id = R.dimen.padding_small),
-        ),
+        verticalArrangement =
+            Arrangement.spacedBy(
+                dimensionResource(id = R.dimen.padding_small),
+            ),
         modifier = modifier,
     ) {
         OutlinedTextField(

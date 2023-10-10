@@ -7,7 +7,8 @@ import org.blackcandy.android.data.ServerAddressRepository
 class NavHostViewModel(
     private val serverAddressRepository: ServerAddressRepository,
 ) : ViewModel() {
-    val serverAddress = runBlocking {
-        serverAddressRepository.getServerAddress()
-    }
+    val serverAddress =
+        runBlocking {
+            serverAddressRepository.getServerAddress()
+        }
 }

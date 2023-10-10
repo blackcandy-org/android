@@ -29,17 +29,19 @@ fun LoginConnectionForm(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            dimensionResource(R.dimen.padding_small),
-        ),
+        verticalArrangement =
+            Arrangement.spacedBy(
+                dimensionResource(R.dimen.padding_small),
+            ),
         modifier = modifier,
     ) {
         Image(
             painter = painterResource(R.drawable.black_candy_logo),
             contentDescription = stringResource(R.string.logo_description),
-            modifier = Modifier
-                .width(dimensionResource(R.dimen.logo_width))
-                .padding(bottom = dimensionResource(R.dimen.padding_medium)),
+            modifier =
+                Modifier
+                    .width(dimensionResource(R.dimen.logo_width))
+                    .padding(bottom = dimensionResource(R.dimen.padding_medium)),
         )
 
         OutlinedTextField(

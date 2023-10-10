@@ -13,9 +13,10 @@ class AccountSheetViewModel(
 ) : ViewModel() {
     val currentUserFlow = userRepository.getCurrentUserFlow()
 
-    val serverAddress = runBlocking {
-        serverAddressRepository.getServerAddress()
-    }
+    val serverAddress =
+        runBlocking {
+            serverAddressRepository.getServerAddress()
+        }
 
     fun logout() {
         viewModelScope.launch {

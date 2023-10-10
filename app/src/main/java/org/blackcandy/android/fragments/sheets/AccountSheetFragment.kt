@@ -28,55 +28,60 @@ class AccountSheetFragment : TurboBottomSheetDialogFragment() {
 
     private lateinit var currentUser: User
 
-    private val menuItems get() = buildList {
-        add(
-            MenuItem(
-                R.string.settings,
-                R.drawable.baseline_settings_24,
-                { navigate("${viewModel.serverAddress}/setting") },
-            ),
-        )
-
-        if (currentUser.isAdmin) {
+    private val menuItems get() =
+        buildList {
             add(
                 MenuItem(
-                    R.string.manage_users,
-                    R.drawable.baseline_people_24,
-                    { navigate("${viewModel.serverAddress}/users") },
+                    R.string.settings,
+                    R.drawable.baseline_settings_24,
+                    { navigate("${viewModel.serverAddress}/setting") },
+                ),
+            )
+
+            if (currentUser.isAdmin) {
+                add(
+                    MenuItem(
+                        R.string.manage_users,
+                        R.drawable.baseline_people_24,
+                        { navigate("${viewModel.serverAddress}/users") },
+                    ),
+                )
+            }
+
+            add(
+                MenuItem(
+                    R.string.update_profile,
+                    R.drawable.baseline_face_24,
+                    { navigate("${viewModel.serverAddress}/users/${currentUser.id}/edit") },
+                ),
+            )
+
+            add(
+                MenuItem(
+                    R.string.logout,
+                    R.drawable.baseline_exit_to_app_24,
+                    { viewModel.logout() },
                 ),
             )
         }
-
-        add(
-            MenuItem(
-                R.string.update_profile,
-                R.drawable.baseline_face_24,
-                { navigate("${viewModel.serverAddress}/users/${currentUser.id}/edit") },
-            ),
-        )
-
-        add(
-            MenuItem(
-                R.string.logout,
-                R.drawable.baseline_exit_to_app_24,
-                { viewModel.logout() },
-            ),
-        )
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.currentUserFlow.collect() {
+                viewModel.currentUserFlow.collect {
                     it?.let { currentUser = it }
                 }
             }
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
         _binding = FragmentSheetAccountBinding.inflate(inflater, container, false)
 
         binding.composeView.apply {

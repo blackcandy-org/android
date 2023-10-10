@@ -1,6 +1,7 @@
 package org.blackcandy.android.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.webkit.CookieManager
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
@@ -9,6 +10,8 @@ import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
@@ -38,28 +41,31 @@ import org.koin.dsl.module
 import java.io.InputStream
 import java.io.OutputStream
 
-val appModule = module {
-    single { provideJson() }
-    single { provideCookieManager() }
-    single(named("PreferencesDataStore")) { provideDataStore(androidContext()) }
-    single(named("UserDataStore")) { provideUserDataStore(androidContext()) }
-    single { provideHttpClient(get()) }
-    single<BlackCandyService> { BlackCandyServiceImpl(get(), get()) }
-    single { ServerAddressRepository(get(named("PreferencesDataStore"))) }
-    single { SystemInfoRepository(get()) }
-    single { UserRepository(get(), get(), get(), get(named("UserDataStore"))) }
-    viewModel { LoginViewModel(get(), get(), get()) }
-    viewModel { MainViewModel(get()) }
-    viewModel { AccountSheetViewModel(get(), get()) }
-    viewModel { NavHostViewModel(get()) }
-    viewModel { WebViewModel(get()) }
-}
+val appModule =
+    module {
+        single { provideJson() }
+        single { provideCookieManager() }
+        single { provideEncryptedSharedPreferences(androidContext()) }
+        single(named("PreferencesDataStore")) { provideDataStore(androidContext()) }
+        single(named("UserDataStore")) { provideUserDataStore(androidContext()) }
+        single { provideHttpClient(get()) }
+        single<BlackCandyService> { BlackCandyServiceImpl(get(), get()) }
+        single { ServerAddressRepository(get(named("PreferencesDataStore"))) }
+        single { SystemInfoRepository(get()) }
+        single { UserRepository(get(), get(), get(), get(named("UserDataStore")), get()) }
+        viewModel { LoginViewModel(get(), get(), get()) }
+        viewModel { MainViewModel(get()) }
+        viewModel { AccountSheetViewModel(get(), get()) }
+        viewModel { NavHostViewModel(get()) }
+        viewModel { WebViewModel(get()) }
+    }
 
 private const val DATASTORE_PREFERENCES_NAME = "user_preferences"
 private const val USER_DATASTORE_FILE_NAME = "user.json"
+private const val ENCRYPTED_SHARED_PREFERENCES_FILE_NAME = "encrypted_preferences.txt"
 
 private fun provideHttpClient(json: Json): HttpClient {
-    return HttpClient() {
+    return HttpClient {
         expectSuccess = true
 
         install(ContentNegotiation) {
@@ -72,11 +78,12 @@ private fun provideHttpClient(json: Json): HttpClient {
                     is ClientRequestException -> {
                         val responseText = exception.response.bodyAsText()
 
-                        val apiError = try {
-                            json.decodeFromString<ApiError>(responseText)
-                        } catch (e: Exception) {
-                            null
-                        }
+                        val apiError =
+                            try {
+                                json.decodeFromString<ApiError>(responseText)
+                            } catch (e: Exception) {
+                                null
+                            }
 
                         throw ApiException(apiError?.message ?: exception.message)
                     }
@@ -97,33 +104,38 @@ private fun provideDataStore(appContext: Context): DataStore<Preferences> {
 }
 
 private fun provideUserDataStore(appContext: Context): DataStore<User?> {
-    val serializer = object : Serializer<User?> {
-        override val defaultValue: User?
-            get() = null
+    val serializer =
+        object : Serializer<User?> {
+            override val defaultValue: User?
+                get() = null
 
-        override suspend fun readFrom(input: InputStream): User? {
-            try {
-                return Json.decodeFromString(
-                    User.serializer(),
-                    input.readBytes().decodeToString(),
-                )
-            } catch (e: Exception) {
-                return null
+            override suspend fun readFrom(input: InputStream): User? {
+                try {
+                    return Json.decodeFromString(
+                        User.serializer(),
+                        input.readBytes().decodeToString(),
+                    )
+                } catch (e: Exception) {
+                    return null
+                }
+            }
+
+            override suspend fun writeTo(
+                t: User?,
+                output: OutputStream,
+            ) {
+                val data =
+                    if (t == null) {
+                        "{}".encodeToByteArray()
+                    } else {
+                        Json.encodeToString(User.serializer(), t).encodeToByteArray()
+                    }
+
+                withContext(Dispatchers.IO) {
+                    output.write(data)
+                }
             }
         }
-
-        override suspend fun writeTo(t: User?, output: OutputStream) {
-            val data = if (t == null) {
-                "{}".encodeToByteArray()
-            } else {
-                Json.encodeToString(User.serializer(), t).encodeToByteArray()
-            }
-
-            withContext(Dispatchers.IO) {
-                output.write(data)
-            }
-        }
-    }
 
     return DataStoreFactory.create(
         serializer = serializer,
@@ -135,8 +147,19 @@ private fun provideCookieManager(): CookieManager {
     return CookieManager.getInstance()
 }
 
-private fun provideJson() = Json {
-    isLenient = true
-    ignoreUnknownKeys = true
-    useAlternativeNames = false
+private fun provideEncryptedSharedPreferences(appContext: Context): SharedPreferences {
+    return EncryptedSharedPreferences.create(
+        ENCRYPTED_SHARED_PREFERENCES_FILE_NAME,
+        MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
+        appContext,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
+    )
 }
+
+private fun provideJson() =
+    Json {
+        isLenient = true
+        ignoreUnknownKeys = true
+        useAlternativeNames = false
+    }

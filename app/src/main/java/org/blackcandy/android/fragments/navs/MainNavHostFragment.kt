@@ -20,25 +20,28 @@ open class MainNavHostFragment : TurboSessionNavHostFragment() {
     override val startLocation get() = viewModel.serverAddress
 
     override val registeredActivities: List<KClass<out AppCompatActivity>>
-        get() = listOf(
-            // Leave empty unless you have more
-            // than one TurboActivity in your app
-        )
+        get() =
+            listOf(
+                // Leave empty unless you have more
+                // than one TurboActivity in your app
+            )
 
     override val registeredFragments: List<KClass<out Fragment>>
-        get() = listOf(
-            WebFragment::class,
-            WebHomeFragment::class,
-            WebLibraryFragment::class,
-            WebBottomSheetFragment::class,
-            AccountSheetFragment::class,
-            // And any other TurboFragments in your app
-        )
+        get() =
+            listOf(
+                WebFragment::class,
+                WebHomeFragment::class,
+                WebLibraryFragment::class,
+                WebBottomSheetFragment::class,
+                AccountSheetFragment::class,
+                // And any other TurboFragments in your app
+            )
 
     override val pathConfigurationLocation: TurboPathConfiguration.Location
-        get() = TurboPathConfiguration.Location(
-            assetFilePath = "json/configuration.json",
-        )
+        get() =
+            TurboPathConfiguration.Location(
+                assetFilePath = "json/configuration.json",
+            )
 
     override fun onSessionCreated() {
         super.onSessionCreated()

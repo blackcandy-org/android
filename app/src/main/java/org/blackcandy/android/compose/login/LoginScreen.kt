@@ -44,9 +44,10 @@ fun LoginScreen(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val uiState by viewModel.uiState.collectAsState()
 
-    val currentRoute = LoginRoute.valueOf(
-        backStackEntry?.destination?.route ?: LoginRoute.Connection.name,
-    )
+    val currentRoute =
+        LoginRoute.valueOf(
+            backStackEntry?.destination?.route ?: LoginRoute.Connection.name,
+        )
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -96,10 +97,11 @@ fun LoginScreen(
         }
 
         uiState.alertMessage?.let { alertMessage ->
-            val snackbarText = when (alertMessage) {
-                is AlertMessage.String -> alertMessage.value
-                is AlertMessage.StringResource -> stringResource(alertMessage.value)
-            }
+            val snackbarText =
+                when (alertMessage) {
+                    is AlertMessage.String -> alertMessage.value
+                    is AlertMessage.StringResource -> stringResource(alertMessage.value)
+                }
 
             LaunchedEffect(snackbarHostState) {
                 snackbarHostState.showSnackbar(snackbarText)

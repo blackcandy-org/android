@@ -24,7 +24,9 @@ data class LoginUiState(
     val password: String = "",
 )
 
-enum class LoginRoute(@StringRes val title: Int) {
+enum class LoginRoute(
+    @StringRes val title: Int,
+) {
     Connection(R.string.connection_title),
     Authentication(R.string.authentication_title),
 }

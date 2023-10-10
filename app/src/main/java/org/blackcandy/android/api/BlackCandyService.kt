@@ -20,7 +20,11 @@ import org.blackcandy.android.models.User
 
 interface BlackCandyService {
     suspend fun getSystemInfo(): SystemInfo
-    suspend fun authenticate(email: String, password: String): AuthenticationResponse
+
+    suspend fun authenticate(
+        email: String,
+        password: String,
+    ): AuthenticationResponse
 }
 
 class BlackCandyServiceImpl(
@@ -31,15 +35,20 @@ class BlackCandyServiceImpl(
         return client.get(apiUrl("/system")).body()
     }
 
-    override suspend fun authenticate(email: String, password: String): AuthenticationResponse {
-        val response: HttpResponse = client.submitForm(
-            url = apiUrl("/authentication"),
-            formParameters = parameters {
-                append("with_session", "true")
-                append("user_session[email]", email)
-                append("user_session[password]", password)
-            },
-        )
+    override suspend fun authenticate(
+        email: String,
+        password: String,
+    ): AuthenticationResponse {
+        val response: HttpResponse =
+            client.submitForm(
+                url = apiUrl("/authentication"),
+                formParameters =
+                    parameters {
+                        append("with_session", "true")
+                        append("user_session[email]", email)
+                        append("user_session[password]", password)
+                    },
+            )
 
         val userElement = Json.parseToJsonElement(response.bodyAsText()).jsonObject["user"]!!
 
@@ -51,11 +60,12 @@ class BlackCandyServiceImpl(
 
         return AuthenticationResponse(
             token = token,
-            user = User(
-                id = id,
-                email = userEmail,
-                isAdmin = isAdmin,
-            ),
+            user =
+                User(
+                    id = id,
+                    email = userEmail,
+                    isAdmin = isAdmin,
+                ),
             cookies = cookies,
         )
     }

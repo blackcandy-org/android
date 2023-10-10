@@ -27,10 +27,13 @@ fun AccountMenu(menuItems: List<MenuItem>) {
 }
 
 @Composable
-fun AccountMenuItem(title: String, iconResourceId: Int, action: () -> Unit) {
+fun AccountMenuItem(
+    title: String,
+    iconResourceId: Int,
+    action: () -> Unit,
+) {
     ListItem(
-        modifier = Modifier
-            .clickable { action() },
+        modifier = Modifier.clickable { action() },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         headlineContent = { Text(title) },
         leadingContent = {

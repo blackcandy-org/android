@@ -31,14 +31,16 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (viewModel.currentUser == null) {
+            switchToLoginActivity()
+            return
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.currentUserFlow.collect() {
+                viewModel.currentUserFlow.collect {
                     if (it == null) {
-                        val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
-                        startActivity(intent)
+                        switchToLoginActivity()
                     }
                 }
             }
@@ -98,5 +100,12 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             }
             else -> false
         }
+    }
+
+    private fun switchToLoginActivity() {
+        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        startActivity(intent)
     }
 }

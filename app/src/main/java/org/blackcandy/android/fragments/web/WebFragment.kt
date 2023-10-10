@@ -10,7 +10,11 @@ import org.blackcandy.android.R
 
 @TurboNavGraphDestination(uri = "turbo://fragment/web")
 open class WebFragment : TurboWebFragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
         return inflater.inflate(R.layout.fragment_web, container, false)
     }
 }
