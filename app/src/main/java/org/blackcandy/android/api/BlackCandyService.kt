@@ -2,6 +2,7 @@ package org.blackcandy.android.api
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
@@ -13,7 +14,6 @@ import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.models.AuthenticationResponse
 import org.blackcandy.android.models.SystemInfo
 import org.blackcandy.android.models.User
@@ -21,32 +21,33 @@ import org.blackcandy.android.models.User
 interface BlackCandyService {
     suspend fun getSystemInfo(): SystemInfo
 
-    suspend fun authenticate(
+    suspend fun createAuthentication(
         email: String,
         password: String,
     ): AuthenticationResponse
+
+    suspend fun destroyAuthentication()
 }
 
 class BlackCandyServiceImpl(
     private val client: HttpClient,
-    private val serverAddressRepository: ServerAddressRepository,
 ) : BlackCandyService {
     override suspend fun getSystemInfo(): SystemInfo {
-        return client.get(apiUrl("/system")).body()
+        return client.get("system").body()
     }
 
-    override suspend fun authenticate(
+    override suspend fun createAuthentication(
         email: String,
         password: String,
     ): AuthenticationResponse {
         val response: HttpResponse =
             client.submitForm(
-                url = apiUrl("/authentication"),
+                url = "authentication",
                 formParameters =
                     parameters {
-                        append("with_session", "true")
-                        append("user_session[email]", email)
-                        append("user_session[password]", password)
+                        append("with_cookie", "true")
+                        append("session[email]", email)
+                        append("session[password]", password)
                     },
             )
 
@@ -70,8 +71,7 @@ class BlackCandyServiceImpl(
         )
     }
 
-    private suspend fun apiUrl(path: String): String {
-        val serverAddress = serverAddressRepository.getServerAddress()
-        return "$serverAddress/api/v1$path"
+    override suspend fun destroyAuthentication() {
+        client.delete("authentication")
     }
 }

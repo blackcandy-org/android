@@ -95,7 +95,7 @@ class LoginViewModel(
     fun login() {
         viewModelScope.launch {
             try {
-                userRepository.authenticate(uiState.value.email, uiState.value.password)
+                userRepository.login(uiState.value.email, uiState.value.password)
             } catch (exception: Exception) {
                 exception.message?.let { message ->
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }

@@ -14,7 +14,9 @@ import com.google.android.material.navigation.NavigationBarView.OnItemSelectedLi
 import dev.hotwire.turbo.activities.TurboActivity
 import dev.hotwire.turbo.delegates.TurboActivityDelegate
 import dev.hotwire.turbo.session.TurboSessionNavHostFragment
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.blackcandy.android.databinding.ActivityMainBinding
 import org.blackcandy.android.fragments.navs.HomeNavHostFragment
 import org.blackcandy.android.fragments.navs.LibraryNavHostFragment
@@ -31,7 +33,9 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (viewModel.currentUser == null) {
+        val currentUser = runBlocking { viewModel.currentUserFlow.first() }
+
+        if (currentUser == null) {
             switchToLoginActivity()
             return
         }

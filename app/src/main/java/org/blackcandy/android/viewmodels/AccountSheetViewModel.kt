@@ -20,8 +20,7 @@ class AccountSheetViewModel(
 
     fun logout() {
         viewModelScope.launch {
-            userRepository.removeCurrentUser()
-            userRepository.removeUserCookies()
+            userRepository.logout()
         }
     }
 }

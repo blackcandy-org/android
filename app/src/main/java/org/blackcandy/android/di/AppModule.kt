@@ -15,20 +15,29 @@ import androidx.security.crypto.MasterKeys
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.UserAgent
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import org.blackcandy.android.api.ApiError
 import org.blackcandy.android.api.ApiException
 import org.blackcandy.android.api.BlackCandyService
 import org.blackcandy.android.api.BlackCandyServiceImpl
+import org.blackcandy.android.data.EncryptedPreferencesDataSource
+import org.blackcandy.android.data.PreferencesDataSource
 import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.data.SystemInfoRepository
 import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.models.User
+import org.blackcandy.android.utils.BLACK_CANDY_USER_AGENT
 import org.blackcandy.android.viewmodels.AccountSheetViewModel
 import org.blackcandy.android.viewmodels.LoginViewModel
 import org.blackcandy.android.viewmodels.MainViewModel
@@ -48,11 +57,16 @@ val appModule =
         single { provideEncryptedSharedPreferences(androidContext()) }
         single(named("PreferencesDataStore")) { provideDataStore(androidContext()) }
         single(named("UserDataStore")) { provideUserDataStore(androidContext()) }
-        single { provideHttpClient(get()) }
-        single<BlackCandyService> { BlackCandyServiceImpl(get(), get()) }
-        single { ServerAddressRepository(get(named("PreferencesDataStore"))) }
+        single { provideHttpClient(get(), get(), get()) }
+
+        single { PreferencesDataSource(get(named("PreferencesDataStore"))) }
+        single { EncryptedPreferencesDataSource(get()) }
+
+        single<BlackCandyService> { BlackCandyServiceImpl(get()) }
+        single { ServerAddressRepository(get()) }
         single { SystemInfoRepository(get()) }
-        single { UserRepository(get(), get(), get(), get(named("UserDataStore")), get()) }
+        single { UserRepository(get(), get(), get(named("UserDataStore")), get(), get()) }
+
         viewModel { LoginViewModel(get(), get(), get()) }
         viewModel { MainViewModel(get()) }
         viewModel { AccountSheetViewModel(get(), get()) }
@@ -64,12 +78,39 @@ private const val DATASTORE_PREFERENCES_NAME = "user_preferences"
 private const val USER_DATASTORE_FILE_NAME = "user.json"
 private const val ENCRYPTED_SHARED_PREFERENCES_FILE_NAME = "encrypted_preferences.txt"
 
-private fun provideHttpClient(json: Json): HttpClient {
+private fun provideHttpClient(
+    json: Json,
+    preferencesDataSource: PreferencesDataSource,
+    encryptedPreferencesDataSource: EncryptedPreferencesDataSource,
+): HttpClient {
     return HttpClient {
         expectSuccess = true
 
+        install(UserAgent) {
+            agent = BLACK_CANDY_USER_AGENT
+        }
+
         install(ContentNegotiation) {
             json(json)
+        }
+
+        install(Auth) {
+            bearer {
+                loadTokens {
+                    encryptedPreferencesDataSource.getApiToken()?.let {
+                        BearerTokens(it, "")
+                    }
+                }
+            }
+        }
+
+        defaultRequest {
+            val serverAddress =
+                runBlocking {
+                    preferencesDataSource.getServerAddress()
+                }
+
+            url("$serverAddress/api/v1/")
         }
 
         HttpResponseValidator {

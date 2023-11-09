@@ -1,6 +1,5 @@
 package org.blackcandy.android.data
 
-import android.content.SharedPreferences
 import android.webkit.CookieManager
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.Flow
@@ -10,44 +9,34 @@ import org.blackcandy.android.models.User
 class UserRepository(
     private val service: BlackCandyService,
     private val cookieManager: CookieManager,
-    private val serverAddressRepository: ServerAddressRepository,
     private val userDataStore: DataStore<User?>,
-    private val encryptedSharedPrefs: SharedPreferences,
+    private val preferencesDataSource: PreferencesDataSource,
+    private val encryptedPreferencesDataSource: EncryptedPreferencesDataSource,
 ) {
-    companion object {
-        private const val API_TOKEN_KEY = "api_token_key"
-    }
-
-    suspend fun authenticate(
+    suspend fun login(
         email: String,
         password: String,
     ) {
-        val response = service.authenticate(email, password)
-        val serverAddress = serverAddressRepository.getServerAddress()
+        val response = service.createAuthentication(email, password)
+        val serverAddress = preferencesDataSource.getServerAddress()
 
         response.cookies.forEach {
             cookieManager.setCookie(serverAddress, it)
         }
 
         cookieManager.flush()
-
         userDataStore.updateData { response.user }
+        encryptedPreferencesDataSource.updateApiToken(response.token)
+    }
 
-        with(encryptedSharedPrefs.edit()) {
-            putString(API_TOKEN_KEY, response.token)
-            apply()
-        }
+    suspend fun logout() {
+        service.destroyAuthentication()
+        userDataStore.updateData { null }
+        cookieManager.removeAllCookies(null)
+        encryptedPreferencesDataSource.removeApiToken()
     }
 
     fun getCurrentUserFlow(): Flow<User?> {
         return userDataStore.data
-    }
-
-    suspend fun removeCurrentUser() {
-        userDataStore.updateData { null }
-    }
-
-    fun removeUserCookies() {
-        cookieManager.removeAllCookies(null)
     }
 }
