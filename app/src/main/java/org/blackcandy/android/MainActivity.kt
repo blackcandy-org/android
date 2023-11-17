@@ -3,16 +3,18 @@ package org.blackcandy.android
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
+import androidx.core.view.isGone
 import androidx.core.view.updatePadding
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import dev.hotwire.turbo.activities.TurboActivity
@@ -32,24 +34,40 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener {
     private val viewModel: MainViewModel by viewModel()
     private lateinit var binding: ActivityMainBinding
-    private var windowInsets: WindowInsetsCompat? = null
+    private lateinit var homeNav: TurboSessionNavHostFragment
+    private lateinit var libraryNav: TurboSessionNavHostFragment
+    private lateinit var playerBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     override lateinit var delegate: TurboActivityDelegate
-    lateinit var homeNav: TurboSessionNavHostFragment
-    lateinit var libraryNav: TurboSessionNavHostFragment
+
+    private val playerBottomSheetCallback by lazy {
+        object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(
+                bottomSheet: View,
+                slideOffset: Float,
+            ) {
+                setupSlideTransition(slideOffset)
+            }
+
+            override fun onStateChanged(
+                bottomSheet: View,
+                newState: Int,
+            ) {
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requireLogin()
+        if (requireLogin()) {
+            switchToLoginActivity()
+            return
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         homeNav = HomeNavHostFragment()
         libraryNav = LibraryNavHostFragment()
-
-        binding.root.setOnApplyWindowInsetsListener { _, insets ->
-            windowInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
-            insets
-        }
+        playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet)
 
         initHome()
 
@@ -57,6 +75,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
         setupLayout()
         setupBottomNav()
+        setupPlayerBottomSheet()
         setupMiniPlayer()
         setupPlayerScreen()
 
@@ -64,6 +83,11 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
         // Displaying edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(window, false)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        playerBottomSheetBehavior.removeBottomSheetCallback(playerBottomSheetCallback)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -104,13 +128,8 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         }
     }
 
-    private fun requireLogin() {
-        val currentUser = runBlocking { viewModel.currentUserFlow.first() }
-
-        if (currentUser == null) {
-            switchToLoginActivity()
-            return
-        }
+    private fun requireLogin(): Boolean {
+        runBlocking { viewModel.currentUserFlow.first() } ?: return true
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -121,6 +140,8 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
                 }
             }
         }
+
+        return false
     }
 
     private fun initHome() {
@@ -135,24 +156,21 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
     private fun setupLayout() {
         binding.bottomNav.post {
-            val playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet)
-            val systemNavigationBarHeight = getSystemNavigationBarHeight()
-
-            // Because displaying edge-to-edge, so the height of bottom nav includes the height of system navigation bar.
-            val bottomNavHeightWithNav = binding.bottomNav.height
-
+            val bottomNavHeight = binding.bottomNav.height
             val miniPlayerHeight = resources.getDimensionPixelSize(R.dimen.mini_player_height)
-            val bottomNavHeight = if (binding.bottomNav.isVisible) bottomNavHeightWithNav - systemNavigationBarHeight else 0
 
             playerBottomSheetBehavior.peekHeight = bottomNavHeight + miniPlayerHeight
             binding.mainContainer.updatePadding(bottom = bottomNavHeight + miniPlayerHeight)
+            binding.playerScreenComposeView.updatePadding(top = miniPlayerHeight)
         }
     }
 
     private fun setupMiniPlayer() {
         binding.miniPlayerComposeView.apply {
             setContent {
-                MiniPlayer()
+                Mdc3Theme {
+                    MiniPlayer()
+                }
             }
         }
     }
@@ -160,9 +178,30 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     private fun setupPlayerScreen() {
         binding.playerScreenComposeView.apply {
             setContent {
-                PlayerScreen()
+                Mdc3Theme {
+                    PlayerScreen()
+                }
             }
         }
+    }
+
+    private fun setupPlayerBottomSheet() {
+        playerBottomSheetBehavior.addBottomSheetCallback(playerBottomSheetCallback)
+    }
+
+    private fun setupSlideTransition(slideOffset: Float) {
+        if (slideOffset < 0) {
+            return
+        }
+
+        val bottomNavTransitionVelocity = 450
+        val transitionOffsetThreshold = 0.15f
+
+        binding.miniPlayerComposeView.alpha = 1 - (slideOffset / transitionOffsetThreshold)
+        binding.miniPlayerComposeView.isGone = slideOffset == 1f
+        binding.bottomNav.translationY = slideOffset * bottomNavTransitionVelocity
+        binding.bottomNav.alpha = 1 - slideOffset
+        binding.playerScreenComposeView.alpha = (slideOffset - transitionOffsetThreshold) / transitionOffsetThreshold
     }
 
     private fun switchToLoginActivity() {
@@ -170,9 +209,5 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         startActivity(intent)
-    }
-
-    private fun getSystemNavigationBarHeight(): Int {
-        return windowInsets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
     }
 }

@@ -19,4 +19,7 @@
     <string name="logo_description">Logo Of Black Candy</string>
     <string name="invalid_server_address">Invalid server address</string>
     <string name="unsupported_server">Unsupported Black Candy Server</string>
+    <string name="not_playing">Not Playing</string>
+    <string name="play">Play</string>
+    <string name="next">Next Track</string>
 </resources>
