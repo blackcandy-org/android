@@ -22,4 +22,5 @@
     <string name="not_playing">Not Playing</string>
     <string name="play">Play</string>
     <string name="next">Next Track</string>
+    <string name="album_cover">Album Cover</string>
 </resources>

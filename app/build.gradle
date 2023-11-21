@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'org.blackcandy.android'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "org.blackcandy.android"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -81,4 +81,5 @@ dependencies {
     implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
     implementation "io.ktor:ktor-client-auth:$ktor_version"
     implementation "androidx.security:security-crypto:1.0.0"
+    implementation "io.coil-kt:coil-compose:2.5.0"
 }
