@@ -7,7 +7,9 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
@@ -33,6 +35,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener {
     private val viewModel: MainViewModel by viewModel()
+    private var windowInsets: WindowInsetsCompat? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var homeNav: TurboSessionNavHostFragment
     private lateinit var libraryNav: TurboSessionNavHostFragment
@@ -69,6 +72,11 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         libraryNav = LibraryNavHostFragment()
         playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet)
 
+        binding.root.setOnApplyWindowInsetsListener { _, insets ->
+            windowInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
+            insets
+        }
+
         initHome()
 
         delegate = TurboActivityDelegate(this, homeNav.id)
@@ -87,7 +95,10 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
     override fun onDestroy() {
         super.onDestroy()
-        playerBottomSheetBehavior.removeBottomSheetCallback(playerBottomSheetCallback)
+
+        if (::playerBottomSheetBehavior.isInitialized) {
+            playerBottomSheetBehavior.removeBottomSheetCallback(playerBottomSheetCallback)
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -156,11 +167,15 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
     private fun setupLayout() {
         binding.bottomNav.post {
-            val bottomNavHeight = binding.bottomNav.height
+            // Because displaying edge-to-edge, so the height of bottom nav includes the height of system navigation bar.
+            val bottomNavHeightWithNav = binding.bottomNav.height
+
+            val systemNavigationBarHeight = getSystemNavigationBarHeight()
+            val bottomNavHeight = if (binding.bottomNav.isVisible) bottomNavHeightWithNav - systemNavigationBarHeight else 0
             val miniPlayerHeight = resources.getDimensionPixelSize(R.dimen.mini_player_height)
 
             playerBottomSheetBehavior.peekHeight = bottomNavHeight + miniPlayerHeight
-            binding.mainContainer.updatePadding(bottom = bottomNavHeight + miniPlayerHeight)
+            binding.mainContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
             binding.playerScreenComposeView.updatePadding(top = miniPlayerHeight)
         }
     }
@@ -209,5 +224,9 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         startActivity(intent)
+    }
+
+    private fun getSystemNavigationBarHeight(): Int {
+        return windowInsets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
     }
 }

@@ -21,6 +21,12 @@
     <string name="unsupported_server">Unsupported Black Candy Server</string>
     <string name="not_playing">Not Playing</string>
     <string name="play">Play</string>
+    <string name="pause">Pause</string>
     <string name="next">Next Track</string>
+    <string name="previous">Previous Track</string>
     <string name="album_cover">Album Cover</string>
+    <string name="repeat_mode">Repeat Mode</string>
+    <string name="favorited">Favorited</string>
+    <string name="unfavorited">Unfavorited</string>
+    <string name="playlist">Playlist</string>
 </resources>
