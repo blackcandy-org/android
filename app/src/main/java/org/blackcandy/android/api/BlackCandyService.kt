@@ -15,6 +15,7 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.blackcandy.android.models.AuthenticationResponse
+import org.blackcandy.android.models.Song
 import org.blackcandy.android.models.SystemInfo
 import org.blackcandy.android.models.User
 
@@ -27,6 +28,8 @@ interface BlackCandyService {
     ): AuthenticationResponse
 
     suspend fun destroyAuthentication()
+
+    suspend fun getSongsFromCurrentPlaylist(): List<Song>
 }
 
 class BlackCandyServiceImpl(
@@ -73,5 +76,9 @@ class BlackCandyServiceImpl(
 
     override suspend fun destroyAuthentication() {
         client.delete("authentication")
+    }
+
+    override suspend fun getSongsFromCurrentPlaylist(): List<Song> {
+        return client.get("current_playlist/songs").body()
     }
 }

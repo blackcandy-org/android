@@ -71,7 +71,7 @@ fun LoginScreen(
         ) {
             composable(route = LoginRoute.Connection.name) {
                 LoginConnectionForm(
-                    serverAddress = uiState.serverAddress,
+                    serverAddress = uiState.serverAddress ?: "",
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
                     onConnectButtonClicked = {
                         keyboardController?.hide()

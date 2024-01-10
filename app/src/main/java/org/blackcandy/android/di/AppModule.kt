@@ -39,10 +39,10 @@ import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.models.User
 import org.blackcandy.android.utils.BLACK_CANDY_USER_AGENT
 import org.blackcandy.android.viewmodels.AccountSheetViewModel
+import org.blackcandy.android.viewmodels.HomeViewModel
 import org.blackcandy.android.viewmodels.LoginViewModel
 import org.blackcandy.android.viewmodels.MainViewModel
 import org.blackcandy.android.viewmodels.NavHostViewModel
-import org.blackcandy.android.viewmodels.WebViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -71,7 +71,7 @@ val appModule =
         viewModel { MainViewModel(get()) }
         viewModel { AccountSheetViewModel(get(), get()) }
         viewModel { NavHostViewModel(get()) }
-        viewModel { WebViewModel(get()) }
+        viewModel { HomeViewModel(get()) }
     }
 
 private const val DATASTORE_PREFERENCES_NAME = "user_preferences"
