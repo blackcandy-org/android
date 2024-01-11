@@ -1,5 +1,8 @@
 package org.blackcandy.android.models
 
+import android.net.Uri
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,4 +23,19 @@ data class Song(
         val medium: String,
         val large: String,
     )
+
+    fun toMediaItem(): MediaItem {
+        return MediaItem.Builder()
+            .setMediaId(id.toString())
+            .setUri(url)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(name)
+                    .setArtist(artistName)
+                    .setAlbumTitle(albumName)
+                    .setArtworkUri(Uri.parse(albumImageUrl.large))
+                    .build(),
+            )
+            .build()
+    }
 }

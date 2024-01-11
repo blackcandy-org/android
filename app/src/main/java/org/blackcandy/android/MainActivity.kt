@@ -67,6 +67,8 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             return
         }
 
+        viewModel.setupMusicServiceController()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         homeNav = HomeNavHostFragment()
         libraryNav = LibraryNavHostFragment()
@@ -91,6 +93,12 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
         // Displaying edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(window, false)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+
+        viewModel.getCurrentPlaylist()
     }
 
     override fun onDestroy() {

@@ -26,22 +26,27 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNamingStrategy
 import org.blackcandy.android.api.ApiError
 import org.blackcandy.android.api.ApiException
 import org.blackcandy.android.api.BlackCandyService
 import org.blackcandy.android.api.BlackCandyServiceImpl
+import org.blackcandy.android.data.CurrentPlaylistRepository
 import org.blackcandy.android.data.EncryptedPreferencesDataSource
 import org.blackcandy.android.data.PreferencesDataSource
 import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.data.SystemInfoRepository
 import org.blackcandy.android.data.UserRepository
+import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.models.User
 import org.blackcandy.android.utils.BLACK_CANDY_USER_AGENT
 import org.blackcandy.android.viewmodels.AccountSheetViewModel
 import org.blackcandy.android.viewmodels.HomeViewModel
 import org.blackcandy.android.viewmodels.LoginViewModel
 import org.blackcandy.android.viewmodels.MainViewModel
+import org.blackcandy.android.viewmodels.MiniPlayerViewModel
 import org.blackcandy.android.viewmodels.NavHostViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -63,15 +68,18 @@ val appModule =
         single { EncryptedPreferencesDataSource(get()) }
 
         single<BlackCandyService> { BlackCandyServiceImpl(get()) }
+        single { MusicServiceController(androidContext()) }
         single { ServerAddressRepository(get()) }
         single { SystemInfoRepository(get()) }
         single { UserRepository(get(), get(), get(named("UserDataStore")), get(), get()) }
+        single { CurrentPlaylistRepository(get()) }
 
         viewModel { LoginViewModel(get(), get(), get()) }
-        viewModel { MainViewModel(get()) }
+        viewModel { MainViewModel(get(), get(), get()) }
         viewModel { AccountSheetViewModel(get(), get()) }
         viewModel { NavHostViewModel(get()) }
         viewModel { HomeViewModel(get()) }
+        viewModel { MiniPlayerViewModel(get()) }
     }
 
 private const val DATASTORE_PREFERENCES_NAME = "user_preferences"
@@ -198,9 +206,11 @@ private fun provideEncryptedSharedPreferences(appContext: Context): SharedPrefer
     )
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 private fun provideJson() =
     Json {
         isLenient = true
         ignoreUnknownKeys = true
+        namingStrategy = JsonNamingStrategy.SnakeCase
         useAlternativeNames = false
     }
