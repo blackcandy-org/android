@@ -10,6 +10,9 @@ import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import io.ktor.client.HttpClient
@@ -48,12 +51,14 @@ import org.blackcandy.android.viewmodels.LoginViewModel
 import org.blackcandy.android.viewmodels.MainViewModel
 import org.blackcandy.android.viewmodels.MiniPlayerViewModel
 import org.blackcandy.android.viewmodels.NavHostViewModel
+import org.chromium.net.CronetEngine
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.concurrent.Executors
 
 val appModule =
     module {
@@ -63,6 +68,7 @@ val appModule =
         single(named("PreferencesDataStore")) { provideDataStore(androidContext()) }
         single(named("UserDataStore")) { provideUserDataStore(androidContext()) }
         single { provideHttpClient(get(), get(), get()) }
+        single { provideDataSourceFactory(get(), get()) }
 
         single { PreferencesDataSource(get(named("PreferencesDataStore"))) }
         single { EncryptedPreferencesDataSource(get()) }
@@ -159,13 +165,13 @@ private fun provideUserDataStore(appContext: Context): DataStore<User?> {
                 get() = null
 
             override suspend fun readFrom(input: InputStream): User? {
-                try {
-                    return Json.decodeFromString(
+                return try {
+                    Json.decodeFromString(
                         User.serializer(),
                         input.readBytes().decodeToString(),
                     )
                 } catch (e: Exception) {
-                    return null
+                    null
                 }
             }
 
@@ -204,6 +210,27 @@ private fun provideEncryptedSharedPreferences(appContext: Context): SharedPrefer
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
     )
+}
+
+@androidx.annotation.OptIn(UnstableApi::class)
+private fun provideDataSourceFactory(
+    appContext: Context,
+    encryptedPreferencesDataSource: EncryptedPreferencesDataSource,
+): DataSource.Factory {
+    val cronetEngine = CronetEngine.Builder(appContext).build()
+    val apiToken = encryptedPreferencesDataSource.getApiToken()
+
+    return DataSource.Factory {
+        val dataSource =
+            CronetDataSource.Factory(
+                cronetEngine,
+                Executors.newCachedThreadPool(),
+            ).createDataSource()
+
+        dataSource.setRequestProperty("Authorization", "Token $apiToken")
+
+        dataSource
+    }
 }
 
 @OptIn(ExperimentalSerializationApi::class)
