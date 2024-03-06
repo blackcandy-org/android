@@ -8,10 +8,15 @@ import androidx.media3.session.SessionToken
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListUpdateCallback
 import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import org.blackcandy.android.models.Song
+import kotlin.time.Duration.Companion.milliseconds
 
 class MusicServiceController(
     private val appContext: Context,
@@ -20,6 +25,14 @@ class MusicServiceController(
     private val _musicState = MutableStateFlow(MusicState())
 
     val musicState = _musicState.asStateFlow()
+    val currentPosition =
+        flow {
+            while (currentCoroutineContext().isActive) {
+                val currentPosition = (controller?.currentPosition ?: 0) / 1000.0
+                emit(currentPosition)
+                delay(1.milliseconds)
+            }
+        }
 
     fun initMediaController(onInitialized: () -> Unit) {
         val controllerFuture =
@@ -132,5 +145,9 @@ class MusicServiceController(
             seekToPrevious()
             play()
         }
+    }
+
+    fun seekTo(seconds: Double) {
+        controller?.seekTo((seconds * 1000).toLong())
     }
 }

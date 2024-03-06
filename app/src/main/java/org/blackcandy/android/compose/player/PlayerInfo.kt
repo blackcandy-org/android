@@ -18,15 +18,19 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import org.blackcandy.android.R
+import org.blackcandy.android.models.Song
 
 @Composable
-fun PlayerInfo(modifier: Modifier = Modifier) {
+fun PlayerInfo(
+    modifier: Modifier = Modifier,
+    currentSong: Song?,
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
     ) {
         AsyncImage(
-            model = "",
+            model = currentSong?.albumImageUrl?.large,
             contentDescription = stringResource(R.string.album_cover),
             modifier =
                 Modifier
@@ -39,7 +43,7 @@ fun PlayerInfo(modifier: Modifier = Modifier) {
         )
 
         Text(
-            stringResource(R.string.not_playing),
+            currentSong?.name ?: stringResource(R.string.not_playing),
             modifier =
                 Modifier
                     .padding(top = dimensionResource(R.dimen.padding_medium)),
@@ -47,7 +51,7 @@ fun PlayerInfo(modifier: Modifier = Modifier) {
         )
 
         Text(
-            "Artist Name",
+            currentSong?.artistName ?: "",
             style = MaterialTheme.typography.titleMedium,
         )
     }
