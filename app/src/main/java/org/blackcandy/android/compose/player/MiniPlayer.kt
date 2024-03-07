@@ -37,6 +37,10 @@ fun MiniPlayer(viewModel: MiniPlayerViewModel = koinViewModel()) {
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            modifier =
+                Modifier
+                    .padding(vertical = dimensionResource(R.dimen.padding_narrow))
+                    .padding(start = dimensionResource(R.dimen.padding_small)),
         ) {
             if (musicState.hasCurrentSong) {
                 AsyncImage(
@@ -44,8 +48,7 @@ fun MiniPlayer(viewModel: MiniPlayerViewModel = koinViewModel()) {
                     contentDescription = stringResource(R.string.album_cover),
                     modifier =
                         Modifier
-                            .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_small)))
-                            .padding(vertical = dimensionResource(R.dimen.padding_narrow)),
+                            .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_small))),
                 )
             }
 

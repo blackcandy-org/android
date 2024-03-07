@@ -25,7 +25,10 @@
     <string name="next">Next Track</string>
     <string name="previous">Previous Track</string>
     <string name="album_cover">Album Cover</string>
+    <string name="no_repeat_mode">No Repeat Mode</string>
     <string name="repeat_mode">Repeat Mode</string>
+    <string name="repeat_one_mode">Repeat One Mode</string>
+    <string name="shuffle_mode">Shuffle Mode</string>
     <string name="favorited">Favorited</string>
     <string name="unfavorited">Unfavorited</string>
     <string name="playlist">Playlist</string>

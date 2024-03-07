@@ -53,6 +53,8 @@ fun PlayerScreen(viewModel: PlayerViewModel = koinViewModel()) {
                 Modifier
                     .padding(top = dimensionResource(R.dimen.padding_medium))
                     .padding(horizontal = dimensionResource(R.dimen.padding_small)),
+            playbackMode = uiState.musicState.playbackMode,
+            onModeSwitchButtonClicked = { viewModel.nextMode() },
         )
     }
 }

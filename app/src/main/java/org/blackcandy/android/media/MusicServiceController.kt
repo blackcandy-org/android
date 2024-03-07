@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
+import org.blackcandy.android.models.MusicState
+import org.blackcandy.android.models.PlaybackMode
 import org.blackcandy.android.models.Song
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -149,5 +151,39 @@ class MusicServiceController(
 
     fun seekTo(seconds: Double) {
         controller?.seekTo((seconds * 1000).toLong())
+    }
+
+    fun setPlaybackMode(playbackMode: PlaybackMode) {
+        when (playbackMode) {
+            PlaybackMode.NO_REPEAT -> {
+                controller?.run {
+                    setRepeatMode(Player.REPEAT_MODE_OFF)
+                    setShuffleModeEnabled(false)
+                }
+            }
+
+            PlaybackMode.REPEAT -> {
+                controller?.run {
+                    setRepeatMode(Player.REPEAT_MODE_ALL)
+                    setShuffleModeEnabled(false)
+                }
+            }
+
+            PlaybackMode.REPEAT_ONE -> {
+                controller?.run {
+                    setRepeatMode(Player.REPEAT_MODE_ONE)
+                    setShuffleModeEnabled(false)
+                }
+            }
+
+            PlaybackMode.SHUFFLE -> {
+                controller?.run {
+                    setRepeatMode(Player.REPEAT_MODE_OFF)
+                    setShuffleModeEnabled(true)
+                }
+            }
+        }
+
+        _musicState.update { it.copy(playbackMode = playbackMode) }
     }
 }

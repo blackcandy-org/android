@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import org.blackcandy.android.media.MusicServiceController
-import org.blackcandy.android.media.MusicState
+import org.blackcandy.android.models.MusicState
 
 data class PlayerUiState(
     val musicState: MusicState = MusicState(),
@@ -53,5 +53,9 @@ class PlayerViewModel(
 
     fun seekTo(seconds: Double) {
         musicServiceController.seekTo(seconds)
+    }
+
+    fun nextMode() {
+        musicServiceController.setPlaybackMode(uiState.value.musicState.playbackMode.next)
     }
 }
