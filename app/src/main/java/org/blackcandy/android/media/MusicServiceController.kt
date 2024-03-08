@@ -56,10 +56,7 @@ class MusicServiceController(
                         }
 
                         if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)) {
-                            val currentMediaId = player.currentMediaItem?.mediaId
-                            val currentSong = _musicState.value.playlist.find { it.id.toString() == currentMediaId }
-
-                            _musicState.update { it.copy(currentSong = currentSong) }
+                            updateCurrentSong()
                         }
 
                         if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
@@ -125,6 +122,8 @@ class MusicServiceController(
         )
 
         _musicState.update { it.copy(playlist = songs) }
+
+        updateCurrentSong()
     }
 
     fun play() {
@@ -185,5 +184,12 @@ class MusicServiceController(
         }
 
         _musicState.update { it.copy(playbackMode = playbackMode) }
+    }
+
+    private fun updateCurrentSong() {
+        val currentMediaId = controller?.currentMediaItem?.mediaId
+        val currentSong = _musicState.value.playlist.find { it.id.toString() == currentMediaId }
+
+        _musicState.update { it.copy(currentSong = currentSong) }
     }
 }

@@ -12,7 +12,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -28,7 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.blackcandy.android.R
-import org.blackcandy.android.models.AlertMessage
+import org.blackcandy.android.utils.SnackbarUtil.Companion.ShowSnackbar
 import org.blackcandy.android.viewmodels.LoginRoute
 import org.blackcandy.android.viewmodels.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -97,15 +96,8 @@ fun LoginScreen(
         }
 
         uiState.alertMessage?.let { alertMessage ->
-            val snackbarText =
-                when (alertMessage) {
-                    is AlertMessage.String -> alertMessage.value
-                    is AlertMessage.StringResource -> stringResource(alertMessage.value)
-                }
-
-            LaunchedEffect(snackbarHostState) {
-                snackbarHostState.showSnackbar(snackbarText)
-                viewModel.snackbarMessageShown()
+            ShowSnackbar(alertMessage, snackbarHostState) {
+                viewModel.alertMessageShown()
             }
         }
 

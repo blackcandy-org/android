@@ -30,6 +30,10 @@ interface BlackCandyService {
     suspend fun destroyAuthentication()
 
     suspend fun getSongsFromCurrentPlaylist(): List<Song>
+
+    suspend fun addSongToFavorite(songId: Int): Song
+
+    suspend fun deleteSongFromFavorite(songId: Int): Song
 }
 
 class BlackCandyServiceImpl(
@@ -80,5 +84,19 @@ class BlackCandyServiceImpl(
 
     override suspend fun getSongsFromCurrentPlaylist(): List<Song> {
         return client.get("current_playlist/songs").body()
+    }
+
+    override suspend fun addSongToFavorite(songId: Int): Song {
+        return client.submitForm(
+            url = "favorite_playlist/songs",
+            formParameters =
+                parameters {
+                    append("song_id", songId.toString())
+                },
+        ).body()
+    }
+
+    override suspend fun deleteSongFromFavorite(songId: Int): Song {
+        return client.delete("favorite_playlist/songs/$songId").body()
     }
 }

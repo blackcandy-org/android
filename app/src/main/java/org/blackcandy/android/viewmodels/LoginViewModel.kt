@@ -112,7 +112,7 @@ class LoginViewModel(
         }
     }
 
-    fun snackbarMessageShown() {
+    fun alertMessageShown() {
         _uiState.update { it.copy(alertMessage = null) }
     }
 

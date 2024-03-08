@@ -38,6 +38,7 @@ import org.blackcandy.android.api.BlackCandyService
 import org.blackcandy.android.api.BlackCandyServiceImpl
 import org.blackcandy.android.data.CurrentPlaylistRepository
 import org.blackcandy.android.data.EncryptedPreferencesDataSource
+import org.blackcandy.android.data.FavoritePlaylistRepository
 import org.blackcandy.android.data.PreferencesDataSource
 import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.data.SystemInfoRepository
@@ -80,6 +81,7 @@ val appModule =
         single { SystemInfoRepository(get()) }
         single { UserRepository(get(), get(), get(named("UserDataStore")), get(), get()) }
         single { CurrentPlaylistRepository(get()) }
+        single { FavoritePlaylistRepository(get()) }
 
         viewModel { LoginViewModel(get(), get(), get()) }
         viewModel { MainViewModel(get(), get(), get()) }
@@ -87,7 +89,7 @@ val appModule =
         viewModel { NavHostViewModel(get()) }
         viewModel { HomeViewModel(get()) }
         viewModel { MiniPlayerViewModel(get()) }
-        viewModel { PlayerViewModel(get()) }
+        viewModel { PlayerViewModel(get(), get()) }
     }
 
 private const val DATASTORE_PREFERENCES_NAME = "user_preferences"
