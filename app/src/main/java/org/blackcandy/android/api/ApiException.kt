@@ -1,3 +1,3 @@
 package org.blackcandy.android.api
 
-class ApiException(message: String?) : Exception(message)
+class ApiException(val code: Int?, message: String?) : Exception(message)

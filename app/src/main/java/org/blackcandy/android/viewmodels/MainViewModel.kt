@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import org.blackcandy.android.data.CurrentPlaylistRepository
 import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.media.MusicServiceController
+import org.blackcandy.android.utils.TaskResult
 
 class MainViewModel(
     userRepository: UserRepository,
@@ -22,7 +23,10 @@ class MainViewModel(
 
     fun getCurrentPlaylist() {
         viewModelScope.launch {
-            musicServiceController.updatePlaylist(currentPlaylistRepository.getSongs())
+            when (val result = currentPlaylistRepository.getSongs()) {
+                is TaskResult.Success -> musicServiceController.updatePlaylist(result.data)
+                is TaskResult.Failure -> Unit
+            }
         }
     }
 }

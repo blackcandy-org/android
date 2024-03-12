@@ -79,7 +79,7 @@ val appModule =
         single { MusicServiceController(androidContext()) }
         single { ServerAddressRepository(get()) }
         single { SystemInfoRepository(get()) }
-        single { UserRepository(get(), get(), get(named("UserDataStore")), get(), get()) }
+        single { UserRepository(get(), get(), get(), get(named("UserDataStore")), get(), get()) }
         single { CurrentPlaylistRepository(get()) }
         single { FavoritePlaylistRepository(get()) }
 
@@ -132,23 +132,40 @@ private fun provideHttpClient(
         }
 
         HttpResponseValidator {
+            validateResponse { response ->
+                val statusCode = response.status.value
+
+                if (statusCode == 204) {
+                    throw ApiException(
+                        code = statusCode,
+                        message = null,
+                    )
+                }
+            }
+
             handleResponseExceptionWithRequest { exception, _ ->
                 when (exception) {
                     is ClientRequestException -> {
-                        val responseText = exception.response.bodyAsText()
+                        val response = exception.response
 
                         val apiError =
                             try {
-                                json.decodeFromString<ApiError>(responseText)
+                                json.decodeFromString<ApiError>(response.bodyAsText())
                             } catch (e: Exception) {
                                 null
                             }
 
-                        throw ApiException(apiError?.message ?: exception.message)
+                        throw ApiException(
+                            code = response.status.value,
+                            message = apiError?.message ?: exception.message,
+                        )
                     }
 
                     else -> {
-                        throw ApiException(exception.message)
+                        throw ApiException(
+                            code = null,
+                            message = exception.message,
+                        )
                     }
                 }
             }

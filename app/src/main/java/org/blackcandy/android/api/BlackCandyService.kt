@@ -20,83 +20,107 @@ import org.blackcandy.android.models.SystemInfo
 import org.blackcandy.android.models.User
 
 interface BlackCandyService {
-    suspend fun getSystemInfo(): SystemInfo
+    suspend fun getSystemInfo(): ApiResponse<SystemInfo>
 
     suspend fun createAuthentication(
         email: String,
         password: String,
-    ): AuthenticationResponse
+    ): ApiResponse<AuthenticationResponse>
 
-    suspend fun destroyAuthentication()
+    suspend fun destroyAuthentication(): ApiResponse<Unit>
 
-    suspend fun getSongsFromCurrentPlaylist(): List<Song>
+    suspend fun getSongsFromCurrentPlaylist(): ApiResponse<List<Song>>
 
-    suspend fun addSongToFavorite(songId: Int): Song
+    suspend fun addSongToFavorite(songId: Int): ApiResponse<Song>
 
-    suspend fun deleteSongFromFavorite(songId: Int): Song
+    suspend fun deleteSongFromFavorite(songId: Int): ApiResponse<Song>
 }
 
 class BlackCandyServiceImpl(
     private val client: HttpClient,
 ) : BlackCandyService {
-    override suspend fun getSystemInfo(): SystemInfo {
-        return client.get("system").body()
+    override suspend fun getSystemInfo(): ApiResponse<SystemInfo> {
+        return handleResponse {
+            client.get("system").body()
+        }
     }
 
     override suspend fun createAuthentication(
         email: String,
         password: String,
-    ): AuthenticationResponse {
-        val response: HttpResponse =
+    ): ApiResponse<AuthenticationResponse> {
+        return handleResponse {
+            val response: HttpResponse =
+                client.submitForm(
+                    url = "authentication",
+                    formParameters =
+                        parameters {
+                            append("with_cookie", "true")
+                            append("session[email]", email)
+                            append("session[password]", password)
+                        },
+                )
+
+            val userElement = Json.parseToJsonElement(response.bodyAsText()).jsonObject["user"]!!
+
+            val token = userElement.jsonObject["api_token"]?.jsonPrimitive.toString()
+            val id = userElement.jsonObject["id"]?.jsonPrimitive?.int!!
+            val userEmail = userElement.jsonObject["email"]?.jsonPrimitive.toString()
+            val isAdmin = userElement.jsonObject["is_admin"]?.jsonPrimitive?.boolean!!
+            val cookies = response.headers.getAll(HttpHeaders.SetCookie)!!
+
+            AuthenticationResponse(
+                token = token,
+                user =
+                    User(
+                        id = id,
+                        email = userEmail,
+                        isAdmin = isAdmin,
+                    ),
+                cookies = cookies,
+            )
+        }
+    }
+
+    override suspend fun destroyAuthentication(): ApiResponse<Unit> {
+        return handleResponse {
+            client.delete("authentication").body()
+        }
+    }
+
+    override suspend fun getSongsFromCurrentPlaylist(): ApiResponse<List<Song>> {
+        return handleResponse {
+            client.get("current_playlist/songs").body()
+        }
+    }
+
+    override suspend fun addSongToFavorite(songId: Int): ApiResponse<Song> {
+        return handleResponse {
             client.submitForm(
-                url = "authentication",
+                url = "favorite_playlist/songs",
                 formParameters =
                     parameters {
-                        append("with_cookie", "true")
-                        append("session[email]", email)
-                        append("session[password]", password)
+                        append("song_id", songId.toString())
                     },
-            )
-
-        val userElement = Json.parseToJsonElement(response.bodyAsText()).jsonObject["user"]!!
-
-        val token = userElement.jsonObject["api_token"]?.jsonPrimitive.toString()
-        val id = userElement.jsonObject["id"]?.jsonPrimitive?.int!!
-        val userEmail = userElement.jsonObject["email"]?.jsonPrimitive.toString()
-        val isAdmin = userElement.jsonObject["is_admin"]?.jsonPrimitive?.boolean!!
-        val cookies = response.headers.getAll(HttpHeaders.SetCookie)!!
-
-        return AuthenticationResponse(
-            token = token,
-            user =
-                User(
-                    id = id,
-                    email = userEmail,
-                    isAdmin = isAdmin,
-                ),
-            cookies = cookies,
-        )
+            ).body()
+        }
     }
 
-    override suspend fun destroyAuthentication() {
-        client.delete("authentication")
+    override suspend fun deleteSongFromFavorite(songId: Int): ApiResponse<Song> {
+        return handleResponse {
+            client.delete("favorite_playlist/songs/$songId").body()
+        }
     }
 
-    override suspend fun getSongsFromCurrentPlaylist(): List<Song> {
-        return client.get("current_playlist/songs").body()
-    }
+    private suspend fun <T> handleResponse(request: suspend () -> T): ApiResponse<T> {
+        try {
+            return ApiResponse.Success(request())
+        } catch (e: ApiException) {
+            if (e.code == 204) {
+                return ApiResponse.Success(Unit as T)
+            }
 
-    override suspend fun addSongToFavorite(songId: Int): Song {
-        return client.submitForm(
-            url = "favorite_playlist/songs",
-            formParameters =
-                parameters {
-                    append("song_id", songId.toString())
-                },
-        ).body()
-    }
-
-    override suspend fun deleteSongFromFavorite(songId: Int): Song {
-        return client.delete("favorite_playlist/songs/$songId").body()
+            return ApiResponse.Failure(e)
+        }
     }
 }

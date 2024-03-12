@@ -2,15 +2,13 @@ package org.blackcandy.android.data
 
 import org.blackcandy.android.api.BlackCandyService
 import org.blackcandy.android.models.Song
+import org.blackcandy.android.utils.TaskResult
 
 class FavoritePlaylistRepository(
     private val service: BlackCandyService,
 ) {
-    suspend fun addSong(songId: Int): Song {
-        return service.addSongToFavorite(songId)
-    }
-
-    suspend fun deleteSong(songId: Int): Song {
-        return service.deleteSongFromFavorite(songId)
+    suspend fun toggleSong(song: Song): TaskResult<Song> {
+        val response = if (song.isFavorited) service.deleteSongFromFavorite(song.id) else service.addSongToFavorite(song.id)
+        return response.asResult()
     }
 }

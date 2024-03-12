@@ -18,7 +18,7 @@ class SnackbarUtil {
                 when (message) {
                     is AlertMessage.String -> message.value
                     is AlertMessage.StringResource -> stringResource(message.value)
-                }
+                } ?: return
 
             LaunchedEffect(state) {
                 state.showSnackbar(snackbarText)

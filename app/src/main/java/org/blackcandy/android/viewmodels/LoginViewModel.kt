@@ -16,7 +16,7 @@ import org.blackcandy.android.data.SystemInfoRepository
 import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.android.models.User
-import java.lang.Exception
+import org.blackcandy.android.utils.TaskResult
 
 data class LoginUiState(
     val serverAddress: String? = null,
@@ -84,17 +84,17 @@ class LoginViewModel(
         viewModelScope.launch {
             serverAddressRepository.updateServerAddress(serverAddress)
 
-            try {
-                val systemInfo = systemInfoRepository.getSystemInfo()
-
-                if (!systemInfo.isSupported) {
-                    _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.unsupported_server)) }
-                } else {
-                    _uiState.update { it.copy(loginRoute = LoginRoute.Authentication) }
+            when (val result = systemInfoRepository.getSystemInfo()) {
+                is TaskResult.Success -> {
+                    if (!result.data.isSupported) {
+                        _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.unsupported_server)) }
+                    } else {
+                        _uiState.update { it.copy(loginRoute = LoginRoute.Authentication) }
+                    }
                 }
-            } catch (exception: Exception) {
-                exception.message?.let { message ->
-                    _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }
+
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
             }
         }
@@ -102,11 +102,11 @@ class LoginViewModel(
 
     fun login() {
         viewModelScope.launch {
-            try {
-                userRepository.login(uiState.value.email, uiState.value.password)
-            } catch (exception: Exception) {
-                exception.message?.let { message ->
-                    _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }
+            when (val result = userRepository.login(uiState.value.email, uiState.value.password)) {
+                is TaskResult.Success -> Unit
+
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
             }
         }

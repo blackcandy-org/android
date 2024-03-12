@@ -12,6 +12,7 @@ import org.blackcandy.android.data.FavoritePlaylistRepository
 import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.android.models.MusicState
+import org.blackcandy.android.utils.TaskResult
 
 data class PlayerUiState(
     val musicState: MusicState = MusicState(),
@@ -69,23 +70,18 @@ class PlayerViewModel(
         val currentSong = uiState.value.musicState.currentSong ?: return
 
         viewModelScope.launch {
-            try {
-                val toggledSong =
-                    if (currentSong.isFavorited) {
-                        favoritePlaylistRepository.deleteSong(currentSong.id)
-                    } else {
-                        favoritePlaylistRepository.addSong(currentSong.id)
-                    }
+            when (val result = favoritePlaylistRepository.toggleSong(currentSong)) {
+                is TaskResult.Success -> {
+                    val toggledSong = result.data
+                    val updatedPlaylist =
+                        uiState.value.musicState.playlist.map { song ->
+                            if (song.id == toggledSong.id) toggledSong else song
+                        }
 
-                val updatedPlaylist =
-                    uiState.value.musicState.playlist.map { song ->
-                        if (song.id == toggledSong.id) toggledSong else song
-                    }
-
-                musicServiceController.updatePlaylist(updatedPlaylist)
-            } catch (exception: Exception) {
-                exception.message?.let { message ->
-                    _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }
+                    musicServiceController.updatePlaylist(updatedPlaylist)
+                }
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
             }
         }
