@@ -18,6 +18,7 @@ data class PlayerUiState(
     val musicState: MusicState = MusicState(),
     val currentPosition: Double = 0.0,
     val alertMessage: AlertMessage? = null,
+    val isPlaylistsVisible: Boolean = false,
 )
 
 class PlayerViewModel(
@@ -85,6 +86,10 @@ class PlayerViewModel(
                 }
             }
         }
+    }
+
+    fun setPlaylistVisibility(isVisible: Boolean) {
+        _uiState.update { it.copy(isPlaylistsVisible = isVisible) }
     }
 
     fun alertMessageShown() {

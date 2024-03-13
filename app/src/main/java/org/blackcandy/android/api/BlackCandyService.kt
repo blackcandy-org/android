@@ -112,6 +112,7 @@ class BlackCandyServiceImpl(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private suspend fun <T> handleResponse(request: suspend () -> T): ApiResponse<T> {
         try {
             return ApiResponse.Success(request())

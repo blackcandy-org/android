@@ -17,15 +17,15 @@
         app:behavior_hideable="false"
         app:gestureInsetBottomIgnored="true"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-            <androidx.compose.ui.platform.ComposeView
-                android:id="@+id/mini_player_compose_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/player_screen_compose_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-            <androidx.compose.ui.platform.ComposeView
-                android:id="@+id/player_screen_compose_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/mini_player_compose_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

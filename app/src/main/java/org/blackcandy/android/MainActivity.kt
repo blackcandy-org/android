@@ -184,7 +184,6 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
             playerBottomSheetBehavior.peekHeight = bottomNavHeight + miniPlayerHeight
             binding.mainContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
-            binding.playerScreenComposeView.updatePadding(top = miniPlayerHeight)
         }
     }
 

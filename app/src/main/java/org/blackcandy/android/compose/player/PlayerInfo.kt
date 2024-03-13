@@ -1,6 +1,8 @@
 package org.blackcandy.android.compose.player
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,10 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import org.blackcandy.android.R
 import org.blackcandy.android.models.Song
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PlayerInfo(
     modifier: Modifier = Modifier,
@@ -46,13 +50,17 @@ fun PlayerInfo(
             currentSong?.name ?: stringResource(R.string.not_playing),
             modifier =
                 Modifier
-                    .padding(top = dimensionResource(R.dimen.padding_medium)),
+                    .padding(bottom = dimensionResource(R.dimen.padding_small))
+                    .padding(top = dimensionResource(R.dimen.padding_medium))
+                    .basicMarquee(iterations = Int.MAX_VALUE),
             style = MaterialTheme.typography.titleLarge,
         )
 
         Text(
             currentSong?.artistName ?: "",
             style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

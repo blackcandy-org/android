@@ -1,5 +1,7 @@
 package org.blackcandy.android.compose.player
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -23,6 +25,7 @@ import org.blackcandy.android.R
 import org.blackcandy.android.viewmodels.MiniPlayerViewModel
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MiniPlayer(viewModel: MiniPlayerViewModel = koinViewModel()) {
     val musicState by viewModel.musicState.collectAsState()
@@ -39,6 +42,7 @@ fun MiniPlayer(viewModel: MiniPlayerViewModel = koinViewModel()) {
             verticalAlignment = Alignment.CenterVertically,
             modifier =
                 Modifier
+                    .weight(1f)
                     .padding(vertical = dimensionResource(R.dimen.padding_narrow))
                     .padding(start = dimensionResource(R.dimen.padding_small)),
         ) {
@@ -53,13 +57,16 @@ fun MiniPlayer(viewModel: MiniPlayerViewModel = koinViewModel()) {
             }
 
             Text(
-                modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_small)),
+                modifier =
+                    Modifier
+                        .basicMarquee(iterations = Int.MAX_VALUE)
+                        .padding(start = dimensionResource(R.dimen.padding_narrow)),
                 text = musicState.currentSong?.name ?: stringResource(R.string.not_playing),
                 style = MaterialTheme.typography.labelLarge,
             )
         }
 
-        Row {
+        Row(modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_narrow))) {
             IconButton(
                 onClick = {
                     if (musicState.isPlaying) {
