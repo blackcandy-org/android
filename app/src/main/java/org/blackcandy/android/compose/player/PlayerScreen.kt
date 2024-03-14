@@ -57,6 +57,8 @@ fun PlayerScreen(
                 PlayerPlaylist(
                     modifier = Modifier.weight(1f),
                     playlist = uiState.musicState.playlist,
+                    currentSong = uiState.musicState.currentSong,
+                    onItemClicked = { viewModel.playOn(it) },
                 )
             } else {
                 Spacer(modifier = Modifier.weight(1f))

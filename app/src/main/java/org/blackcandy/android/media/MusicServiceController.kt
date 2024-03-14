@@ -148,6 +148,13 @@ class MusicServiceController(
         }
     }
 
+    fun playOn(index: Int) {
+        controller?.run {
+            seekToDefaultPosition(index)
+            play()
+        }
+    }
+
     fun seekTo(seconds: Double) {
         controller?.seekTo((seconds * 1000).toLong())
     }

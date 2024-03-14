@@ -63,6 +63,10 @@ class PlayerViewModel(
         musicServiceController.seekTo(seconds)
     }
 
+    fun playOn(index: Int) {
+        musicServiceController.playOn(index)
+    }
+
     fun nextMode() {
         musicServiceController.setPlaybackMode(uiState.value.musicState.playbackMode.next)
     }
