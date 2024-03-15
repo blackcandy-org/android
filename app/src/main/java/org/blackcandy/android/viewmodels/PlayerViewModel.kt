@@ -8,10 +8,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.blackcandy.android.data.CurrentPlaylistRepository
 import org.blackcandy.android.data.FavoritePlaylistRepository
 import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.android.models.MusicState
+import org.blackcandy.android.models.Song
 import org.blackcandy.android.utils.TaskResult
 
 data class PlayerUiState(
@@ -24,6 +26,7 @@ data class PlayerUiState(
 class PlayerViewModel(
     private val musicServiceController: MusicServiceController,
     private val favoritePlaylistRepository: FavoritePlaylistRepository,
+    private val currentPlaylistRepository: CurrentPlaylistRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PlayerUiState())
 
@@ -67,6 +70,33 @@ class PlayerViewModel(
         musicServiceController.playOn(index)
     }
 
+    fun clearPlaylist() {
+        _uiState.update { it.copy(isPlaylistsVisible = false) }
+        musicServiceController.clearPlaylist()
+
+        viewModelScope.launch {
+            when (val result = currentPlaylistRepository.removeAllSongs()) {
+                is TaskResult.Success -> Unit
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
+                }
+            }
+        }
+    }
+
+    fun removeSongFromPlaylist(song: Song) {
+        musicServiceController.deleteSongFromPlaylist(song)
+
+        viewModelScope.launch {
+            when (val result = currentPlaylistRepository.removeSong(song.id)) {
+                is TaskResult.Success -> Unit
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
+                }
+            }
+        }
+    }
+
     fun nextMode() {
         musicServiceController.setPlaybackMode(uiState.value.musicState.playbackMode.next)
     }
@@ -74,18 +104,15 @@ class PlayerViewModel(
     fun toggleFavorite() {
         val currentSong = uiState.value.musicState.currentSong ?: return
 
+        musicServiceController.updateSongInPlaylist(currentSong.copy(isFavorited = !currentSong.isFavorited))
+
         viewModelScope.launch {
             when (val result = favoritePlaylistRepository.toggleSong(currentSong)) {
-                is TaskResult.Success -> {
-                    val toggledSong = result.data
-                    val updatedPlaylist =
-                        uiState.value.musicState.playlist.map { song ->
-                            if (song.id == toggledSong.id) toggledSong else song
-                        }
-
-                    musicServiceController.updatePlaylist(updatedPlaylist)
-                }
+                is TaskResult.Success -> Unit
                 is TaskResult.Failure -> {
+                    // Rollback favorite state in previous operation
+                    musicServiceController.updateSongInPlaylist(currentSong)
+
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
             }

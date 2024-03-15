@@ -122,8 +122,6 @@ class MusicServiceController(
         )
 
         _musicState.update { it.copy(playlist = songs) }
-
-        updateCurrentSong()
     }
 
     fun play() {
@@ -157,6 +155,24 @@ class MusicServiceController(
 
     fun seekTo(seconds: Double) {
         controller?.seekTo((seconds * 1000).toLong())
+    }
+
+    fun clearPlaylist() {
+        updatePlaylist(emptyList())
+    }
+
+    fun deleteSongFromPlaylist(song: Song) {
+        val songs = musicState.value.playlist.toMutableList().apply { remove(song) }
+        updatePlaylist(songs)
+    }
+
+    fun updateSongInPlaylist(song: Song) {
+        val songs = musicState.value.playlist.map { if (it.id == song.id) song else it }
+        updatePlaylist(songs)
+
+        if (song.id.toString() == controller?.currentMediaItem?.mediaId) {
+            updateCurrentSong()
+        }
     }
 
     fun setPlaybackMode(playbackMode: PlaybackMode) {
@@ -195,7 +211,7 @@ class MusicServiceController(
 
     private fun updateCurrentSong() {
         val currentMediaId = controller?.currentMediaItem?.mediaId
-        val currentSong = _musicState.value.playlist.find { it.id.toString() == currentMediaId }
+        val currentSong = musicState.value.playlist.find { it.id.toString() == currentMediaId }
 
         _musicState.update { it.copy(currentSong = currentSong) }
     }

@@ -10,4 +10,12 @@ class CurrentPlaylistRepository(
     suspend fun getSongs(): TaskResult<List<Song>> {
         return service.getSongsFromCurrentPlaylist().asResult()
     }
+
+    suspend fun removeAllSongs(): TaskResult<Unit> {
+        return service.removeAllSongsFromCurrentPlaylist().asResult()
+    }
+
+    suspend fun removeSong(songId: Int): TaskResult<Unit> {
+        return service.removeSongFromCurrentPlaylist(songId).asResult()
+    }
 }

@@ -35,4 +35,6 @@
     <string name="edit">Edit</string>
     <string name="clear_all">Clear All</string>
     <string name="playing_queue">Playing Queue</string>
+    <string name="delete">Delete</string>
+    <string name="empty_playlist_indication">Nothing to play here</string>
 </resources>

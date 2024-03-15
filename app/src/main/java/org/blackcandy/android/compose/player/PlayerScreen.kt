@@ -41,7 +41,9 @@ fun PlayerScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             if (uiState.isPlaylistsVisible) {
-                PlaylistAppBar()
+                PlaylistAppBar(
+                    onClearAllButtonClicked = { viewModel.clearPlaylist() },
+                )
             }
         },
         containerColor = Color.Transparent,
@@ -59,6 +61,7 @@ fun PlayerScreen(
                     playlist = uiState.musicState.playlist,
                     currentSong = uiState.musicState.currentSong,
                     onItemClicked = { viewModel.playOn(it) },
+                    onItemSweepToDismiss = { viewModel.removeSongFromPlaylist(it) },
                 )
             } else {
                 Spacer(modifier = Modifier.weight(1f))
@@ -114,18 +117,11 @@ fun PlayerScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlaylistAppBar() {
+fun PlaylistAppBar(onClearAllButtonClicked: () -> Unit) {
     TopAppBar(
         title = { Text(text = stringResource(R.string.playing_queue)) },
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(R.drawable.baseline_edit_24),
-                    contentDescription = stringResource(R.string.edit),
-                )
-            }
-
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onClearAllButtonClicked) {
                 Icon(
                     painter = painterResource(R.drawable.baseline_clear_all_24),
                     contentDescription = stringResource(R.string.clear_all),

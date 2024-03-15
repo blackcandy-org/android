@@ -89,7 +89,7 @@ val appModule =
         viewModel { NavHostViewModel(get()) }
         viewModel { HomeViewModel(get()) }
         viewModel { MiniPlayerViewModel(get()) }
-        viewModel { PlayerViewModel(get(), get()) }
+        viewModel { PlayerViewModel(get(), get(), get()) }
     }
 
 private const val DATASTORE_PREFERENCES_NAME = "user_preferences"
@@ -132,17 +132,6 @@ private fun provideHttpClient(
         }
 
         HttpResponseValidator {
-            validateResponse { response ->
-                val statusCode = response.status.value
-
-                if (statusCode == 204) {
-                    throw ApiException(
-                        code = statusCode,
-                        message = null,
-                    )
-                }
-            }
-
             handleResponseExceptionWithRequest { exception, _ ->
                 when (exception) {
                     is ClientRequestException -> {

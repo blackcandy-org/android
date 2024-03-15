@@ -47,7 +47,7 @@ class UserRepository(
     }
 
     suspend fun logout() {
-        service.destroyAuthentication()
+        service.removeAuthentication()
         encryptedPreferencesDataSource.removeApiToken()
         cookieManager.removeAllCookies(null)
         userDataStore.updateData { null }

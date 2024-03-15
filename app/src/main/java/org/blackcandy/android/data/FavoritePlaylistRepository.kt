@@ -8,7 +8,7 @@ class FavoritePlaylistRepository(
     private val service: BlackCandyService,
 ) {
     suspend fun toggleSong(song: Song): TaskResult<Song> {
-        val response = if (song.isFavorited) service.deleteSongFromFavorite(song.id) else service.addSongToFavorite(song.id)
+        val response = if (song.isFavorited) service.removeSongFromFavorite(song.id) else service.addSongToFavorite(song.id)
         return response.asResult()
     }
 }

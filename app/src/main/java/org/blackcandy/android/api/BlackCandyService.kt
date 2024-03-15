@@ -27,13 +27,17 @@ interface BlackCandyService {
         password: String,
     ): ApiResponse<AuthenticationResponse>
 
-    suspend fun destroyAuthentication(): ApiResponse<Unit>
+    suspend fun removeAuthentication(): ApiResponse<Unit>
 
     suspend fun getSongsFromCurrentPlaylist(): ApiResponse<List<Song>>
 
     suspend fun addSongToFavorite(songId: Int): ApiResponse<Song>
 
-    suspend fun deleteSongFromFavorite(songId: Int): ApiResponse<Song>
+    suspend fun removeSongFromFavorite(songId: Int): ApiResponse<Song>
+
+    suspend fun removeAllSongsFromCurrentPlaylist(): ApiResponse<Unit>
+
+    suspend fun removeSongFromCurrentPlaylist(songId: Int): ApiResponse<Unit>
 }
 
 class BlackCandyServiceImpl(
@@ -82,7 +86,7 @@ class BlackCandyServiceImpl(
         }
     }
 
-    override suspend fun destroyAuthentication(): ApiResponse<Unit> {
+    override suspend fun removeAuthentication(): ApiResponse<Unit> {
         return handleResponse {
             client.delete("authentication").body()
         }
@@ -106,21 +110,28 @@ class BlackCandyServiceImpl(
         }
     }
 
-    override suspend fun deleteSongFromFavorite(songId: Int): ApiResponse<Song> {
+    override suspend fun removeSongFromFavorite(songId: Int): ApiResponse<Song> {
         return handleResponse {
             client.delete("favorite_playlist/songs/$songId").body()
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
+    override suspend fun removeAllSongsFromCurrentPlaylist(): ApiResponse<Unit> {
+        return handleResponse {
+            client.delete("current_playlist/songs").body()
+        }
+    }
+
+    override suspend fun removeSongFromCurrentPlaylist(songId: Int): ApiResponse<Unit> {
+        return handleResponse {
+            client.delete("current_playlist/songs/$songId").body()
+        }
+    }
+
     private suspend fun <T> handleResponse(request: suspend () -> T): ApiResponse<T> {
         try {
             return ApiResponse.Success(request())
         } catch (e: ApiException) {
-            if (e.code == 204) {
-                return ApiResponse.Success(Unit as T)
-            }
-
             return ApiResponse.Failure(e)
         }
     }
