@@ -5,6 +5,9 @@ import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
@@ -38,6 +41,11 @@ interface BlackCandyService {
     suspend fun removeAllSongsFromCurrentPlaylist(): ApiResponse<Unit>
 
     suspend fun removeSongFromCurrentPlaylist(songId: Int): ApiResponse<Unit>
+
+    suspend fun moveSongInCurrentPlaylist(
+        songId: Int,
+        destinationSongId: Int,
+    ): ApiResponse<Unit>
 }
 
 class BlackCandyServiceImpl(
@@ -100,13 +108,9 @@ class BlackCandyServiceImpl(
 
     override suspend fun addSongToFavorite(songId: Int): ApiResponse<Song> {
         return handleResponse {
-            client.submitForm(
-                url = "favorite_playlist/songs",
-                formParameters =
-                    parameters {
-                        append("song_id", songId.toString())
-                    },
-            ).body()
+            client.post("favorite_playlist/songs") {
+                parameter("song_id", songId.toString())
+            }.body()
         }
     }
 
@@ -128,11 +132,22 @@ class BlackCandyServiceImpl(
         }
     }
 
+    override suspend fun moveSongInCurrentPlaylist(
+        songId: Int,
+        destinationSongId: Int,
+    ): ApiResponse<Unit> {
+        return handleResponse {
+            client.put("current_playlist/songs/$songId/move") {
+                parameter("destination_song_id", destinationSongId.toString())
+            }.body()
+        }
+    }
+
     private suspend fun <T> handleResponse(request: suspend () -> T): ApiResponse<T> {
-        try {
-            return ApiResponse.Success(request())
+        return try {
+            ApiResponse.Success(request())
         } catch (e: ApiException) {
-            return ApiResponse.Failure(e)
+            ApiResponse.Failure(e)
         }
     }
 }

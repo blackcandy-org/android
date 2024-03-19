@@ -60,8 +60,9 @@ fun PlayerScreen(
                     modifier = Modifier.weight(1f),
                     playlist = uiState.musicState.playlist,
                     currentSong = uiState.musicState.currentSong,
-                    onItemClicked = { viewModel.playOn(it) },
-                    onItemSweepToDismiss = { viewModel.removeSongFromPlaylist(it) },
+                    onItemClicked = { songId -> viewModel.playOn(songId) },
+                    onItemSweepToDismiss = { songId -> viewModel.removeSongFromPlaylist(songId) },
+                    onItemMoved = { from, to -> viewModel.moveSongInPlaylist(from, to) },
                 )
             } else {
                 Spacer(modifier = Modifier.weight(1f))

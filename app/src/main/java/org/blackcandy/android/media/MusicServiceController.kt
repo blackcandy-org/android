@@ -175,6 +175,14 @@ class MusicServiceController(
         }
     }
 
+    fun moveSongInPlaylist(
+        from: Int,
+        to: Int,
+    ) {
+        val songs = musicState.value.playlist.toMutableList().apply { add(to, removeAt(from)) }
+        updatePlaylist(songs)
+    }
+
     fun setPlaybackMode(playbackMode: PlaybackMode) {
         when (playbackMode) {
             PlaybackMode.NO_REPEAT -> {

@@ -18,4 +18,11 @@ class CurrentPlaylistRepository(
     suspend fun removeSong(songId: Int): TaskResult<Unit> {
         return service.removeSongFromCurrentPlaylist(songId).asResult()
     }
+
+    suspend fun moveSong(
+        songId: Int,
+        destinationSongId: Int,
+    ): TaskResult<Unit> {
+        return service.moveSongInCurrentPlaylist(songId, destinationSongId).asResult()
+    }
 }

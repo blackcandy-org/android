@@ -13,7 +13,6 @@ import org.blackcandy.android.data.FavoritePlaylistRepository
 import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.android.models.MusicState
-import org.blackcandy.android.models.Song
 import org.blackcandy.android.utils.TaskResult
 
 data class PlayerUiState(
@@ -66,8 +65,12 @@ class PlayerViewModel(
         musicServiceController.seekTo(seconds)
     }
 
-    fun playOn(index: Int) {
-        musicServiceController.playOn(index)
+    fun playOn(songId: Int) {
+        val index = uiState.value.musicState.playlist.indexOfFirst { it.id == songId }
+
+        if (index != -1) {
+            musicServiceController.playOn(index)
+        }
     }
 
     fun clearPlaylist() {
@@ -84,11 +87,33 @@ class PlayerViewModel(
         }
     }
 
-    fun removeSongFromPlaylist(song: Song) {
+    fun removeSongFromPlaylist(songId: Int) {
+        val song = uiState.value.musicState.playlist.firstOrNull { it.id == songId } ?: return
+
         musicServiceController.deleteSongFromPlaylist(song)
 
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.removeSong(song.id)) {
+                is TaskResult.Success -> Unit
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
+                }
+            }
+        }
+    }
+
+    fun moveSongInPlaylist(
+        from: Int,
+        to: Int,
+    ) {
+        val playlist = uiState.value.musicState.playlist
+        val songId = playlist[from].id
+        val destinationSongId = playlist[to].id
+
+        musicServiceController.moveSongInPlaylist(from, to)
+
+        viewModelScope.launch {
+            when (val result = currentPlaylistRepository.moveSong(songId, destinationSongId)) {
                 is TaskResult.Success -> Unit
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
