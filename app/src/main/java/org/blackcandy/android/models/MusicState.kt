@@ -10,4 +10,5 @@ data class MusicState(
     val playbackMode: PlaybackMode = PlaybackMode.NO_REPEAT,
 ) {
     val hasCurrentSong: Boolean get() = currentSong != null
+    val isLoading: Boolean get() = playbackState == Player.STATE_BUFFERING
 }

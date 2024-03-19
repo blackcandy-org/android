@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
@@ -23,6 +24,7 @@ import org.blackcandy.android.utils.NONE_DURATION_TEXT
 fun PlayerControl(
     modifier: Modifier = Modifier,
     isPlaying: Boolean = false,
+    isLoading: Boolean = false,
     currentPosition: Double = 0.0,
     duration: Double = 0.0,
     enabled: Boolean = true,
@@ -83,6 +85,14 @@ fun PlayerControl(
                 },
                 enabled = enabled,
             ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(dimensionResource(R.dimen.icon_size_large)),
+                    )
+
+                    return@IconButton
+                }
+
                 if (isPlaying) {
                     Icon(
                         painterResource(R.drawable.baseline_pause_24),

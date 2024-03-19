@@ -80,6 +80,7 @@ fun PlayerScreen(
                             Modifier
                                 .padding(top = dimensionResource(R.dimen.padding_medium)),
                         isPlaying = uiState.musicState.isPlaying,
+                        isLoading = uiState.musicState.isLoading,
                         currentPosition = uiState.currentPosition,
                         duration = uiState.musicState.currentSong?.duration ?: 0.0,
                         enabled = uiState.musicState.hasCurrentSong,
