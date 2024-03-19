@@ -12,6 +12,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -35,6 +39,8 @@ fun PlayerControl(
     onSeek: (Double) -> Unit,
 ) {
     val progressValue = if (duration > 0) (currentPosition / duration).toFloat() else 0f
+    var progressValueState by remember { mutableFloatStateOf(0f) }
+
     val currentPositionText = if (enabled) DurationFormatter.string(currentPosition) else NONE_DURATION_TEXT
     val durationText = if (enabled) DurationFormatter.string(duration) else NONE_DURATION_TEXT
 
@@ -42,10 +48,14 @@ fun PlayerControl(
         modifier = modifier,
     ) {
         Slider(
-            value = progressValue,
+            value = if (progressValueState == 0f) progressValue else progressValueState,
             enabled = enabled,
             onValueChange = {
-                onSeek(duration * it)
+                progressValueState = it
+            },
+            onValueChangeFinished = {
+                onSeek(duration * progressValueState)
+                progressValueState = 0f
             },
         )
 
