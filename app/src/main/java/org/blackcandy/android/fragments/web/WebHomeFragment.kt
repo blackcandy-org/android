@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import org.blackcandy.android.R
 import org.blackcandy.android.databinding.FragmentWebHomeBinding
-import org.blackcandy.android.viewmodels.WebViewModel
+import org.blackcandy.android.viewmodels.HomeViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @TurboNavGraphDestination(uri = "turbo://fragment/web/home")
 class WebHomeFragment : WebFragment() {
-    private val viewModel: WebViewModel by viewModel()
+    private val viewModel: HomeViewModel by viewModel()
     private var _binding: FragmentWebHomeBinding? = null
     private val binding get() = _binding!!
 

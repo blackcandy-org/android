@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.runBlocking
 import org.blackcandy.android.data.ServerAddressRepository
 
-class WebViewModel(
+class HomeViewModel(
     private val serverAddressRepository: ServerAddressRepository,
 ) : ViewModel() {
     val serverAddress =

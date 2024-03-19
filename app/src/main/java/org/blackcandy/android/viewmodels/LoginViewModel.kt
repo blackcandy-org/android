@@ -5,8 +5,9 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.blackcandy.android.R
@@ -14,14 +15,16 @@ import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.data.SystemInfoRepository
 import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.models.AlertMessage
-import java.lang.Exception
+import org.blackcandy.android.models.User
+import org.blackcandy.android.utils.TaskResult
 
 data class LoginUiState(
-    val serverAddress: String = "",
+    val serverAddress: String? = null,
     val alertMessage: AlertMessage? = null,
     val loginRoute: LoginRoute = LoginRoute.Connection,
     val email: String = "",
     val password: String = "",
+    val currentUser: User? = null,
 )
 
 enum class LoginRoute(
@@ -38,16 +41,21 @@ class LoginViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
 
-    val currentUserFlow = userRepository.getCurrentUserFlow()
-    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
-
-    fun initServerAddress() {
-        viewModelScope.launch {
-            if (uiState.value.serverAddress.isEmpty()) {
-                updateServerAddress(serverAddressRepository.getServerAddress())
-            }
-        }
-    }
+    val uiState =
+        combine(
+            _uiState,
+            serverAddressRepository.getServerAddressFlow(),
+            userRepository.getCurrentUserFlow(),
+        ) { state, serverAddress, currentUser ->
+            state.copy(
+                serverAddress = state.serverAddress ?: serverAddress,
+                currentUser = currentUser,
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = LoginUiState(),
+        )
 
     fun updateServerAddress(serverAddress: String) {
         _uiState.update { it.copy(serverAddress = serverAddress) }
@@ -62,7 +70,7 @@ class LoginViewModel(
     }
 
     fun checkSystemInfo() {
-        var serverAddress = uiState.value.serverAddress
+        var serverAddress = uiState.value.serverAddress ?: return
 
         if (!Regex("^https?://.*").matches(serverAddress)) {
             serverAddress = "http://$serverAddress"
@@ -76,17 +84,17 @@ class LoginViewModel(
         viewModelScope.launch {
             serverAddressRepository.updateServerAddress(serverAddress)
 
-            try {
-                val systemInfo = systemInfoRepository.getSystemInfo()
-
-                if (!systemInfo.isSupported) {
-                    _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.unsupported_server)) }
-                } else {
-                    _uiState.update { it.copy(loginRoute = LoginRoute.Authentication) }
+            when (val result = systemInfoRepository.getSystemInfo()) {
+                is TaskResult.Success -> {
+                    if (!result.data.isSupported) {
+                        _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.unsupported_server)) }
+                    } else {
+                        _uiState.update { it.copy(loginRoute = LoginRoute.Authentication) }
+                    }
                 }
-            } catch (exception: Exception) {
-                exception.message?.let { message ->
-                    _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }
+
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
             }
         }
@@ -94,17 +102,17 @@ class LoginViewModel(
 
     fun login() {
         viewModelScope.launch {
-            try {
-                userRepository.login(uiState.value.email, uiState.value.password)
-            } catch (exception: Exception) {
-                exception.message?.let { message ->
-                    _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }
+            when (val result = userRepository.login(uiState.value.email, uiState.value.password)) {
+                is TaskResult.Success -> Unit
+
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
             }
         }
     }
 
-    fun snackbarMessageShown() {
+    fun alertMessageShown() {
         _uiState.update { it.copy(alertMessage = null) }
     }
 

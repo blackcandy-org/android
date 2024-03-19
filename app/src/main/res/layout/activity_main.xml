@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <FrameLayout
+        android:id="@+id/player_bottom_sheet"
+        style="@style/Widget.Material3.BottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:behavior_hideable="false"
+        app:gestureInsetBottomIgnored="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/player_screen_compose_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/mini_player_compose_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_gravity="bottom"
         app:menu="@menu/bottom_nav" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

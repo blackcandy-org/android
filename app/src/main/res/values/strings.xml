@@ -19,4 +19,23 @@
     <string name="logo_description">Logo Of Black Candy</string>
     <string name="invalid_server_address">Invalid server address</string>
     <string name="unsupported_server">Unsupported Black Candy Server</string>
+    <string name="not_playing">Not Playing</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="next">Next Track</string>
+    <string name="previous">Previous Track</string>
+    <string name="album_cover">Album Cover</string>
+    <string name="no_repeat_mode">No Repeat Mode</string>
+    <string name="repeat_mode">Repeat Mode</string>
+    <string name="repeat_one_mode">Repeat One Mode</string>
+    <string name="shuffle_mode">Shuffle Mode</string>
+    <string name="favorited">Favorited</string>
+    <string name="unfavorited">Unfavorited</string>
+    <string name="playlist">Playlist</string>
+    <string name="edit">Edit</string>
+    <string name="clear_all">Clear All</string>
+    <string name="playing_queue">Playing Queue</string>
+    <string name="delete">Delete</string>
+    <string name="empty_playlist_indication">Nothing to play here</string>
+    <string name="drag_handle">Drag Handle</string>
 </resources>
