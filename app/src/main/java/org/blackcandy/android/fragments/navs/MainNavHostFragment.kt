@@ -1,5 +1,6 @@
 package org.blackcandy.android.fragments.navs
 
+import android.webkit.JavascriptInterface
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import dev.hotwire.turbo.config.TurboPathConfiguration
@@ -46,6 +47,17 @@ open class MainNavHostFragment : TurboSessionNavHostFragment() {
 
     override fun onSessionCreated() {
         super.onSessionCreated()
+
         session.webView.settings.userAgentString = BLACK_CANDY_USER_AGENT
+
+        session.webView.addJavascriptInterface(
+            object {
+                @JavascriptInterface
+                fun updateTheme(theme: String) {
+                    viewModel.updateTheme(theme)
+                }
+            },
+            "NativeBridge",
+        )
     }
 }
