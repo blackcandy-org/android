@@ -86,7 +86,7 @@ val appModule =
         viewModel { LoginViewModel(get(), get(), get()) }
         viewModel { MainViewModel(get(), get(), get()) }
         viewModel { AccountSheetViewModel(get(), get()) }
-        viewModel { NavHostViewModel(get()) }
+        viewModel { NavHostViewModel(get(), get(), get()) }
         viewModel { HomeViewModel(get()) }
         viewModel { MiniPlayerViewModel(get()) }
         viewModel { PlayerViewModel(get(), get(), get()) }
