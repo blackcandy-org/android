@@ -46,6 +46,16 @@ interface BlackCandyService {
         songId: Int,
         destinationSongId: Int,
     ): ApiResponse<Unit>
+
+    suspend fun replaceCurrentPlaylistWithAlbumSongs(albumId: Int): ApiResponse<List<Song>>
+
+    suspend fun replaceCurrentPlaylistWithPlaylistSongs(playlistId: Int): ApiResponse<List<Song>>
+
+    suspend fun addSongToCurrentPlaylist(
+        songId: Int,
+        currentSongId: Int?,
+        location: String?,
+    ): ApiResponse<Song>
 }
 
 class BlackCandyServiceImpl(
@@ -139,6 +149,38 @@ class BlackCandyServiceImpl(
         return handleResponse {
             client.put("current_playlist/songs/$songId/move") {
                 parameter("destination_song_id", destinationSongId.toString())
+            }.body()
+        }
+    }
+
+    override suspend fun replaceCurrentPlaylistWithAlbumSongs(albumId: Int): ApiResponse<List<Song>> {
+        return handleResponse {
+            client.put("current_playlist/songs/albums/$albumId").body()
+        }
+    }
+
+    override suspend fun replaceCurrentPlaylistWithPlaylistSongs(playlistId: Int): ApiResponse<List<Song>> {
+        return handleResponse {
+            client.put("current_playlist/songs/playlists/$playlistId").body()
+        }
+    }
+
+    override suspend fun addSongToCurrentPlaylist(
+        songId: Int,
+        currentSongId: Int?,
+        location: String?,
+    ): ApiResponse<Song> {
+        return handleResponse {
+            client.post("current_playlist/songs") {
+                parameter("song_id", songId.toString())
+
+                if (currentSongId != null) {
+                    parameter("current_song_id", currentSongId.toString())
+                }
+
+                if (location != null) {
+                    parameter("location", location)
+                }
             }.body()
         }
     }

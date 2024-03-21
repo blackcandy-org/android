@@ -38,4 +38,5 @@
     <string name="delete">Delete</string>
     <string name="empty_playlist_indication">Nothing to play here</string>
     <string name="drag_handle">Drag Handle</string>
+    <string name="added_to_playlist">Added to playlist</string>
 </resources>

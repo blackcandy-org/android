@@ -217,6 +217,30 @@ class MusicServiceController(
         _musicState.update { it.copy(playbackMode = playbackMode) }
     }
 
+    fun getSongIndex(songId: Int): Int {
+        return musicState.value.playlist.indexOfFirst { it.id == songId }
+    }
+
+    fun addSongToNext(song: Song): Int {
+        val currentSong = musicState.value.currentSong
+        val songs =
+            if (currentSong != null) {
+                val index = musicState.value.playlist.indexOf(currentSong)
+                musicState.value.playlist.toMutableList().apply { add(index + 1, song) }
+            } else {
+                musicState.value.playlist.toMutableList().apply { add(0, song) }
+            }
+
+        updatePlaylist(songs)
+
+        return songs.indexOf(song)
+    }
+
+    fun addSongToLast(song: Song) {
+        val songs = musicState.value.playlist.toMutableList().apply { add(song) }
+        updatePlaylist(songs)
+    }
+
     private fun updateCurrentSong() {
         val currentMediaId = controller?.currentMediaItem?.mediaId
         val currentSong = musicState.value.playlist.find { it.id.toString() == currentMediaId }
