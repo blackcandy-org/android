@@ -53,6 +53,7 @@ import org.blackcandy.android.viewmodels.MainViewModel
 import org.blackcandy.android.viewmodels.MiniPlayerViewModel
 import org.blackcandy.android.viewmodels.NavHostViewModel
 import org.blackcandy.android.viewmodels.PlayerViewModel
+import org.blackcandy.android.viewmodels.WebViewModel
 import org.chromium.net.CronetEngine
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -90,6 +91,7 @@ val appModule =
         viewModel { HomeViewModel(get()) }
         viewModel { MiniPlayerViewModel(get()) }
         viewModel { PlayerViewModel(get(), get(), get()) }
+        viewModel { WebViewModel(get()) }
     }
 
 private const val DATASTORE_PREFERENCES_NAME = "user_preferences"
