@@ -45,7 +45,9 @@
         "^/dialog/*"
       ],
       "properties": {
-        "uri": "turbo://fragment/web/bottom_sheet"
+        "context": "modal",
+        "uri": "turbo://fragment/web/bottom_sheet",
+        "pull_to_refresh_enabled": false
       }
     }
   ]

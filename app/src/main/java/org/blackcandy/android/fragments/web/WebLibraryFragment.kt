@@ -34,7 +34,7 @@ open class WebLibraryFragment : WebFragment() {
             if (searchText.isEmpty()) return@setOnEditorActionListener false
 
             binding.searchView.hide()
-            binding.searchBar.text = searchText
+            binding.searchBar.setText(searchText)
             session.webView.evaluateJavascript("App.nativeBridge.search('$searchText')", null)
 
             true
