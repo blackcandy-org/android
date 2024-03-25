@@ -35,7 +35,7 @@ class SnackbarUtil {
             message: AlertMessage,
             onShown: () -> Unit,
         ) {
-            val rootView = activity.findViewById<View>(R.id.main_container)
+            val rootView = activity.findViewById<View>(R.id.main_layout)
 
             val snackbarText =
                 when (message) {
