@@ -11,7 +11,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -71,7 +70,6 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         homeNav = HomeNavHostFragment()
-        libraryNav = LibraryNavHostFragment()
         playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet)
 
         binding.root.setOnApplyWindowInsetsListener { _, insets ->
@@ -112,33 +110,26 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.nav_menu_home -> {
-                supportFragmentManager.commit {
-                    hide(libraryNav)
-                    show(homeNav)
-                }
-
+                binding.homeContainer.isGone = false
+                binding.libraryContainer.isGone = true
                 delegate.currentNavHostFragmentId = homeNav.id
 
                 true
             }
 
             R.id.nav_menu_library -> {
-                val libraryNavFragment = supportFragmentManager.findFragmentById(libraryNav.id)
+                if (::libraryNav.isInitialized.not()) {
+                    libraryNav = LibraryNavHostFragment()
 
-                if (libraryNavFragment == null) {
                     supportFragmentManager.commitNow {
-                        add(R.id.main_container, libraryNav)
-                        hide(homeNav)
+                        add(R.id.library_container, libraryNav)
                     }
 
                     delegate.registerNavHostFragment(libraryNav.id)
-                } else {
-                    supportFragmentManager.commit {
-                        hide(homeNav)
-                        show(libraryNav)
-                    }
                 }
 
+                binding.homeContainer.isGone = true
+                binding.libraryContainer.isGone = false
                 delegate.currentNavHostFragmentId = libraryNav.id
 
                 true
@@ -165,7 +156,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
     private fun initHome() {
         supportFragmentManager.commitNow {
-            add(R.id.main_container, homeNav)
+            add(R.id.home_container, homeNav)
         }
     }
 
@@ -183,7 +174,8 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             val miniPlayerHeight = resources.getDimensionPixelSize(R.dimen.mini_player_height)
 
             playerBottomSheetBehavior.peekHeight = bottomNavHeight + miniPlayerHeight
-            binding.mainContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
+            binding.homeContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
+            binding.libraryContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
         }
     }
 
