@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.BlackCandy.Toolbar" parent="Widget.Material3.Toolbar.Surface">
+        <item name="colorControlNormal">?attr/colorOnSurface</item>
+        <item name="titleTextColor">?attr/colorOnSurface</item>
+        <item name="materialThemeOverlay">@style/Theme.BlackCandy.Toolbar.Overlay</item>
+    </style>
+    <style name="Theme.BlackCandy.Toolbar.Overlay" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+        <item name="iconTint">?attr/colorOnSurface</item>
+    </style>
+</resources>
