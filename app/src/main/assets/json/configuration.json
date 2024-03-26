@@ -37,6 +37,7 @@
         "^/account$"
       ],
       "properties": {
+        "context": "modal",
         "uri": "turbo://fragment/sheets/account"
       }
     },
