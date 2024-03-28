@@ -215,6 +215,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         binding.miniPlayerComposeView.isGone = slideOffset == 1f
         binding.bottomNav.translationY = slideOffset * bottomNavTransitionVelocity
         binding.bottomNav.alpha = 1 - slideOffset
+        binding.playerScreenComposeView.isGone = slideOffset == 0f
         binding.playerScreenComposeView.alpha = (slideOffset - transitionOffsetThreshold) / transitionOffsetThreshold
     }
 
