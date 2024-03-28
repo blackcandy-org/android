@@ -11,8 +11,8 @@
         android:layout_height="match_parent" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:visibility="gone"
         android:id="@+id/library_container"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -26,6 +26,7 @@
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
         <androidx.compose.ui.platform.ComposeView
             android:id="@+id/player_screen_compose_view"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
