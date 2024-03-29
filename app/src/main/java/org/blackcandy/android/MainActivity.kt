@@ -1,6 +1,7 @@
 package org.blackcandy.android
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -15,6 +16,9 @@ import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.layout.WindowMetricsCalculator
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
@@ -39,6 +43,17 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     private lateinit var binding: ActivityMainBinding
     private lateinit var playerBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     override lateinit var delegate: TurboActivityDelegate
+
+    private val isCompactView: Boolean
+        get() {
+            val metrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this)
+            val width = metrics.bounds.width()
+            val height = metrics.bounds.height()
+            val density = resources.displayMetrics.density
+            val windowSizeClass = WindowSizeClass.compute(width / density, height / density)
+
+            return windowSizeClass.windowWidthSizeClass === WindowWidthSizeClass.COMPACT
+        }
 
     private val playerBottomSheetCallback by lazy {
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -65,32 +80,19 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             return
         }
 
-        viewModel.setupMusicServiceController()
-
         binding = ActivityMainBinding.inflate(layoutInflater)
-        playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet)
-
-        binding.root.setOnApplyWindowInsetsListener { _, insets ->
-            windowInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
-            insets
-        }
-
         delegate = TurboActivityDelegate(this, R.id.home_container)
+
+        viewModel.setupMusicServiceController()
 
         setupLayout()
         setupBottomNav()
         setupPlayerBottomSheet()
         setupMiniPlayer()
         setupPlayerScreen()
+        restoreSavedState(savedInstanceState)
 
         setContentView(binding.root)
-
-        if (savedInstanceState != null) {
-            showSelectedNavItem(savedInstanceState.getInt(SELECTED_NAV_ITEM_ID_KEY, R.id.nav_menu_home))
-        }
-
-        // Displaying edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     override fun onRestart() {
@@ -114,13 +116,13 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.nav_menu_home, R.id.nav_menu_library -> {
                 showSelectedNavItem(item.itemId)
-                return true
+                true
             }
 
-            else -> return false
+            else -> false
         }
     }
 
@@ -145,11 +147,16 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     }
 
     private fun setupLayout() {
+        binding.root.setOnApplyWindowInsetsListener { _, insets ->
+            windowInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
+            insets
+        }
+
         binding.bottomNav.post {
             // Because displaying edge-to-edge, so the height of bottom nav includes the height of system navigation bar.
             val bottomNavHeightWithNav = binding.bottomNav.height
 
-            val systemNavigationBarHeight = getSystemNavigationBarHeight()
+            val systemNavigationBarHeight = windowInsets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
             val bottomNavHeight = if (binding.bottomNav.isVisible) bottomNavHeightWithNav - systemNavigationBarHeight else 0
             val miniPlayerHeight = resources.getDimensionPixelSize(R.dimen.mini_player_height)
 
@@ -157,6 +164,16 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             binding.homeContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
             binding.libraryContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
         }
+
+        requestedOrientation =
+            if (isCompactView) {
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            } else {
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            }
+
+        // Displaying edge-to-edge
+        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     private fun setupMiniPlayer() {
@@ -180,6 +197,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     }
 
     private fun setupPlayerBottomSheet() {
+        playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet)
         playerBottomSheetBehavior.addBottomSheetCallback(playerBottomSheetCallback)
     }
 
@@ -199,15 +217,17 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         binding.playerScreenComposeView.alpha = (slideOffset - transitionOffsetThreshold) / transitionOffsetThreshold
     }
 
+    private fun restoreSavedState(savedInstanceState: Bundle?) {
+        if (savedInstanceState != null) {
+            showSelectedNavItem(savedInstanceState.getInt(SELECTED_NAV_ITEM_ID_KEY, R.id.nav_menu_home))
+        }
+    }
+
     private fun switchToLoginActivity() {
         val intent = Intent(this@MainActivity, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         startActivity(intent)
-    }
-
-    private fun getSystemNavigationBarHeight(): Int {
-        return windowInsets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
     }
 
     private fun showSelectedNavItem(itemId: Int) {

@@ -1,9 +1,13 @@
 package org.blackcandy.android
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +21,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModel()
 
-    @OptIn(ExperimentalComposeUiApi::class)
+    @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -35,6 +39,15 @@ class LoginActivity : ComponentActivity() {
         }
 
         setContent {
+            val widthSizeClass = calculateWindowSizeClass(this).widthSizeClass
+
+            requestedOrientation =
+                if (widthSizeClass == WindowWidthSizeClass.Compact) {
+                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                } else {
+                    ActivityInfo.SCREEN_ORIENTATION_SENSOR
+                }
+
             Mdc3Theme {
                 LoginScreen(viewModel = viewModel)
             }
