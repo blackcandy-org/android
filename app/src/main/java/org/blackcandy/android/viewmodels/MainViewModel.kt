@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.blackcandy.android.data.CurrentPlaylistRepository
 import org.blackcandy.android.data.UserRepository
+import org.blackcandy.android.fragments.navs.LibraryNavHostFragment
 import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.utils.TaskResult
 
@@ -14,6 +15,9 @@ class MainViewModel(
     private val musicServiceController: MusicServiceController,
 ) : ViewModel() {
     val currentUserFlow = userRepository.getCurrentUserFlow()
+
+    // Declare the library nav host fragment in view model to prevent it from being recreated when configuration changed.
+    val libraryNav = LibraryNavHostFragment()
 
     fun setupMusicServiceController() {
         musicServiceController.initMediaController {

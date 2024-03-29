@@ -20,24 +20,23 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import dev.hotwire.turbo.activities.TurboActivity
 import dev.hotwire.turbo.delegates.TurboActivityDelegate
-import dev.hotwire.turbo.session.TurboSessionNavHostFragment
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.blackcandy.android.compose.player.MiniPlayer
 import org.blackcandy.android.compose.player.PlayerScreen
 import org.blackcandy.android.databinding.ActivityMainBinding
-import org.blackcandy.android.fragments.navs.HomeNavHostFragment
-import org.blackcandy.android.fragments.navs.LibraryNavHostFragment
 import org.blackcandy.android.viewmodels.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener {
+    companion object {
+        private const val SELECTED_NAV_ITEM_ID_KEY = "selected_nav_item_id"
+    }
+
     private val viewModel: MainViewModel by viewModel()
     private var windowInsets: WindowInsetsCompat? = null
     private lateinit var binding: ActivityMainBinding
-    private lateinit var homeNav: TurboSessionNavHostFragment
-    private lateinit var libraryNav: TurboSessionNavHostFragment
     private lateinit var playerBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     override lateinit var delegate: TurboActivityDelegate
 
@@ -69,7 +68,6 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         viewModel.setupMusicServiceController()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        homeNav = HomeNavHostFragment()
         playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet)
 
         binding.root.setOnApplyWindowInsetsListener { _, insets ->
@@ -77,9 +75,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             insets
         }
 
-        initHome()
-
-        delegate = TurboActivityDelegate(this, homeNav.id)
+        delegate = TurboActivityDelegate(this, R.id.home_container)
 
         setupLayout()
         setupBottomNav()
@@ -88,6 +84,10 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         setupPlayerScreen()
 
         setContentView(binding.root)
+
+        if (savedInstanceState != null) {
+            showSelectedNavItem(savedInstanceState.getInt(SELECTED_NAV_ITEM_ID_KEY, R.id.nav_menu_home))
+        }
 
         // Displaying edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -107,34 +107,20 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        // Save the selected nav item id to restore it when configuration changed.
+        outState.putInt(SELECTED_NAV_ITEM_ID_KEY, binding.bottomNav.selectedItemId)
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.nav_menu_home -> {
-                binding.homeContainer.isGone = false
-                binding.libraryContainer.isGone = true
-                delegate.currentNavHostFragmentId = homeNav.id
-
-                true
+        when (item.itemId) {
+            R.id.nav_menu_home, R.id.nav_menu_library -> {
+                showSelectedNavItem(item.itemId)
+                return true
             }
 
-            R.id.nav_menu_library -> {
-                if (::libraryNav.isInitialized.not()) {
-                    libraryNav = LibraryNavHostFragment()
-
-                    supportFragmentManager.commitNow {
-                        add(R.id.library_container, libraryNav)
-                    }
-
-                    delegate.registerNavHostFragment(libraryNav.id)
-                }
-
-                binding.homeContainer.isGone = true
-                binding.libraryContainer.isGone = false
-                delegate.currentNavHostFragmentId = libraryNav.id
-
-                true
-            }
-            else -> false
+            else -> return false
         }
     }
 
@@ -152,12 +138,6 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         }
 
         return false
-    }
-
-    private fun initHome() {
-        supportFragmentManager.commitNow {
-            add(R.id.home_container, homeNav)
-        }
     }
 
     private fun setupBottomNav() {
@@ -228,5 +208,33 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
     private fun getSystemNavigationBarHeight(): Int {
         return windowInsets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
+    }
+
+    private fun showSelectedNavItem(itemId: Int) {
+        when (itemId) {
+            R.id.nav_menu_home -> {
+                binding.homeContainer.isGone = false
+                binding.libraryContainer.isGone = true
+                delegate.currentNavHostFragmentId = R.id.home_container
+            }
+
+            R.id.nav_menu_library -> {
+                val libraryNavFragment =
+                    supportFragmentManager.findFragmentById(viewModel.libraryNav.id)
+
+                // Lazily add the library nav host fragment.
+                if (libraryNavFragment == null) {
+                    supportFragmentManager.commitNow {
+                        add(R.id.library_container, viewModel.libraryNav)
+                    }
+
+                    delegate.registerNavHostFragment(R.id.library_container)
+                }
+
+                binding.homeContainer.isGone = true
+                binding.libraryContainer.isGone = false
+                delegate.currentNavHostFragmentId = R.id.library_container
+            }
+        }
     }
 }
