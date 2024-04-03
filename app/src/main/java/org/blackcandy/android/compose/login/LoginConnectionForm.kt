@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -48,7 +49,16 @@ fun LoginConnectionForm(
             value = serverAddress,
             label = { Text(text = stringResource(R.string.server_address)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+            keyboardActions =
+                KeyboardActions(
+                    onDone = {
+                        if (serverAddress.isNotEmpty()) {
+                            onConnectButtonClicked()
+                        }
+                    },
+                ),
             onValueChange = onServerAddressChanged,
+            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
 
