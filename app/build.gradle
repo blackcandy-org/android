@@ -71,7 +71,7 @@ dependencies {
 
     implementation "androidx.media3:media3-exoplayer:$media3_version"
     implementation "androidx.media3:media3-session:$media3_version"
-    implementation "androidx.media3:media3-datasource-cronet:$media3_version"
+    implementation "androidx.media3:media3-datasource-okhttp:$media3_version"
 
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'com.google.accompanist:accompanist-themeadapter-material3:0.30.1'
@@ -80,7 +80,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1'
     implementation "io.insert-koin:koin-androidx-compose:3.5.0"
     implementation "io.ktor:ktor-client-core:$ktor_version"
-    implementation "io.ktor:ktor-client-cio:$ktor_version"
+    implementation "io.ktor:ktor-client-okhttp:$ktor_version"
     implementation "io.ktor:ktor-client-content-negotiation:$ktor_version"
     implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
     implementation "io.ktor:ktor-client-auth:$ktor_version"
