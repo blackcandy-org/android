@@ -12,7 +12,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.cronet.CronetDataSource
+import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import io.ktor.client.HttpClient
@@ -32,6 +32,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
+import okhttp3.OkHttpClient
 import org.blackcandy.android.api.ApiError
 import org.blackcandy.android.api.ApiException
 import org.blackcandy.android.api.BlackCandyService
@@ -54,14 +55,12 @@ import org.blackcandy.android.viewmodels.MiniPlayerViewModel
 import org.blackcandy.android.viewmodels.NavHostViewModel
 import org.blackcandy.android.viewmodels.PlayerViewModel
 import org.blackcandy.android.viewmodels.WebViewModel
-import org.chromium.net.CronetEngine
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import java.io.InputStream
 import java.io.OutputStream
-import java.util.concurrent.Executors
 
 val appModule =
     module {
@@ -71,7 +70,7 @@ val appModule =
         single(named("PreferencesDataStore")) { provideDataStore(androidContext()) }
         single(named("UserDataStore")) { provideUserDataStore(androidContext()) }
         single { provideHttpClient(get(), get(), get()) }
-        single { provideDataSourceFactory(get(), get()) }
+        single { provideDataSourceFactory(get()) }
 
         single { PreferencesDataSource(get(named("PreferencesDataStore"))) }
         single { EncryptedPreferencesDataSource(get()) }
@@ -225,19 +224,13 @@ private fun provideEncryptedSharedPreferences(appContext: Context): SharedPrefer
 }
 
 @androidx.annotation.OptIn(UnstableApi::class)
-private fun provideDataSourceFactory(
-    appContext: Context,
-    encryptedPreferencesDataSource: EncryptedPreferencesDataSource,
-): DataSource.Factory {
-    val cronetEngine = CronetEngine.Builder(appContext).build()
+private fun provideDataSourceFactory(encryptedPreferencesDataSource: EncryptedPreferencesDataSource): DataSource.Factory {
+    val httpClient = OkHttpClient().newBuilder().build()
     val apiToken = encryptedPreferencesDataSource.getApiToken()
 
     return DataSource.Factory {
         val dataSource =
-            CronetDataSource.Factory(
-                cronetEngine,
-                Executors.newCachedThreadPool(),
-            ).createDataSource()
+            OkHttpDataSource.Factory(httpClient).createDataSource()
 
         dataSource.setRequestProperty("Authorization", "Token $apiToken")
 
