@@ -2,6 +2,9 @@ package org.blackcandy.android.media
 
 import android.content.Intent
 import androidx.annotation.OptIn
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
+import androidx.media3.common.C.USAGE_MEDIA
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
@@ -21,6 +24,12 @@ class MusicService : MediaSessionService() {
 
         val dataSourceFactory: DataSource.Factory = get()
 
+        val audioAttributes =
+            AudioAttributes.Builder()
+                .setContentType(AUDIO_CONTENT_TYPE_MUSIC)
+                .setUsage(USAGE_MEDIA)
+                .build()
+
         val player =
             ExoPlayer.Builder(this)
                 .setMediaSourceFactory(
@@ -39,6 +48,8 @@ class MusicService : MediaSessionService() {
                         )
                     },
                 )
+                .setAudioAttributes(audioAttributes, true)
+                .setHandleAudioBecomingNoisy(true)
                 .build()
 
         mediaSession = MediaSession.Builder(this, player).build()
