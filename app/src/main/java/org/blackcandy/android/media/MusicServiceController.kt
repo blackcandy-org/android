@@ -53,6 +53,11 @@ class MusicServiceController(
                     ) {
                         if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
                             _musicState.update { it.copy(playbackState = player.playbackState) }
+
+                            if (player.playbackState == Player.STATE_ENDED) {
+                                player.seekToDefaultPosition(0)
+                                player.stop()
+                            }
                         }
 
                         if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)) {
