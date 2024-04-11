@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
@@ -86,7 +85,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         viewModel.setupMusicServiceController()
 
         setupLayout()
-        setupBottomNav()
+        setupNavListener()
         setupPlayerBottomSheet()
         setupMiniPlayer()
         setupPlayerScreen()
@@ -111,7 +110,9 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
     override fun onSaveInstanceState(outState: Bundle) {
         // Save the selected nav item id to restore it when configuration changed.
-        outState.putInt(SELECTED_NAV_ITEM_ID_KEY, binding.bottomNav.selectedItemId)
+        binding.bottomNav?.let { outState.putInt(SELECTED_NAV_ITEM_ID_KEY, it.selectedItemId) }
+        binding.railNav?.let { outState.putInt(SELECTED_NAV_ITEM_ID_KEY, it.selectedItemId) }
+
         super.onSaveInstanceState(outState)
     }
 
@@ -142,8 +143,9 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         return false
     }
 
-    private fun setupBottomNav() {
-        binding.bottomNav.setOnItemSelectedListener(this)
+    private fun setupNavListener() {
+        binding.bottomNav?.setOnItemSelectedListener(this)
+        binding.railNav?.setOnItemSelectedListener(this)
     }
 
     private fun setupLayout() {
@@ -152,17 +154,34 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             insets
         }
 
-        binding.bottomNav.post {
+        binding.root.post {
             // Because displaying edge-to-edge, so the height of bottom nav includes the height of system navigation bar.
-            val bottomNavHeightWithNav = binding.bottomNav.height
-
+            val bottomNavHeightWithNav = binding.bottomNav?.height ?: 0
             val systemNavigationBarHeight = windowInsets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
-            val bottomNavHeight = if (binding.bottomNav.isVisible) bottomNavHeightWithNav - systemNavigationBarHeight else 0
-            val miniPlayerHeight = resources.getDimensionPixelSize(R.dimen.mini_player_height)
+            val bottomNavHeight = if (binding.bottomNav != null) bottomNavHeightWithNav - systemNavigationBarHeight else 0
+            val miniPlayerHeight =
+                if (binding.miniPlayerComposeView != null) {
+                    resources.getDimensionPixelSize(
+                        R.dimen.mini_player_height,
+                    )
+                } else {
+                    0
+                }
 
-            playerBottomSheetBehavior.peekHeight = bottomNavHeight + miniPlayerHeight
-            binding.homeContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
-            binding.libraryContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
+            val containerPaddingSize =
+                when (true) {
+                    (binding.bottomNav != null && binding.miniPlayerComposeView != null) -> bottomNavHeightWithNav + miniPlayerHeight
+                    (binding.bottomNav == null && binding.miniPlayerComposeView != null) -> systemNavigationBarHeight + miniPlayerHeight
+                    (binding.bottomNav == null && binding.miniPlayerComposeView == null) -> systemNavigationBarHeight
+                    else -> 0
+                }
+
+            binding.homeContainer.updatePadding(bottom = containerPaddingSize)
+            binding.libraryContainer.updatePadding(bottom = containerPaddingSize)
+
+            if (::playerBottomSheetBehavior.isInitialized) {
+                playerBottomSheetBehavior.peekHeight = bottomNavHeight + miniPlayerHeight
+            }
         }
 
         requestedOrientation =
@@ -177,7 +196,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     }
 
     private fun setupMiniPlayer() {
-        binding.miniPlayerComposeView.apply {
+        binding.miniPlayerComposeView?.apply {
             setContent {
                 Mdc3Theme {
                     MiniPlayer()
@@ -197,8 +216,10 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     }
 
     private fun setupPlayerBottomSheet() {
-        playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet)
-        playerBottomSheetBehavior.addBottomSheetCallback(playerBottomSheetCallback)
+        if (binding.playerBottomSheet != null) {
+            playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet!!)
+            playerBottomSheetBehavior.addBottomSheetCallback(playerBottomSheetCallback)
+        }
     }
 
     private fun setupSlideTransition(slideOffset: Float) {
@@ -209,10 +230,10 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         val bottomNavTransitionVelocity = 450
         val transitionOffsetThreshold = 0.15f
 
-        binding.miniPlayerComposeView.alpha = 1 - (slideOffset / transitionOffsetThreshold)
-        binding.miniPlayerComposeView.isGone = slideOffset == 1f
-        binding.bottomNav.translationY = slideOffset * bottomNavTransitionVelocity
-        binding.bottomNav.alpha = 1 - slideOffset
+        binding.miniPlayerComposeView?.alpha = 1 - (slideOffset / transitionOffsetThreshold)
+        binding.miniPlayerComposeView?.isGone = slideOffset == 1f
+        binding.bottomNav?.translationY = slideOffset * bottomNavTransitionVelocity
+        binding.bottomNav?.alpha = 1 - slideOffset
         binding.playerScreenComposeView.isGone = slideOffset == 0f
         binding.playerScreenComposeView.alpha = (slideOffset - transitionOffsetThreshold) / transitionOffsetThreshold
     }

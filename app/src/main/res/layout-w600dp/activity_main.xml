@@ -5,23 +5,37 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/home_container"
-        android:name="org.blackcandy.android.fragments.navs.HomeNavHostFragment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <com.google.android.material.navigationrail.NavigationRailView
+            android:id="@+id/rail_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:menuGravity="center"
+            app:menu="@menu/nav" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/library_container"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/home_container"
+            android:name="org.blackcandy.android.fragments.navs.HomeNavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/library_container"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/player_bottom_sheet"
         style="@style/Widget.Material3.BottomSheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:maxHeight="@dimen/player_bottom_sheet_max_height"
+        android:maxWidth="@dimen/player_bottom_sheet_max_width"
         app:behavior_hideable="false"
         app:behavior_peekHeight="@dimen/mini_player_height"
         app:gestureInsetBottomIgnored="true"
@@ -37,11 +51,4 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </FrameLayout>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:menu="@menu/nav" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

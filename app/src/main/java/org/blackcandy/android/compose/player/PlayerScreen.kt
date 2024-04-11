@@ -2,7 +2,9 @@ package org.blackcandy.android.compose.player
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +27,7 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import org.blackcandy.android.R
 import org.blackcandy.android.utils.SnackbarUtil.Companion.ShowSnackbar
 import org.blackcandy.android.viewmodels.PlayerViewModel
@@ -52,6 +55,7 @@ fun PlayerScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier =
                 Modifier
+                    .fillMaxWidth()
                     .padding(it)
                     .nestedScroll(rememberNestedScrollInteropConnection()),
         ) {
@@ -70,14 +74,15 @@ fun PlayerScreen(
                 Column(
                     modifier =
                         Modifier
-                            .verticalScroll(rememberScrollState())
-                            .padding(horizontal = dimensionResource(R.dimen.padding_medium)),
+                            .padding(horizontal = dimensionResource(R.dimen.padding_small))
+                            .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     PlayerInfo(currentSong = uiState.musicState.currentSong)
                     PlayerControl(
                         modifier =
                             Modifier
+                                .widthIn(0.dp, dimensionResource(R.dimen.player_content_max_width))
                                 .padding(top = dimensionResource(R.dimen.padding_medium)),
                         isPlaying = uiState.musicState.isPlaying,
                         isLoading = uiState.musicState.isLoading,
@@ -98,8 +103,9 @@ fun PlayerScreen(
             PlayerActions(
                 modifier =
                     Modifier
+                        .widthIn(0.dp, dimensionResource(R.dimen.player_content_max_width))
                         .padding(top = dimensionResource(R.dimen.padding_medium))
-                        .padding(horizontal = dimensionResource(R.dimen.padding_medium)),
+                        .padding(horizontal = dimensionResource(R.dimen.padding_small)),
                 playbackMode = uiState.musicState.playbackMode,
                 isFavorited = uiState.musicState.currentSong?.isFavorited ?: false,
                 isPlaylistVisible = uiState.isPlaylistsVisible,

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="?android:dividerVertical"
+        android:showDividers="middle"
+        android:orientation="horizontal">
+        <com.google.android.material.navigationrail.NavigationRailView
+            android:id="@+id/rail_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:menuGravity="center"
+            app:menu="@menu/nav" />
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/player_screen_compose_view"
+            android:layout_marginVertical="@dimen/padding_small"
+            android:layout_width="@dimen/player_layout_size_on_large_screen"
+            android:layout_height="wrap_content" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/home_container"
+            android:name="org.blackcandy.android.fragments.navs.HomeNavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/library_container"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
