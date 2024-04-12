@@ -10,9 +10,9 @@
     <dimen name="icon_size_large">48dp</dimen>
     <dimen name="logo_width">80dp</dimen>
     <dimen name="mini_player_height">55dp</dimen>
-    <dimen name="player_album_cover_max_size">250dp</dimen>
+    <dimen name="player_album_cover_large_size">250dp</dimen>
+    <dimen name="player_album_cover_size">200dp</dimen>
     <dimen name="player_bottom_sheet_max_height">900dp</dimen>
-    <dimen name="player_bottom_sheet_max_width">840dp</dimen>
     <dimen name="player_layout_size_on_large_screen">340dp</dimen>
     <dimen name="player_content_max_width">400dp</dimen>
 </resources>

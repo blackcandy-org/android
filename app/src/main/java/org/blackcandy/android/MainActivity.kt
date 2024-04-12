@@ -1,23 +1,22 @@
 package org.blackcandy.android
 
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
-import androidx.core.view.updatePadding
+import androidx.core.view.updateMargins
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.window.core.layout.WindowSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
-import androidx.window.layout.WindowMetricsCalculator
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
@@ -42,17 +41,6 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     private lateinit var binding: ActivityMainBinding
     private lateinit var playerBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     override lateinit var delegate: TurboActivityDelegate
-
-    private val isCompactView: Boolean
-        get() {
-            val metrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this)
-            val width = metrics.bounds.width()
-            val height = metrics.bounds.height()
-            val density = resources.displayMetrics.density
-            val windowSizeClass = WindowSizeClass.compute(width / density, height / density)
-
-            return windowSizeClass.windowWidthSizeClass === WindowWidthSizeClass.COMPACT
-        }
 
     private val playerBottomSheetCallback by lazy {
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -158,7 +146,6 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             // Because displaying edge-to-edge, so the height of bottom nav includes the height of system navigation bar.
             val bottomNavHeightWithNav = binding.bottomNav?.height ?: 0
             val systemNavigationBarHeight = windowInsets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
-            val bottomNavHeight = if (binding.bottomNav != null) bottomNavHeightWithNav - systemNavigationBarHeight else 0
             val miniPlayerHeight =
                 if (binding.miniPlayerComposeView != null) {
                     resources.getDimensionPixelSize(
@@ -176,40 +163,49 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
                     else -> 0
                 }
 
-            binding.homeContainer.updatePadding(bottom = containerPaddingSize)
-            binding.libraryContainer.updatePadding(bottom = containerPaddingSize)
+            val homeContainerLayoutParams = binding.homeContainer.layoutParams as MarginLayoutParams
+            val libraryContainerLayoutParams = binding.libraryContainer.layoutParams as MarginLayoutParams
+
+            homeContainerLayoutParams.updateMargins(bottom = containerPaddingSize)
+            libraryContainerLayoutParams.updateMargins(bottom = containerPaddingSize)
+
+            val playerBottomSheetPeekHeight =
+                if (binding.bottomNav != null) {
+                    bottomNavHeightWithNav + miniPlayerHeight
+                } else {
+                    systemNavigationBarHeight + miniPlayerHeight
+                }
 
             if (::playerBottomSheetBehavior.isInitialized) {
-                playerBottomSheetBehavior.peekHeight = bottomNavHeight + miniPlayerHeight
+                playerBottomSheetBehavior.peekHeight = playerBottomSheetPeekHeight
             }
         }
-
-        requestedOrientation =
-            if (isCompactView) {
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            } else {
-                ActivityInfo.SCREEN_ORIENTATION_SENSOR
-            }
 
         // Displaying edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     private fun setupMiniPlayer() {
         binding.miniPlayerComposeView?.apply {
             setContent {
+                val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
+
                 Mdc3Theme {
-                    MiniPlayer()
+                    MiniPlayer(windowSizeClass = windowSizeClass)
                 }
             }
         }
     }
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     private fun setupPlayerScreen() {
         binding.playerScreenComposeView.apply {
             setContent {
+                val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
+
                 Mdc3Theme {
-                    PlayerScreen()
+                    PlayerScreen(windowSizeClass = windowSizeClass)
                 }
             }
         }

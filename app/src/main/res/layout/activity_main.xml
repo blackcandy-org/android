@@ -24,6 +24,8 @@
         android:layout_height="match_parent"
         app:behavior_hideable="false"
         app:behavior_peekHeight="@dimen/mini_player_height"
+        app:enableEdgeToEdge="true"
+        app:paddingBottomSystemWindowInsets="false"
         app:gestureInsetBottomIgnored="true"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
         <androidx.compose.ui.platform.ComposeView

@@ -20,7 +20,6 @@
 
         <androidx.compose.ui.platform.ComposeView
             android:id="@+id/player_screen_compose_view"
-            android:layout_marginVertical="@dimen/padding_small"
             android:layout_width="@dimen/player_layout_size_on_large_screen"
             android:layout_height="wrap_content" />
 

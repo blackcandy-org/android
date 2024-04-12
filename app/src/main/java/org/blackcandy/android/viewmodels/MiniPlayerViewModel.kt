@@ -19,4 +19,8 @@ class MiniPlayerViewModel(
     fun next() {
         musicServiceController.next()
     }
+
+    fun previous() {
+        musicServiceController.previous()
+    }
 }
