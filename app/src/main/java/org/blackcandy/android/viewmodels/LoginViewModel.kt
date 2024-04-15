@@ -1,7 +1,6 @@
 package org.blackcandy.android.viewmodels
 
 import android.util.Patterns
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,18 +20,10 @@ import org.blackcandy.android.utils.TaskResult
 data class LoginUiState(
     val serverAddress: String? = null,
     val alertMessage: AlertMessage? = null,
-    val loginRoute: LoginRoute = LoginRoute.Connection,
     val email: String = "",
     val password: String = "",
     val currentUser: User? = null,
 )
-
-enum class LoginRoute(
-    @StringRes val title: Int,
-) {
-    Connection(R.string.connection_title),
-    Authentication(R.string.authentication_title),
-}
 
 class LoginViewModel(
     private val systemInfoRepository: SystemInfoRepository,
@@ -69,7 +60,7 @@ class LoginViewModel(
         _uiState.update { it.copy(password = password) }
     }
 
-    fun checkSystemInfo() {
+    fun checkSystemInfo(onSuccess: () -> Unit) {
         var serverAddress = uiState.value.serverAddress ?: return
 
         if (!Regex("^https?://.*").matches(serverAddress)) {
@@ -89,7 +80,7 @@ class LoginViewModel(
                     if (!result.data.isSupported) {
                         _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.unsupported_server)) }
                     } else {
-                        _uiState.update { it.copy(loginRoute = LoginRoute.Authentication) }
+                        onSuccess()
                     }
                 }
 
@@ -114,9 +105,5 @@ class LoginViewModel(
 
     fun alertMessageShown() {
         _uiState.update { it.copy(alertMessage = null) }
-    }
-
-    fun updateLoginRoute(route: LoginRoute) {
-        _uiState.update { it.copy(loginRoute = route) }
     }
 }
