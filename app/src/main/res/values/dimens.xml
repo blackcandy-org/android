@@ -8,6 +8,7 @@
     <dimen name="corner_radius_medium">8dp</dimen>
     <dimen name="corner_radius_large">16dp</dimen>
     <dimen name="icon_size_large">48dp</dimen>
+    <dimen name="icon_size_medium">32dp</dimen>
     <dimen name="logo_width">80dp</dimen>
     <dimen name="mini_player_height">55dp</dimen>
     <dimen name="player_album_cover_large_size">250dp</dimen>
