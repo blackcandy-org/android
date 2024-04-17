@@ -1,17 +1,21 @@
 package org.blackcandy.android
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
@@ -37,7 +41,6 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     }
 
     private val viewModel: MainViewModel by viewModel()
-    private var windowInsets: WindowInsetsCompat? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var playerBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     override lateinit var delegate: TurboActivityDelegate
@@ -147,15 +150,19 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     }
 
     private fun setupLayout() {
-        binding.root.setOnApplyWindowInsetsListener { _, insets ->
-            windowInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
-            insets
+        // Displaying edge-to-edge
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
 
-        binding.root.post {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+            val displayCutout = windowInsets.displayCutout
+
             // Because displaying edge-to-edge, so the height of bottom nav includes the height of system navigation bar.
             val bottomNavHeightWithNav = binding.bottomNav?.height ?: 0
-            val systemNavigationBarHeight = windowInsets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
+            val systemNavigationBarHeight = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
             val miniPlayerHeight =
                 if (binding.miniPlayerComposeView != null) {
                     resources.getDimensionPixelSize(
@@ -165,7 +172,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
                     0
                 }
 
-            val containerPaddingSize =
+            val containerMarginSize =
                 when (true) {
                     (binding.bottomNav != null && binding.miniPlayerComposeView != null) -> bottomNavHeightWithNav + miniPlayerHeight
                     (binding.bottomNav == null && binding.miniPlayerComposeView != null) -> systemNavigationBarHeight + miniPlayerHeight
@@ -176,8 +183,8 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             val homeContainerLayoutParams = binding.homeContainer.layoutParams as MarginLayoutParams
             val libraryContainerLayoutParams = binding.libraryContainer.layoutParams as MarginLayoutParams
 
-            homeContainerLayoutParams.updateMargins(bottom = containerPaddingSize)
-            libraryContainerLayoutParams.updateMargins(bottom = containerPaddingSize)
+            homeContainerLayoutParams.updateMargins(bottom = containerMarginSize)
+            libraryContainerLayoutParams.updateMargins(bottom = containerMarginSize)
 
             val playerBottomSheetPeekHeight =
                 if (binding.bottomNav != null) {
@@ -186,13 +193,18 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
                     systemNavigationBarHeight + miniPlayerHeight
                 }
 
+            binding.mainContent.updateLayoutParams<MarginLayoutParams> {
+                if (displayCutout != null) {
+                    updateMargins(left = displayCutout.safeInsetLeft, right = displayCutout.safeInsetRight)
+                }
+            }
+
             if (::playerBottomSheetBehavior.isInitialized) {
                 playerBottomSheetBehavior.peekHeight = playerBottomSheetPeekHeight
             }
-        }
 
-        // Displaying edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+            windowInsets
+        }
     }
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
