@@ -96,6 +96,16 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (::playerBottomSheetBehavior.isInitialized &&
+            playerBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
+        ) {
+            setupSlideTransition(1f)
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         // Save the selected nav item id to restore it when configuration changed.
         binding.bottomNav?.let { outState.putInt(SELECTED_NAV_ITEM_ID_KEY, it.selectedItemId) }
