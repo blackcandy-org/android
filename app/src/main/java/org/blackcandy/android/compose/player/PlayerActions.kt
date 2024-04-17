@@ -19,10 +19,9 @@ fun PlayerActions(
     modifier: Modifier = Modifier,
     playbackMode: PlaybackMode,
     isFavorited: Boolean,
-    isPlaylistVisible: Boolean,
     onModeSwitchButtonClicked: () -> Unit,
     onFavoriteButtonClicked: () -> Unit,
-    onPlaylistButtonToggled: (Boolean) -> Unit,
+    onPlaylistButtonClicked: () -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -41,14 +40,13 @@ fun PlayerActions(
         }
 
         IconButton(
-            enabled = !isPlaylistVisible,
             onClick = onFavoriteButtonClicked,
         ) {
             if (isFavorited) {
                 Icon(
                     painter = painterResource(R.drawable.baseline_favorite_24),
                     contentDescription = stringResource(R.string.favorited),
-                    tint = if (isPlaylistVisible) Color.LightGray else Color.Red,
+                    tint = Color.Red,
                 )
             } else {
                 Icon(
@@ -58,9 +56,8 @@ fun PlayerActions(
             }
         }
 
-        FilledIconToggleButton(
-            checked = isPlaylistVisible,
-            onCheckedChange = onPlaylistButtonToggled,
+        IconButton(
+            onClick = onPlaylistButtonClicked,
         ) {
             Icon(
                 painter = painterResource(R.drawable.baseline_format_list_bulleted_24),

@@ -1,24 +1,26 @@
 package org.blackcandy.android
 
 import android.content.Intent
-import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
+import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMargins
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.window.core.layout.WindowSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
-import androidx.window.layout.WindowMetricsCalculator
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
@@ -39,21 +41,9 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
     }
 
     private val viewModel: MainViewModel by viewModel()
-    private var windowInsets: WindowInsetsCompat? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var playerBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     override lateinit var delegate: TurboActivityDelegate
-
-    private val isCompactView: Boolean
-        get() {
-            val metrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this)
-            val width = metrics.bounds.width()
-            val height = metrics.bounds.height()
-            val density = resources.displayMetrics.density
-            val windowSizeClass = WindowSizeClass.compute(width / density, height / density)
-
-            return windowSizeClass.windowWidthSizeClass === WindowWidthSizeClass.COMPACT
-        }
 
     private val playerBottomSheetCallback by lazy {
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -86,7 +76,7 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         viewModel.setupMusicServiceController()
 
         setupLayout()
-        setupBottomNav()
+        setupNavListener()
         setupPlayerBottomSheet()
         setupMiniPlayer()
         setupPlayerScreen()
@@ -109,9 +99,21 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (::playerBottomSheetBehavior.isInitialized &&
+            playerBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
+        ) {
+            setupSlideTransition(1f)
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         // Save the selected nav item id to restore it when configuration changed.
-        outState.putInt(SELECTED_NAV_ITEM_ID_KEY, binding.bottomNav.selectedItemId)
+        binding.bottomNav?.let { outState.putInt(SELECTED_NAV_ITEM_ID_KEY, it.selectedItemId) }
+        binding.railNav?.let { outState.putInt(SELECTED_NAV_ITEM_ID_KEY, it.selectedItemId) }
+
         super.onSaveInstanceState(outState)
     }
 
@@ -142,63 +144,100 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         return false
     }
 
-    private fun setupBottomNav() {
-        binding.bottomNav.setOnItemSelectedListener(this)
+    private fun setupNavListener() {
+        binding.bottomNav?.setOnItemSelectedListener(this)
+        binding.railNav?.setOnItemSelectedListener(this)
     }
 
     private fun setupLayout() {
-        binding.root.setOnApplyWindowInsetsListener { _, insets ->
-            windowInsets = WindowInsetsCompat.toWindowInsetsCompat(insets)
-            insets
-        }
-
-        binding.bottomNav.post {
-            // Because displaying edge-to-edge, so the height of bottom nav includes the height of system navigation bar.
-            val bottomNavHeightWithNav = binding.bottomNav.height
-
-            val systemNavigationBarHeight = windowInsets?.getInsets(WindowInsetsCompat.Type.systemBars())?.bottom ?: 0
-            val bottomNavHeight = if (binding.bottomNav.isVisible) bottomNavHeightWithNav - systemNavigationBarHeight else 0
-            val miniPlayerHeight = resources.getDimensionPixelSize(R.dimen.mini_player_height)
-
-            playerBottomSheetBehavior.peekHeight = bottomNavHeight + miniPlayerHeight
-            binding.homeContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
-            binding.libraryContainer.updatePadding(bottom = bottomNavHeightWithNav + miniPlayerHeight)
-        }
-
-        requestedOrientation =
-            if (isCompactView) {
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            } else {
-                ActivityInfo.SCREEN_ORIENTATION_SENSOR
-            }
-
         // Displaying edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
+            val displayCutout = windowInsets.displayCutout
+
+            // Because displaying edge-to-edge, so the height of bottom nav includes the height of system navigation bar.
+            val bottomNavHeightWithNav = binding.bottomNav?.height ?: 0
+            val systemNavigationBarHeight = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            val miniPlayerHeight =
+                if (binding.miniPlayerComposeView != null) {
+                    resources.getDimensionPixelSize(
+                        R.dimen.mini_player_height,
+                    )
+                } else {
+                    0
+                }
+
+            val containerMarginSize =
+                when (true) {
+                    (binding.bottomNav != null && binding.miniPlayerComposeView != null) -> bottomNavHeightWithNav + miniPlayerHeight
+                    (binding.bottomNav == null && binding.miniPlayerComposeView != null) -> systemNavigationBarHeight + miniPlayerHeight
+                    (binding.bottomNav == null && binding.miniPlayerComposeView == null) -> systemNavigationBarHeight
+                    else -> 0
+                }
+
+            val homeContainerLayoutParams = binding.homeContainer.layoutParams as MarginLayoutParams
+            val libraryContainerLayoutParams = binding.libraryContainer.layoutParams as MarginLayoutParams
+
+            homeContainerLayoutParams.updateMargins(bottom = containerMarginSize)
+            libraryContainerLayoutParams.updateMargins(bottom = containerMarginSize)
+
+            val playerBottomSheetPeekHeight =
+                if (binding.bottomNav != null) {
+                    bottomNavHeightWithNav + miniPlayerHeight
+                } else {
+                    systemNavigationBarHeight + miniPlayerHeight
+                }
+
+            binding.mainContent.updateLayoutParams<MarginLayoutParams> {
+                if (displayCutout != null) {
+                    updateMargins(left = displayCutout.safeInsetLeft, right = displayCutout.safeInsetRight)
+                }
+            }
+
+            if (::playerBottomSheetBehavior.isInitialized) {
+                playerBottomSheetBehavior.peekHeight = playerBottomSheetPeekHeight
+            }
+
+            windowInsets
+        }
     }
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     private fun setupMiniPlayer() {
-        binding.miniPlayerComposeView.apply {
+        binding.miniPlayerComposeView?.apply {
             setContent {
+                val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
+
                 Mdc3Theme {
-                    MiniPlayer()
+                    MiniPlayer(windowSizeClass = windowSizeClass)
                 }
             }
         }
     }
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     private fun setupPlayerScreen() {
         binding.playerScreenComposeView.apply {
             setContent {
+                val windowSizeClass = calculateWindowSizeClass(this@MainActivity)
+
                 Mdc3Theme {
-                    PlayerScreen()
+                    PlayerScreen(windowSizeClass = windowSizeClass)
                 }
             }
         }
     }
 
     private fun setupPlayerBottomSheet() {
-        playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet)
-        playerBottomSheetBehavior.addBottomSheetCallback(playerBottomSheetCallback)
+        if (binding.playerBottomSheet != null) {
+            playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet!!)
+            playerBottomSheetBehavior.addBottomSheetCallback(playerBottomSheetCallback)
+        }
     }
 
     private fun setupSlideTransition(slideOffset: Float) {
@@ -209,10 +248,10 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         val bottomNavTransitionVelocity = 450
         val transitionOffsetThreshold = 0.15f
 
-        binding.miniPlayerComposeView.alpha = 1 - (slideOffset / transitionOffsetThreshold)
-        binding.miniPlayerComposeView.isGone = slideOffset == 1f
-        binding.bottomNav.translationY = slideOffset * bottomNavTransitionVelocity
-        binding.bottomNav.alpha = 1 - slideOffset
+        binding.miniPlayerComposeView?.alpha = 1 - (slideOffset / transitionOffsetThreshold)
+        binding.miniPlayerComposeView?.isGone = slideOffset == 1f
+        binding.bottomNav?.translationY = slideOffset * bottomNavTransitionVelocity
+        binding.bottomNav?.alpha = 1 - slideOffset
         binding.playerScreenComposeView.isGone = slideOffset == 0f
         binding.playerScreenComposeView.alpha = (slideOffset - transitionOffsetThreshold) / transitionOffsetThreshold
     }

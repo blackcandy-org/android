@@ -23,7 +23,7 @@ import sh.calvin.reorderable.rememberReorderableLazyColumnState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PlayerPlaylist(
+fun Playlist(
     modifier: Modifier = Modifier,
     playlist: List<Song>,
     currentSong: Song?,
@@ -57,7 +57,7 @@ fun PlayerPlaylist(
         ) {
             items(playlistState, key = { it.id }) { song ->
                 ReorderableItem(reorderableLazyColumnState, key = song.id) {
-                    PlayerPlaylistItem(
+                    PlaylistItem(
                         song = song,
                         isCurrent = song == currentSong,
                         scope = this,

@@ -19,13 +19,11 @@
         tools:targetApi="31">
         <activity
             android:name=".LoginActivity"
-            android:screenOrientation="locked"
             android:exported="true"
             android:launchMode="singleTask">
         </activity>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="locked"
             android:exported="true"
             android:windowSoftInputMode="adjustNothing"
             android:launchMode="singleTask">

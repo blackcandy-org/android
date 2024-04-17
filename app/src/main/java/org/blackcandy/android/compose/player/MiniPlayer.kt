@@ -11,6 +11,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +29,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MiniPlayer(viewModel: MiniPlayerViewModel = koinViewModel()) {
+fun MiniPlayer(
+    viewModel: MiniPlayerViewModel = koinViewModel(),
+    windowSizeClass: WindowSizeClass,
+) {
     val musicState by viewModel.musicState.collectAsState()
 
     Row(
@@ -67,6 +72,18 @@ fun MiniPlayer(viewModel: MiniPlayerViewModel = koinViewModel()) {
         }
 
         Row(modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_narrow))) {
+            if (windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact) {
+                IconButton(
+                    onClick = { viewModel.previous() },
+                    enabled = musicState.hasCurrentSong,
+                ) {
+                    Icon(
+                        painterResource(R.drawable.baseline_skip_previous_24),
+                        contentDescription = stringResource(id = R.string.previous),
+                    )
+                }
+            }
+
             IconButton(
                 onClick = {
                     if (musicState.isPlaying) {

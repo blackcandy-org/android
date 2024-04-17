@@ -1,5 +1,6 @@
 package org.blackcandy.android.compose.login
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -28,9 +29,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.blackcandy.android.R
 import org.blackcandy.android.utils.SnackbarUtil.Companion.ShowSnackbar
-import org.blackcandy.android.viewmodels.LoginRoute
 import org.blackcandy.android.viewmodels.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
+
+enum class LoginRoute(
+    @StringRes val title: Int,
+) {
+    Connection(R.string.connection_title),
+    Authentication(R.string.authentication_title),
+}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -53,13 +60,8 @@ fun LoginScreen(
         topBar = {
             LoginScreenAppBar(
                 currentRoute = currentRoute,
-                canNavigateBack = currentRoute != LoginRoute.Connection,
-                navigateUp = {
-                    navController.previousBackStackEntry?.destination?.route?.let {
-                        val previousRoute = LoginRoute.valueOf(it)
-                        viewModel.updateLoginRoute(previousRoute)
-                    }
-                },
+                canNavigateBack = navController.previousBackStackEntry != null,
+                navigateUp = { navController.navigateUp() },
             )
         },
     ) { innerPadding ->
@@ -74,7 +76,7 @@ fun LoginScreen(
                     modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
                     onConnectButtonClicked = {
                         keyboardController?.hide()
-                        viewModel.checkSystemInfo()
+                        viewModel.checkSystemInfo { navController.navigate(LoginRoute.Authentication.name) }
                     },
                     onServerAddressChanged = { viewModel.updateServerAddress(it) },
                 )
@@ -99,10 +101,6 @@ fun LoginScreen(
             ShowSnackbar(alertMessage, snackbarHostState) {
                 viewModel.alertMessageShown()
             }
-        }
-
-        if (uiState.loginRoute != currentRoute) {
-            navController.navigate(uiState.loginRoute.name)
         }
     }
 }

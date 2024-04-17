@@ -29,6 +29,7 @@ fun PlayerControl(
     modifier: Modifier = Modifier,
     isPlaying: Boolean = false,
     isLoading: Boolean = false,
+    largeIcon: Boolean = false,
     currentPosition: Double = 0.0,
     duration: Double = 0.0,
     enabled: Boolean = true,
@@ -76,6 +77,8 @@ fun PlayerControl(
                     .fillMaxWidth()
                     .padding(top = dimensionResource(R.dimen.padding_medium)),
         ) {
+            val iconSize = dimensionResource(if (largeIcon) R.dimen.icon_size_large else R.dimen.icon_size_medium)
+
             IconButton(
                 onClick = onPreviousButtonClicked,
                 enabled = enabled,
@@ -85,7 +88,7 @@ fun PlayerControl(
                     contentDescription = stringResource(R.string.previous),
                     modifier =
                         Modifier
-                            .size(dimensionResource(R.dimen.icon_size_large)),
+                            .size(iconSize),
                 )
             }
 
@@ -97,7 +100,8 @@ fun PlayerControl(
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(dimensionResource(R.dimen.icon_size_large)),
+                        modifier =
+                            Modifier.size(iconSize),
                     )
 
                     return@IconButton
@@ -109,7 +113,7 @@ fun PlayerControl(
                         contentDescription = stringResource(R.string.pause),
                         modifier =
                             Modifier
-                                .size(dimensionResource(R.dimen.icon_size_large)),
+                                .size(iconSize),
                     )
                 } else {
                     Icon(
@@ -117,7 +121,7 @@ fun PlayerControl(
                         contentDescription = stringResource(R.string.play),
                         modifier =
                             Modifier
-                                .size(dimensionResource(R.dimen.icon_size_large)),
+                                .size(iconSize),
                     )
                 }
             }
@@ -131,7 +135,7 @@ fun PlayerControl(
                     contentDescription = stringResource(R.string.next),
                     modifier =
                         Modifier
-                            .size(dimensionResource(R.dimen.icon_size_large)),
+                            .size(iconSize),
                 )
             }
         }
