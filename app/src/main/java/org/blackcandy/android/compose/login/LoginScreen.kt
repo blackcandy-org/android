@@ -1,7 +1,10 @@
 package org.blackcandy.android.compose.login
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -16,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -65,35 +69,43 @@ fun LoginScreen(
             )
         },
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = LoginRoute.Connection.name,
-            modifier = Modifier.padding(innerPadding),
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxWidth(),
         ) {
-            composable(route = LoginRoute.Connection.name) {
-                LoginConnectionForm(
-                    serverAddress = uiState.serverAddress ?: "",
-                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
-                    onConnectButtonClicked = {
-                        keyboardController?.hide()
-                        viewModel.checkSystemInfo { navController.navigate(LoginRoute.Authentication.name) }
-                    },
-                    onServerAddressChanged = { viewModel.updateServerAddress(it) },
-                )
-            }
+            NavHost(
+                navController = navController,
+                startDestination = LoginRoute.Connection.name,
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
+            ) {
+                composable(route = LoginRoute.Connection.name) {
+                    LoginConnectionForm(
+                        serverAddress = uiState.serverAddress ?: "",
+                        modifier = Modifier.widthIn(max = dimensionResource(R.dimen.login_form_max_width)),
+                        onConnectButtonClicked = {
+                            keyboardController?.hide()
+                            viewModel.checkSystemInfo { navController.navigate(LoginRoute.Authentication.name) }
+                        },
+                        onServerAddressChanged = { viewModel.updateServerAddress(it) },
+                    )
+                }
 
-            composable(route = LoginRoute.Authentication.name) {
-                LoginAuthenticationForm(
-                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)),
-                    email = uiState.email,
-                    password = uiState.password,
-                    onEmailChanged = { viewModel.updateEmail(it) },
-                    onPasswordChanged = { viewModel.updatePassword(it) },
-                    onLoginButtonClicked = {
-                        keyboardController?.hide()
-                        viewModel.login()
-                    },
-                )
+                composable(route = LoginRoute.Authentication.name) {
+                    LoginAuthenticationForm(
+                        modifier = Modifier.widthIn(max = dimensionResource(R.dimen.login_form_max_width)),
+                        email = uiState.email,
+                        password = uiState.password,
+                        onEmailChanged = { viewModel.updateEmail(it) },
+                        onPasswordChanged = { viewModel.updatePassword(it) },
+                        onLoginButtonClicked = {
+                            keyboardController?.hide()
+                            viewModel.login()
+                        },
+                    )
+                }
             }
         }
 
