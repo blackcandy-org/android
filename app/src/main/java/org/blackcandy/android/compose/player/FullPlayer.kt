@@ -188,7 +188,7 @@ fun PlayerVerticalLayout(
             PlayerInfo(
                 currentSong = currentSong,
                 center = true,
-                modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_small)),
+                modifier = Modifier.padding(top = dimensionResource(R.dimen.padding_medium)),
             )
 
             PlayerControl(

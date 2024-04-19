@@ -237,6 +237,10 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         if (binding.playerBottomSheet != null) {
             playerBottomSheetBehavior = BottomSheetBehavior.from(binding.playerBottomSheet!!)
             playerBottomSheetBehavior.addBottomSheetCallback(playerBottomSheetCallback)
+
+            binding.miniPlayerComposeView?.setOnClickListener {
+                playerBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
         }
     }
 
