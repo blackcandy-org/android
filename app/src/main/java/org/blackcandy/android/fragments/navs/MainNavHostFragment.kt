@@ -16,7 +16,6 @@ import org.blackcandy.android.fragments.web.WebFragment
 import org.blackcandy.android.fragments.web.WebHomeFragment
 import org.blackcandy.android.fragments.web.WebLibraryFragment
 import org.blackcandy.android.utils.BLACK_CANDY_USER_AGENT
-import org.blackcandy.android.utils.PlayableResource
 import org.blackcandy.android.utils.SnackbarUtil.Companion.showSnackbar
 import org.blackcandy.android.utils.Theme
 import org.blackcandy.android.viewmodels.NavHostViewModel
@@ -83,17 +82,34 @@ open class MainNavHostFragment : TurboSessionNavHostFragment() {
                 }
 
                 @JavascriptInterface
-                fun playAll(
-                    resourceType: String,
-                    resourceId: Int,
-                ) {
-                    val resourceTypeValue = PlayableResource.values().find { it.name == resourceType.uppercase() } ?: return
-                    viewModel.playAll(resourceTypeValue, resourceId)
+                fun playAlbum(albumId: Int) {
+                    viewModel.playAlbum(albumId)
                 }
 
                 @JavascriptInterface
-                fun playSong(songId: Int) {
-                    viewModel.playSong(songId)
+                fun playPlaylist(playlistId: Int) {
+                    viewModel.playPlaylist(playlistId)
+                }
+
+                @JavascriptInterface
+                fun playAlbumBeginWith(
+                    albumId: Int,
+                    songId: Int,
+                ) {
+                    viewModel.playAlbumBeginWith(albumId, songId)
+                }
+
+                @JavascriptInterface
+                fun playPlaylistBeginWith(
+                    playlistId: Int,
+                    songId: Int,
+                ) {
+                    viewModel.playPlaylistBeginWith(playlistId, songId)
+                }
+
+                @JavascriptInterface
+                fun playNow(songId: Int) {
+                    viewModel.playNow(songId)
                 }
 
                 @JavascriptInterface

@@ -13,7 +13,7 @@ import org.blackcandy.android.data.CurrentPlaylistRepository
 import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.models.AlertMessage
-import org.blackcandy.android.utils.PlayableResource
+import org.blackcandy.android.models.Song
 import org.blackcandy.android.utils.TaskResult
 import org.blackcandy.android.utils.Theme
 
@@ -55,15 +55,11 @@ class NavHostViewModel(
         }
     }
 
-    fun playAll(
-        resourceType: PlayableResource,
-        resourceId: Int,
-    ) {
+    fun playAlbum(albumId: Int) {
         viewModelScope.launch {
-            when (val result = currentPlaylistRepository.replaceWith(resourceType, resourceId)) {
+            when (val result = currentPlaylistRepository.replaceWithAlbumSongs(albumId)) {
                 is TaskResult.Success -> {
-                    musicServiceController.updatePlaylist(result.data)
-                    musicServiceController.playOn(0)
+                    playSongs(result.data)
                 }
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
@@ -72,7 +68,52 @@ class NavHostViewModel(
         }
     }
 
-    fun playSong(songId: Int) {
+    fun playPlaylist(playlistId: Int) {
+        viewModelScope.launch {
+            when (val result = currentPlaylistRepository.replaceWithPlaylistSongs(playlistId)) {
+                is TaskResult.Success -> {
+                    playSongs(result.data)
+                }
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
+                }
+            }
+        }
+    }
+
+    fun playAlbumBeginWith(
+        albumId: Int,
+        songId: Int,
+    ) {
+        viewModelScope.launch {
+            when (val result = currentPlaylistRepository.replaceWithAlbumSongs(albumId)) {
+                is TaskResult.Success -> {
+                    playSongsBeginWith(result.data, songId)
+                }
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
+                }
+            }
+        }
+    }
+
+    fun playPlaylistBeginWith(
+        playlistId: Int,
+        songId: Int,
+    ) {
+        viewModelScope.launch {
+            when (val result = currentPlaylistRepository.replaceWithPlaylistSongs(playlistId)) {
+                is TaskResult.Success -> {
+                    playSongsBeginWith(result.data, songId)
+                }
+                is TaskResult.Failure -> {
+                    _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
+                }
+            }
+        }
+    }
+
+    fun playNow(songId: Int) {
         viewModelScope.launch {
             val index = musicServiceController.getSongIndex(songId)
 
@@ -134,5 +175,25 @@ class NavHostViewModel(
 
     fun showFlashMessage(message: String) {
         _uiState.update { it.copy(alertMessage = AlertMessage.String(message)) }
+    }
+
+    private fun playSongs(songs: List<Song>) {
+        musicServiceController.updatePlaylist(songs)
+        musicServiceController.playOn(0)
+    }
+
+    private fun playSongsBeginWith(
+        songs: List<Song>,
+        songId: Int,
+    ) {
+        musicServiceController.updatePlaylist(songs)
+
+        val index = musicServiceController.getSongIndex(songId)
+
+        if (index != -1) {
+            musicServiceController.playOn(index)
+        } else {
+            musicServiceController.playOn(0)
+        }
     }
 }
