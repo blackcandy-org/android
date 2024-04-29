@@ -2,7 +2,6 @@ package org.blackcandy.android.data
 
 import org.blackcandy.android.api.BlackCandyService
 import org.blackcandy.android.models.Song
-import org.blackcandy.android.utils.PlayableResource
 import org.blackcandy.android.utils.TaskResult
 
 class CurrentPlaylistRepository(
@@ -27,17 +26,12 @@ class CurrentPlaylistRepository(
         return service.moveSongInCurrentPlaylist(songId, destinationSongId).asResult()
     }
 
-    suspend fun replaceWith(
-        resourceType: PlayableResource,
-        resourceId: Int,
-    ): TaskResult<List<Song>> {
-        val response =
-            when (resourceType) {
-                PlayableResource.ALBUM -> service.replaceCurrentPlaylistWithAlbumSongs(resourceId)
-                PlayableResource.PLAYLIST -> service.replaceCurrentPlaylistWithPlaylistSongs(resourceId)
-            }
+    suspend fun replaceWithAlbumSongs(albumId: Int): TaskResult<List<Song>> {
+        return service.replaceCurrentPlaylistWithAlbumSongs(albumId).asResult()
+    }
 
-        return response.asResult()
+    suspend fun replaceWithPlaylistSongs(playlistId: Int): TaskResult<List<Song>> {
+        return service.replaceCurrentPlaylistWithPlaylistSongs(playlistId).asResult()
     }
 
     suspend fun addSongToNext(
