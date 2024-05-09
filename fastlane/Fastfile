@@ -1,0 +1,55 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+skip_docs
+default_platform(:android)
+
+platform :android do
+  desc "Create a new release"
+  lane :release do
+    version_name = get_version_name
+    UI.user_error!("Version name did not provide!") if version_name.nil? or version_name.empty?
+
+    gradle(
+      task: "clean assemble",
+      build_type: "Release",
+      print_command: false,
+      properties: {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"]
+      }
+    )
+
+    # Rename the APK file
+    apk_path = Actions.lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]
+    new_apk_path = File.join(File.dirname(apk_path), "blackcandy_#{version_name}.apk")
+    sh("mv #{apk_path} #{new_apk_path}")
+
+    git_tag = "v#{version_name}"
+    add_git_tag(tag: git_tag)
+    push_to_git_remote
+
+    set_github_release(
+      repository_name: "blackcandy-org/black_candy_android",
+      api_token: ENV["GITHUB_TOKEN"],
+      name: git_tag,
+      tag_name: git_tag,
+      is_prerelease: version_name.include?("beta"),
+      upload_assets: [new_apk_path]
+    )
+  end
+end
