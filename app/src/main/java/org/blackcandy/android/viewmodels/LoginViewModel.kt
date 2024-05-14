@@ -80,6 +80,12 @@ class LoginViewModel(
                     if (!result.data.isSupported) {
                         _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.unsupported_server)) }
                     } else {
+                        val responseServerAddress = result.data.serverAddress
+
+                        if (responseServerAddress != null && responseServerAddress != serverAddress) {
+                            serverAddressRepository.updateServerAddress(responseServerAddress)
+                        }
+
                         onSuccess()
                     }
                 }
