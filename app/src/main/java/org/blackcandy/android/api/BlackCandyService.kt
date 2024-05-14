@@ -10,7 +10,9 @@ import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
 import io.ktor.http.HttpHeaders
+import io.ktor.http.URLBuilder
 import io.ktor.http.parameters
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.boolean
@@ -63,7 +65,18 @@ class BlackCandyServiceImpl(
 ) : BlackCandyService {
     override suspend fun getSystemInfo(): ApiResponse<SystemInfo> {
         return handleResponse {
-            client.get("system").body()
+            val response = client.get("system")
+            val responseUrl = response.request.url
+            val systemInfo: SystemInfo = response.body()
+
+            systemInfo.serverAddress =
+                URLBuilder(
+                    protocol = responseUrl.protocol,
+                    host = responseUrl.host,
+                    port = responseUrl.port,
+                ).buildString()
+
+            systemInfo
         }
     }
 

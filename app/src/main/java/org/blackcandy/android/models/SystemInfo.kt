@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SystemInfo(
     val version: Version,
+    var serverAddress: String? = null,
 ) {
     companion object {
         const val SUPPORTED_MINIMUM_MAJOR_VERSION = 3
