@@ -1,0 +1,3 @@
+Black Candy is an open source, self-hosted music streaming server. With this official mobile app, you can access your music library from your Black Candy server.
+
+To use this app, you must have a Black Candy server set up. For more information, please visit https://github.com/blackcandy-org/blackcandy
