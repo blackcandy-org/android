@@ -44,7 +44,7 @@ platform :android do
     push_to_git_remote
 
     set_github_release(
-      repository_name: "blackcandy-org/black_candy_android",
+      repository_name: "blackcandy-org/android",
       api_token: ENV["GITHUB_TOKEN"],
       name: git_tag,
       tag_name: git_tag,
