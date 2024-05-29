@@ -8,6 +8,6 @@ The official Black Candy Android app. To use this app, you must have a Black Can
 
 ## Get the app
 
-<a href="https://f-droid.org/packages/org.blackcandy.android/"><img src="https://raw.githubusercontent.com/blackcandy-org/android/pre-1.0/images/fdroid_badge.png" height="50"></a>
+[<img src="https://raw.githubusercontent.com/blackcandy-org/android/pre-1.0/images/fdroid_badge.png" alt="Get it on F-Droid" height="50">](https://f-droid.org/packages/org.blackcandy.android/)
 
 Or you can download the latest APK from [GitHub Releases](https://github.com/blackcandy-org/android/releases/latest). 
