@@ -17,3 +17,4 @@ local.properties
 .idea
 /app/release/
 /fastlane/report.xml
+.kotlin
