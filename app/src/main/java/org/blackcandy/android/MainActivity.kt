@@ -32,6 +32,7 @@ import kotlinx.coroutines.runBlocking
 import org.blackcandy.android.compose.player.MiniPlayer
 import org.blackcandy.android.compose.player.PlayerScreen
 import org.blackcandy.android.databinding.ActivityMainBinding
+import org.blackcandy.android.fragments.navs.LibraryNavHostFragment
 import org.blackcandy.android.viewmodels.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -262,7 +263,11 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
 
     private fun restoreSavedState(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
-            showSelectedNavItem(savedInstanceState.getInt(SELECTED_NAV_ITEM_ID_KEY, R.id.nav_menu_home))
+            val selectedNavItemId = savedInstanceState.getInt(SELECTED_NAV_ITEM_ID_KEY, R.id.nav_menu_home)
+            showSelectedNavItem(selectedNavItemId)
+
+            binding.bottomNav?.menu?.findItem(selectedNavItemId)?.isChecked = true
+            binding.railNav?.menu?.findItem(selectedNavItemId)?.isChecked = true
         }
     }
 
@@ -282,15 +287,21 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
             }
 
             R.id.nav_menu_library -> {
-                val libraryNavFragment =
-                    supportFragmentManager.findFragmentById(viewModel.libraryNav.id)
+                val libraryNavFragment = binding.libraryContainer.getFragment<LibraryNavHostFragment?>()
 
                 // Lazily add the library nav host fragment.
                 if (libraryNavFragment == null) {
                     supportFragmentManager.commitNow {
                         add(R.id.library_container, viewModel.libraryNav)
                     }
+                }
 
+                // Because there is no direct way to determine if a nav host fragment is registered or not,
+                // but the navHostFragment function in delegate will throw an IllegalArgumentException if the nav host fragment is not registered.
+                // So, we can use this to determine if the nav host fragment is registered or not.
+                try {
+                    delegate.navHostFragment(R.id.library_container)
+                } catch (e: IllegalArgumentException) {
                     delegate.registerNavHostFragment(R.id.library_container)
                 }
 
