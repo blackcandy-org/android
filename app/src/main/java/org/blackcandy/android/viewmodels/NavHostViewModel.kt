@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.blackcandy.android.R
-import org.blackcandy.android.data.CurrentPlaylistRepository
-import org.blackcandy.android.data.ServerAddressRepository
+import org.blackcandy.shared.data.CurrentPlaylistRepository
+import org.blackcandy.shared.data.ServerAddressRepository
 import org.blackcandy.android.media.MusicServiceController
-import org.blackcandy.android.models.AlertMessage
-import org.blackcandy.android.models.Song
-import org.blackcandy.android.utils.TaskResult
-import org.blackcandy.android.utils.Theme
+import org.blackcandy.shared.models.AlertMessage
+import org.blackcandy.shared.models.Song
+import org.blackcandy.shared.utils.TaskResult
+import org.blackcandy.shared.utils.Theme
 
 data class NavHostUiState(
     val alertMessage: AlertMessage? = null,

@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.blackcandy.android.R
-import org.blackcandy.android.models.PlaybackMode
+import org.blackcandy.shared.models.PlaybackMode
 
 @Composable
 fun PlayerActions(

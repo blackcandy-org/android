@@ -15,8 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import org.blackcandy.android.R
-import org.blackcandy.android.models.PlaybackMode
-import org.blackcandy.android.models.Song
+import org.blackcandy.shared.models.PlaybackMode
+import org.blackcandy.shared.models.Song
 
 @Composable
 fun FullPlayer(

@@ -15,9 +15,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
-import org.blackcandy.android.models.MusicState
-import org.blackcandy.android.models.PlaybackMode
-import org.blackcandy.android.models.Song
+import org.blackcandy.shared.models.MusicState
+import org.blackcandy.shared.models.PlaybackMode
+import org.blackcandy.shared.models.Song
 import kotlin.time.Duration.Companion.milliseconds
 
 class MusicServiceController(

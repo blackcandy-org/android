@@ -32,7 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.blackcandy.android.R
-import org.blackcandy.android.utils.SnackbarUtil.Companion.ShowSnackbar
+import org.blackcandy.shared.utils.SnackbarUtil.Companion.ShowSnackbar
 import org.blackcandy.android.viewmodels.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
 
