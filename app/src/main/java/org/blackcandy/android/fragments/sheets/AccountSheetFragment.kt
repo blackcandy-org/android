@@ -15,7 +15,7 @@ import org.blackcandy.android.R
 import org.blackcandy.android.compose.account.AccountMenu
 import org.blackcandy.android.databinding.FragmentSheetAccountBinding
 import org.blackcandy.shared.models.MenuItem
-import org.blackcandy.android.viewmodels.AccountSheetViewModel
+import org.blackcandy.shared.viewmodels.AccountSheetViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @TurboNavGraphDestination(uri = "turbo://fragment/sheets/account")

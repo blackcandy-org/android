@@ -1,4 +1,4 @@
-package org.blackcandy.android.viewmodels
+package org.blackcandy.shared.viewmodels
 
 import androidx.lifecycle.ViewModel
 import org.blackcandy.android.media.MusicServiceController

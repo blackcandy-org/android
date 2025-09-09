@@ -1,4 +1,4 @@
-package org.blackcandy.android.viewmodels
+package org.blackcandy.shared.viewmodels
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel

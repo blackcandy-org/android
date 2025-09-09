@@ -1,4 +1,4 @@
-package org.blackcandy.android.viewmodels
+package org.blackcandy.shared.viewmodels
 
 import android.util.Patterns
 import androidx.lifecycle.ViewModel

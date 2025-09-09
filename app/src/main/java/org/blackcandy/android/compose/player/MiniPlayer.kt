@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import org.blackcandy.android.R
-import org.blackcandy.android.viewmodels.MiniPlayerViewModel
+import org.blackcandy.shared.viewmodels.MiniPlayerViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
