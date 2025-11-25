@@ -13,7 +13,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 @TurboNavGraphDestination(uri = "turbo://fragment/web/home")
 class WebHomeFragment : WebFragment() {
     private val viewModel: HomeViewModel by viewModel()
+
+    @Suppress("ktlint:standard:backing-property-naming")
     private var _binding: FragmentWebHomeBinding? = null
+
     private val binding get() = _binding!!
 
     override fun onCreateView(

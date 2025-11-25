@@ -9,6 +9,7 @@ import org.blackcandy.android.databinding.FragmentWebLibraryBinding
 
 @TurboNavGraphDestination(uri = "turbo://fragment/web/library")
 open class WebLibraryFragment : WebFragment() {
+    @Suppress("ktlint:standard:backing-property-naming")
     private var _binding: FragmentWebLibraryBinding? = null
     private val binding get() = _binding!!
 

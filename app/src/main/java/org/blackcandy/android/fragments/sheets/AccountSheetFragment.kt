@@ -21,7 +21,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 @TurboNavGraphDestination(uri = "turbo://fragment/sheets/account")
 class AccountSheetFragment : TurboBottomSheetDialogFragment() {
     private val viewModel: AccountSheetViewModel by viewModel()
+
+    @Suppress("ktlint:standard:backing-property-naming")
     private var _binding: FragmentSheetAccountBinding? = null
+
     private val binding get() = _binding!!
 
     override fun onCreateView(
