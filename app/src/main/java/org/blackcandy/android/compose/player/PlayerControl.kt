@@ -21,8 +21,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.blackcandy.android.R
-import org.blackcandy.android.utils.DurationFormatter
-import org.blackcandy.android.utils.NONE_DURATION_TEXT
+import org.blackcandy.shared.utils.DurationFormatter
+import org.blackcandy.shared.utils.NONE_DURATION_TEXT
 
 @Composable
 fun PlayerControl(

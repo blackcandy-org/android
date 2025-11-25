@@ -38,10 +38,11 @@ class MusicServiceController(
 
     fun initMediaController(onInitialized: () -> Unit) {
         val controllerFuture =
-            MediaController.Builder(
-                appContext,
-                SessionToken(appContext, ComponentName(appContext, MusicService::class.java)),
-            ).buildAsync()
+            MediaController
+                .Builder(
+                    appContext,
+                    SessionToken(appContext, ComponentName(appContext, MusicService::class.java)),
+                ).buildAsync()
 
         controllerFuture.addListener({
             controller = controllerFuture.get()
@@ -77,54 +78,55 @@ class MusicServiceController(
     fun updatePlaylist(songs: List<Song>) {
         val mediaItems = songs.map { it.toMediaItem() }
 
-        DiffUtil.calculateDiff(
-            object : DiffUtil.Callback() {
-                override fun getOldListSize() = controller?.mediaItemCount ?: 0
+        DiffUtil
+            .calculateDiff(
+                object : DiffUtil.Callback() {
+                    override fun getOldListSize() = controller?.mediaItemCount ?: 0
 
-                override fun getNewListSize() = mediaItems.size
+                    override fun getNewListSize() = mediaItems.size
 
-                override fun areItemsTheSame(
-                    oldItemPosition: Int,
-                    newItemPosition: Int,
-                ) = controller?.getMediaItemAt(oldItemPosition)?.mediaId == mediaItems[newItemPosition].mediaId
+                    override fun areItemsTheSame(
+                        oldItemPosition: Int,
+                        newItemPosition: Int,
+                    ) = controller?.getMediaItemAt(oldItemPosition)?.mediaId == mediaItems[newItemPosition].mediaId
 
-                override fun areContentsTheSame(
-                    oldItemPosition: Int,
-                    newItemPosition: Int,
-                ) = controller?.getMediaItemAt(oldItemPosition) == mediaItems[newItemPosition]
-            },
-        ).dispatchUpdatesTo(
-            object : ListUpdateCallback {
-                override fun onInserted(
-                    position: Int,
-                    count: Int,
-                ) {
-                    controller?.addMediaItems(position, mediaItems.subList(position, position + count))
-                }
+                    override fun areContentsTheSame(
+                        oldItemPosition: Int,
+                        newItemPosition: Int,
+                    ) = controller?.getMediaItemAt(oldItemPosition) == mediaItems[newItemPosition]
+                },
+            ).dispatchUpdatesTo(
+                object : ListUpdateCallback {
+                    override fun onInserted(
+                        position: Int,
+                        count: Int,
+                    ) {
+                        controller?.addMediaItems(position, mediaItems.subList(position, position + count))
+                    }
 
-                override fun onRemoved(
-                    position: Int,
-                    count: Int,
-                ) {
-                    controller?.removeMediaItems(position, position + count)
-                }
+                    override fun onRemoved(
+                        position: Int,
+                        count: Int,
+                    ) {
+                        controller?.removeMediaItems(position, position + count)
+                    }
 
-                override fun onMoved(
-                    fromPosition: Int,
-                    toPosition: Int,
-                ) {
-                    controller?.moveMediaItem(fromPosition, toPosition)
-                }
+                    override fun onMoved(
+                        fromPosition: Int,
+                        toPosition: Int,
+                    ) {
+                        controller?.moveMediaItem(fromPosition, toPosition)
+                    }
 
-                override fun onChanged(
-                    position: Int,
-                    count: Int,
-                    payload: Any?,
-                ) {
-                    controller?.replaceMediaItems(position, position + count, mediaItems.subList(position, position + count))
-                }
-            },
-        )
+                    override fun onChanged(
+                        position: Int,
+                        count: Int,
+                        payload: Any?,
+                    ) {
+                        controller?.replaceMediaItems(position, position + count, mediaItems.subList(position, position + count))
+                    }
+                },
+            )
 
         _musicState.update { it.copy(playlist = songs) }
     }
@@ -167,7 +169,10 @@ class MusicServiceController(
     }
 
     fun deleteSongFromPlaylist(song: Song) {
-        val songs = musicState.value.playlist.toMutableList().apply { remove(song) }
+        val songs =
+            musicState.value.playlist
+                .toMutableList()
+                .apply { remove(song) }
         updatePlaylist(songs)
     }
 
@@ -184,7 +189,10 @@ class MusicServiceController(
         from: Int,
         to: Int,
     ) {
-        val songs = musicState.value.playlist.toMutableList().apply { add(to, removeAt(from)) }
+        val songs =
+            musicState.value.playlist
+                .toMutableList()
+                .apply { add(to, removeAt(from)) }
         updatePlaylist(songs)
     }
 
@@ -222,18 +230,20 @@ class MusicServiceController(
         _musicState.update { it.copy(playbackMode = playbackMode) }
     }
 
-    fun getSongIndex(songId: Int): Int {
-        return musicState.value.playlist.indexOfFirst { it.id == songId }
-    }
+    fun getSongIndex(songId: Int): Int = musicState.value.playlist.indexOfFirst { it.id == songId }
 
     fun addSongToNext(song: Song): Int {
         val currentSong = musicState.value.currentSong
         val songs =
             if (currentSong != null) {
                 val index = musicState.value.playlist.indexOf(currentSong)
-                musicState.value.playlist.toMutableList().apply { add(index + 1, song) }
+                musicState.value.playlist
+                    .toMutableList()
+                    .apply { add(index + 1, song) }
             } else {
-                musicState.value.playlist.toMutableList().apply { add(0, song) }
+                musicState.value.playlist
+                    .toMutableList()
+                    .apply { add(0, song) }
             }
 
         updatePlaylist(songs)
@@ -242,7 +252,10 @@ class MusicServiceController(
     }
 
     fun addSongToLast(song: Song) {
-        val songs = musicState.value.playlist.toMutableList().apply { add(song) }
+        val songs =
+            musicState.value.playlist
+                .toMutableList()
+                .apply { add(song) }
         updatePlaylist(songs)
     }
 

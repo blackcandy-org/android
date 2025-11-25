@@ -18,9 +18,7 @@ open class WebFragment : TurboWebFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_web, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_web, container, false)
 
     override fun onVisitErrorReceived(
         location: String,

@@ -15,10 +15,10 @@ import org.blackcandy.android.fragments.web.WebBottomSheetFragment
 import org.blackcandy.android.fragments.web.WebFragment
 import org.blackcandy.android.fragments.web.WebHomeFragment
 import org.blackcandy.android.fragments.web.WebLibraryFragment
-import org.blackcandy.android.utils.BLACK_CANDY_USER_AGENT
 import org.blackcandy.android.utils.SnackbarUtil.Companion.showSnackbar
-import org.blackcandy.android.utils.Theme
 import org.blackcandy.android.viewmodels.NavHostViewModel
+import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
+import org.blackcandy.shared.utils.Theme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.reflect.KClass
 

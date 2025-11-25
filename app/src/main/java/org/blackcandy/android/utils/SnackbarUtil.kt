@@ -43,14 +43,16 @@ class SnackbarUtil {
                     is AlertMessage.StringResource -> rootView.context.getString(message.value)
                 } ?: return
 
-            Snackbar.make(rootView, snackbarText, Snackbar.LENGTH_SHORT).addCallback(
-                object : Snackbar.Callback() {
-                    override fun onShown(sb: Snackbar?) {
-                        super.onShown(sb)
-                        onShown()
-                    }
-                },
-            ).show()
+            Snackbar
+                .make(rootView, snackbarText, Snackbar.LENGTH_SHORT)
+                .addCallback(
+                    object : Snackbar.Callback() {
+                        override fun onShown(sb: Snackbar?) {
+                            super.onShown(sb)
+                            onShown()
+                        }
+                    },
+                ).show()
         }
     }
 }

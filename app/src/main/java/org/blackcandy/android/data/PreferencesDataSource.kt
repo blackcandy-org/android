@@ -15,15 +15,11 @@ class PreferencesDataSource(
         private val SERVER_ADDRESS_KEY = stringPreferencesKey("server_address")
     }
 
-    suspend fun getServerAddress(): String {
-        return dataStore.data.first()[SERVER_ADDRESS_KEY] ?: ""
-    }
+    suspend fun getServerAddress(): String = dataStore.data.first()[SERVER_ADDRESS_KEY] ?: ""
 
     suspend fun updateServerAddress(serverAddress: String) {
         dataStore.edit { it[SERVER_ADDRESS_KEY] = serverAddress }
     }
 
-    fun getServerAddressFlow(): Flow<String> {
-        return dataStore.data.map { it[SERVER_ADDRESS_KEY] ?: "" }
-    }
+    fun getServerAddressFlow(): Flow<String> = dataStore.data.map { it[SERVER_ADDRESS_KEY] ?: "" }
 }

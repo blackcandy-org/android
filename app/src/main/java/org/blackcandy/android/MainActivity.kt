@@ -35,7 +35,10 @@ import org.blackcandy.android.databinding.ActivityMainBinding
 import org.blackcandy.android.viewmodels.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener {
+class MainActivity :
+    AppCompatActivity(),
+    TurboActivity,
+    OnItemSelectedListener {
     companion object {
         private const val SELECTED_NAV_ITEM_ID_KEY = "selected_nav_item_id"
     }
@@ -117,16 +120,17 @@ class MainActivity : AppCompatActivity(), TurboActivity, OnItemSelectedListener 
         super.onSaveInstanceState(outState)
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+    override fun onNavigationItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
             R.id.nav_menu_home, R.id.nav_menu_library -> {
                 showSelectedNavItem(item.itemId)
                 true
             }
 
-            else -> false
+            else -> {
+                false
+            }
         }
-    }
 
     private fun requireLogin(): Boolean {
         runBlocking { viewModel.currentUserFlow.first() } ?: return true

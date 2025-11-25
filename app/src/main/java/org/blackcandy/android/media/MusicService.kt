@@ -25,30 +25,32 @@ class MusicService : MediaSessionService() {
         val dataSourceFactory: DataSource.Factory = get()
 
         val audioAttributes =
-            AudioAttributes.Builder()
+            AudioAttributes
+                .Builder()
                 .setContentType(AUDIO_CONTENT_TYPE_MUSIC)
                 .setUsage(USAGE_MEDIA)
                 .build()
 
         val player =
-            ExoPlayer.Builder(this)
+            ExoPlayer
+                .Builder(this)
                 .setMediaSourceFactory(
                     DefaultMediaSourceFactory(this).setDataSourceFactory(dataSourceFactory),
-                )
-                .setTrackSelector(
+                ).setTrackSelector(
                     DefaultTrackSelector(this).apply {
                         setParameters(
                             buildUponParameters().apply {
                                 setAudioOffloadPreferences(
-                                    TrackSelectionParameters.AudioOffloadPreferences.DEFAULT.buildUpon().apply {
-                                        setAudioOffloadMode(TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED)
-                                    }.build(),
+                                    TrackSelectionParameters.AudioOffloadPreferences.DEFAULT
+                                        .buildUpon()
+                                        .apply {
+                                            setAudioOffloadMode(TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED)
+                                        }.build(),
                                 )
                             },
                         )
                     },
-                )
-                .setAudioAttributes(audioAttributes, true)
+                ).setAudioAttributes(audioAttributes, true)
                 .setHandleAudioBecomingNoisy(true)
                 .build()
 

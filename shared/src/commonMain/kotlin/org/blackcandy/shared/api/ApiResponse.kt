@@ -1,11 +1,15 @@
-package org.blackcandy.android.api
+package org.blackcandy.shared.api
 
-import org.blackcandy.android.utils.TaskResult
+import org.blackcandy.shared.utils.TaskResult
 
 sealed interface ApiResponse<out T> {
-    data class Success<T>(val data: T) : ApiResponse<T>
+    data class Success<T>(
+        val data: T,
+    ) : ApiResponse<T>
 
-    data class Failure(val exception: ApiException) : ApiResponse<Nothing>
+    data class Failure(
+        val exception: ApiException,
+    ) : ApiResponse<Nothing>
 
     fun orNull(): T? =
         when (this) {

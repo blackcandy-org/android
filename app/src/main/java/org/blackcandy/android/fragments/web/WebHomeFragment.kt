@@ -38,7 +38,9 @@ class WebHomeFragment : WebFragment() {
                     true
                 }
 
-                else -> false
+                else -> {
+                    false
+                }
             }
         }
     }

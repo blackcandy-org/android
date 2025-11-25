@@ -1,4 +1,4 @@
-package org.blackcandy.android.utils
+package org.blackcandy.shared.utils
 
 import kotlin.time.Duration.Companion.seconds
 

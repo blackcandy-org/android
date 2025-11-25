@@ -1,4 +1,4 @@
-package org.blackcandy.android.utils
+package org.blackcandy.shared.utils
 
 enum class Theme {
     DARK,

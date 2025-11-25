@@ -14,8 +14,8 @@ import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.data.SystemInfoRepository
 import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.models.AlertMessage
-import org.blackcandy.android.models.User
-import org.blackcandy.android.utils.TaskResult
+import org.blackcandy.shared.models.User
+import org.blackcandy.shared.utils.TaskResult
 
 data class LoginUiState(
     val serverAddress: String? = null,
@@ -100,7 +100,9 @@ class LoginViewModel(
     fun login() {
         viewModelScope.launch {
             when (val result = userRepository.login(uiState.value.email, uiState.value.password)) {
-                is TaskResult.Success -> Unit
+                is TaskResult.Success -> {
+                    Unit
+                }
 
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }

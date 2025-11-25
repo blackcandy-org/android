@@ -33,8 +33,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import okhttp3.OkHttpClient
-import org.blackcandy.android.api.ApiError
-import org.blackcandy.android.api.ApiException
 import org.blackcandy.android.api.BlackCandyService
 import org.blackcandy.android.api.BlackCandyServiceImpl
 import org.blackcandy.android.data.CurrentPlaylistRepository
@@ -45,8 +43,6 @@ import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.data.SystemInfoRepository
 import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.media.MusicServiceController
-import org.blackcandy.android.models.User
-import org.blackcandy.android.utils.BLACK_CANDY_USER_AGENT
 import org.blackcandy.android.viewmodels.AccountSheetViewModel
 import org.blackcandy.android.viewmodels.HomeViewModel
 import org.blackcandy.android.viewmodels.LoginViewModel
@@ -55,6 +51,10 @@ import org.blackcandy.android.viewmodels.MiniPlayerViewModel
 import org.blackcandy.android.viewmodels.NavHostViewModel
 import org.blackcandy.android.viewmodels.PlayerViewModel
 import org.blackcandy.android.viewmodels.WebViewModel
+import org.blackcandy.shared.api.ApiError
+import org.blackcandy.shared.api.ApiException
+import org.blackcandy.shared.models.User
+import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -101,8 +101,8 @@ private fun provideHttpClient(
     json: Json,
     preferencesDataSource: PreferencesDataSource,
     encryptedPreferencesDataSource: EncryptedPreferencesDataSource,
-): HttpClient {
-    return HttpClient {
+): HttpClient =
+    HttpClient {
         expectSuccess = true
 
         install(UserAgent) {
@@ -161,13 +161,11 @@ private fun provideHttpClient(
             }
         }
     }
-}
 
-private fun provideDataStore(appContext: Context): DataStore<Preferences> {
-    return PreferenceDataStoreFactory.create(
+private fun provideDataStore(appContext: Context): DataStore<Preferences> =
+    PreferenceDataStoreFactory.create(
         produceFile = { appContext.preferencesDataStoreFile(DATASTORE_PREFERENCES_NAME) },
     )
-}
 
 private fun provideUserDataStore(appContext: Context): DataStore<User?> {
     val serializer =
@@ -175,8 +173,8 @@ private fun provideUserDataStore(appContext: Context): DataStore<User?> {
             override val defaultValue: User?
                 get() = null
 
-            override suspend fun readFrom(input: InputStream): User? {
-                return try {
+            override suspend fun readFrom(input: InputStream): User? =
+                try {
                     Json.decodeFromString(
                         User.serializer(),
                         input.readBytes().decodeToString(),
@@ -184,7 +182,6 @@ private fun provideUserDataStore(appContext: Context): DataStore<User?> {
                 } catch (e: Exception) {
                     null
                 }
-            }
 
             override suspend fun writeTo(
                 t: User?,
@@ -209,19 +206,16 @@ private fun provideUserDataStore(appContext: Context): DataStore<User?> {
     )
 }
 
-private fun provideCookieManager(): CookieManager {
-    return CookieManager.getInstance()
-}
+private fun provideCookieManager(): CookieManager = CookieManager.getInstance()
 
-private fun provideEncryptedSharedPreferences(appContext: Context): SharedPreferences {
-    return EncryptedSharedPreferences.create(
+private fun provideEncryptedSharedPreferences(appContext: Context): SharedPreferences =
+    EncryptedSharedPreferences.create(
         ENCRYPTED_SHARED_PREFERENCES_FILE_NAME,
         MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
         appContext,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
     )
-}
 
 @androidx.annotation.OptIn(UnstableApi::class)
 private fun provideDataSourceFactory(encryptedPreferencesDataSource: EncryptedPreferencesDataSource): DataSource.Factory {

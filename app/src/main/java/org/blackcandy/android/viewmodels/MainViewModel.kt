@@ -7,7 +7,7 @@ import org.blackcandy.android.data.CurrentPlaylistRepository
 import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.fragments.navs.LibraryNavHostFragment
 import org.blackcandy.android.media.MusicServiceController
-import org.blackcandy.android.utils.TaskResult
+import org.blackcandy.shared.utils.TaskResult
 
 class MainViewModel(
     userRepository: UserRepository,

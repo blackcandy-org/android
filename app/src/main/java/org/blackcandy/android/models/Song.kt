@@ -24,18 +24,18 @@ data class Song(
         val large: String,
     )
 
-    fun toMediaItem(): MediaItem {
-        return MediaItem.Builder()
+    fun toMediaItem(): MediaItem =
+        MediaItem
+            .Builder()
             .setMediaId(id.toString())
             .setUri(url)
             .setMediaMetadata(
-                MediaMetadata.Builder()
+                MediaMetadata
+                    .Builder()
                     .setTitle(name)
                     .setArtist(artistName)
                     .setAlbumTitle(albumName)
                     .setArtworkUri(Uri.parse(albumImageUrl.large))
                     .build(),
-            )
-            .build()
-    }
+            ).build()
 }

@@ -13,7 +13,7 @@ import org.blackcandy.android.data.FavoritePlaylistRepository
 import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.android.models.MusicState
-import org.blackcandy.android.utils.TaskResult
+import org.blackcandy.shared.utils.TaskResult
 
 data class PlayerUiState(
     val musicState: MusicState = MusicState(),
@@ -66,7 +66,9 @@ class PlayerViewModel(
     }
 
     fun playOn(songId: Int) {
-        val index = uiState.value.musicState.playlist.indexOfFirst { it.id == songId }
+        val index =
+            uiState.value.musicState.playlist
+                .indexOfFirst { it.id == songId }
 
         if (index != -1) {
             musicServiceController.playOn(index)
@@ -79,7 +81,10 @@ class PlayerViewModel(
 
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.removeAllSongs()) {
-                is TaskResult.Success -> Unit
+                is TaskResult.Success -> {
+                    Unit
+                }
+
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
@@ -88,13 +93,18 @@ class PlayerViewModel(
     }
 
     fun removeSongFromPlaylist(songId: Int) {
-        val song = uiState.value.musicState.playlist.firstOrNull { it.id == songId } ?: return
+        val song =
+            uiState.value.musicState.playlist
+                .firstOrNull { it.id == songId } ?: return
 
         musicServiceController.deleteSongFromPlaylist(song)
 
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.removeSong(song.id)) {
-                is TaskResult.Success -> Unit
+                is TaskResult.Success -> {
+                    Unit
+                }
+
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
@@ -114,7 +124,10 @@ class PlayerViewModel(
 
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.moveSong(songId, destinationSongId)) {
-                is TaskResult.Success -> Unit
+                is TaskResult.Success -> {
+                    Unit
+                }
+
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
@@ -133,7 +146,10 @@ class PlayerViewModel(
 
         viewModelScope.launch {
             when (val result = favoritePlaylistRepository.toggleSong(currentSong)) {
-                is TaskResult.Success -> Unit
+                is TaskResult.Success -> {
+                    Unit
+                }
+
                 is TaskResult.Failure -> {
                     // Rollback favorite state in previous operation
                     musicServiceController.updateSongInPlaylist(currentSong)

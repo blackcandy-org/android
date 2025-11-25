@@ -14,8 +14,8 @@ import org.blackcandy.android.data.ServerAddressRepository
 import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.android.models.Song
-import org.blackcandy.android.utils.TaskResult
-import org.blackcandy.android.utils.Theme
+import org.blackcandy.shared.utils.TaskResult
+import org.blackcandy.shared.utils.Theme
 
 data class NavHostUiState(
     val alertMessage: AlertMessage? = null,
@@ -45,9 +45,11 @@ class NavHostViewModel(
                 Theme.DARK -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 }
+
                 Theme.LIGHT -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 }
+
                 Theme.AUTO -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 }
@@ -61,6 +63,7 @@ class NavHostViewModel(
                 is TaskResult.Success -> {
                     playSongs(result.data)
                 }
+
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
@@ -74,6 +77,7 @@ class NavHostViewModel(
                 is TaskResult.Success -> {
                     playSongs(result.data)
                 }
+
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
@@ -90,6 +94,7 @@ class NavHostViewModel(
                 is TaskResult.Success -> {
                     playSongsBeginWith(result.data, songId)
                 }
+
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }
@@ -106,6 +111,7 @@ class NavHostViewModel(
                 is TaskResult.Success -> {
                     playSongsBeginWith(result.data, songId)
                 }
+
                 is TaskResult.Failure -> {
                     _uiState.update { it.copy(alertMessage = AlertMessage.String(result.message)) }
                 }

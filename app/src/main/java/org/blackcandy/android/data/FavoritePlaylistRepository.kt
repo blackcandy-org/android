@@ -2,7 +2,7 @@ package org.blackcandy.android.data
 
 import org.blackcandy.android.api.BlackCandyService
 import org.blackcandy.android.models.Song
-import org.blackcandy.android.utils.TaskResult
+import org.blackcandy.shared.utils.TaskResult
 
 class FavoritePlaylistRepository(
     private val service: BlackCandyService,

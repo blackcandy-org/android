@@ -1,4 +1,4 @@
-package org.blackcandy.android.models
+package org.blackcandy.shared.models
 
 import kotlinx.serialization.Serializable
 

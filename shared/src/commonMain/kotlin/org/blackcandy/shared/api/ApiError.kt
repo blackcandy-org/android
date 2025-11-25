@@ -1,4 +1,4 @@
-package org.blackcandy.android.api
+package org.blackcandy.shared.api
 
 import kotlinx.serialization.Serializable
 

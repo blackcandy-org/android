@@ -8,8 +8,8 @@ import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.plugin
 import kotlinx.coroutines.flow.Flow
 import org.blackcandy.android.api.BlackCandyService
-import org.blackcandy.android.models.User
-import org.blackcandy.android.utils.TaskResult
+import org.blackcandy.shared.models.User
+import org.blackcandy.shared.utils.TaskResult
 
 class UserRepository(
     private val httpClient: HttpClient,
@@ -36,9 +36,12 @@ class UserRepository(
             encryptedPreferencesDataSource.updateApiToken(response.token)
 
             // Clear previous cached auth token in http client
-            httpClient.plugin(Auth).providers
+            httpClient
+                .plugin(Auth)
+                .providers
                 .filterIsInstance<BearerAuthProvider>()
-                .first().clearToken()
+                .first()
+                .clearToken()
 
             return TaskResult.Success(Unit)
         } catch (e: Exception) {
@@ -53,7 +56,5 @@ class UserRepository(
         userDataStore.updateData { null }
     }
 
-    fun getCurrentUserFlow(): Flow<User?> {
-        return userDataStore.data
-    }
+    fun getCurrentUserFlow(): Flow<User?> = userDataStore.data
 }

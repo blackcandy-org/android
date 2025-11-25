@@ -9,9 +9,7 @@ class EncryptedPreferencesDataSource(
         private const val API_TOKEN_KEY = "api_token_key"
     }
 
-    fun getApiToken(): String? {
-        return encryptedSharedPrefs.getString(API_TOKEN_KEY, null)
-    }
+    fun getApiToken(): String? = encryptedSharedPrefs.getString(API_TOKEN_KEY, null)
 
     fun updateApiToken(apiToken: String) {
         with(encryptedSharedPrefs.edit()) {

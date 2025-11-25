@@ -19,10 +19,12 @@ import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.blackcandy.android.models.AuthenticationResponse
 import org.blackcandy.android.models.Song
-import org.blackcandy.android.models.SystemInfo
-import org.blackcandy.android.models.User
+import org.blackcandy.shared.api.ApiException
+import org.blackcandy.shared.api.ApiResponse
+import org.blackcandy.shared.models.AuthenticationResponse
+import org.blackcandy.shared.models.SystemInfo
+import org.blackcandy.shared.models.User
 
 interface BlackCandyService {
     suspend fun getSystemInfo(): ApiResponse<SystemInfo>
@@ -63,8 +65,8 @@ interface BlackCandyService {
 class BlackCandyServiceImpl(
     private val client: HttpClient,
 ) : BlackCandyService {
-    override suspend fun getSystemInfo(): ApiResponse<SystemInfo> {
-        return handleResponse {
+    override suspend fun getSystemInfo(): ApiResponse<SystemInfo> =
+        handleResponse {
             val response = client.get("system")
             val responseUrl = response.request.url
             val systemInfo: SystemInfo = response.body()
@@ -78,13 +80,12 @@ class BlackCandyServiceImpl(
 
             systemInfo
         }
-    }
 
     override suspend fun createAuthentication(
         email: String,
         password: String,
-    ): ApiResponse<AuthenticationResponse> {
-        return handleResponse {
+    ): ApiResponse<AuthenticationResponse> =
+        handleResponse {
             val response: HttpResponse =
                 client.submitForm(
                     url = "authentication",
@@ -115,94 +116,85 @@ class BlackCandyServiceImpl(
                 cookies = cookies,
             )
         }
-    }
 
-    override suspend fun removeAuthentication(): ApiResponse<Unit> {
-        return handleResponse {
+    override suspend fun removeAuthentication(): ApiResponse<Unit> =
+        handleResponse {
             client.delete("authentication").body()
         }
-    }
 
-    override suspend fun getSongsFromCurrentPlaylist(): ApiResponse<List<Song>> {
-        return handleResponse {
+    override suspend fun getSongsFromCurrentPlaylist(): ApiResponse<List<Song>> =
+        handleResponse {
             client.get("current_playlist/songs").body()
         }
-    }
 
-    override suspend fun addSongToFavorite(songId: Int): ApiResponse<Song> {
-        return handleResponse {
-            client.post("favorite_playlist/songs") {
-                parameter("song_id", songId.toString())
-            }.body()
+    override suspend fun addSongToFavorite(songId: Int): ApiResponse<Song> =
+        handleResponse {
+            client
+                .post("favorite_playlist/songs") {
+                    parameter("song_id", songId.toString())
+                }.body()
         }
-    }
 
-    override suspend fun removeSongFromFavorite(songId: Int): ApiResponse<Song> {
-        return handleResponse {
+    override suspend fun removeSongFromFavorite(songId: Int): ApiResponse<Song> =
+        handleResponse {
             client.delete("favorite_playlist/songs/$songId").body()
         }
-    }
 
-    override suspend fun removeAllSongsFromCurrentPlaylist(): ApiResponse<Unit> {
-        return handleResponse {
+    override suspend fun removeAllSongsFromCurrentPlaylist(): ApiResponse<Unit> =
+        handleResponse {
             client.delete("current_playlist/songs").body()
         }
-    }
 
-    override suspend fun removeSongFromCurrentPlaylist(songId: Int): ApiResponse<Unit> {
-        return handleResponse {
+    override suspend fun removeSongFromCurrentPlaylist(songId: Int): ApiResponse<Unit> =
+        handleResponse {
             client.delete("current_playlist/songs/$songId").body()
         }
-    }
 
     override suspend fun moveSongInCurrentPlaylist(
         songId: Int,
         destinationSongId: Int,
-    ): ApiResponse<Unit> {
-        return handleResponse {
-            client.put("current_playlist/songs/$songId/move") {
-                parameter("destination_song_id", destinationSongId.toString())
-            }.body()
+    ): ApiResponse<Unit> =
+        handleResponse {
+            client
+                .put("current_playlist/songs/$songId/move") {
+                    parameter("destination_song_id", destinationSongId.toString())
+                }.body()
         }
-    }
 
-    override suspend fun replaceCurrentPlaylistWithAlbumSongs(albumId: Int): ApiResponse<List<Song>> {
-        return handleResponse {
+    override suspend fun replaceCurrentPlaylistWithAlbumSongs(albumId: Int): ApiResponse<List<Song>> =
+        handleResponse {
             client.put("current_playlist/songs/albums/$albumId").body()
         }
-    }
 
-    override suspend fun replaceCurrentPlaylistWithPlaylistSongs(playlistId: Int): ApiResponse<List<Song>> {
-        return handleResponse {
+    override suspend fun replaceCurrentPlaylistWithPlaylistSongs(playlistId: Int): ApiResponse<List<Song>> =
+        handleResponse {
             client.put("current_playlist/songs/playlists/$playlistId").body()
         }
-    }
 
     override suspend fun addSongToCurrentPlaylist(
         songId: Int,
         currentSongId: Int?,
         location: String?,
-    ): ApiResponse<Song> {
-        return handleResponse {
-            client.post("current_playlist/songs") {
-                parameter("song_id", songId.toString())
+    ): ApiResponse<Song> =
+        handleResponse {
+            client
+                .post("current_playlist/songs") {
+                    parameter("song_id", songId.toString())
 
-                if (currentSongId != null) {
-                    parameter("current_song_id", currentSongId.toString())
-                }
+                    if (currentSongId != null) {
+                        parameter("current_song_id", currentSongId.toString())
+                    }
 
-                if (location != null) {
-                    parameter("location", location)
-                }
-            }.body()
+                    if (location != null) {
+                        parameter("location", location)
+                    }
+                }.body()
         }
-    }
 
-    private suspend fun <T> handleResponse(request: suspend () -> T): ApiResponse<T> {
-        return try {
+    private suspend fun <T> handleResponse(request: suspend () -> T): ApiResponse<T> =
+        try {
             ApiResponse.Success(request())
         } catch (e: ApiException) {
             ApiResponse.Failure(e)
         }
-    }
 }
