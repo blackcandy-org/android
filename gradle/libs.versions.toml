@@ -11,6 +11,7 @@ androidxSecurityCrypto = "1.0.0"
 androidxDatastorePreferences = "1.1.1"
 androidxJunit = "1.1.5"
 androidxEspresso = "3.5.1"
+annotationExperimental = "1.5.1"
 coilCompose = "2.5.0"
 googleAccompanistThemeadapterMaterial3 = "0.30.1"
 googleMaterial = "1.12.0"
@@ -22,10 +23,11 @@ media3 = "1.3.1"
 reorderable = "1.3.3"
 turbo = "7.0.3"
 kotlin = "2.2.0"
-androidGradlePlugin = "8.11.0"
+androidGradlePlugin = "8.13.1"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+androidx-annotation-experimental = { group = "androidx.annotation", name = "annotation-experimental", version.ref = "annotationExperimental" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }

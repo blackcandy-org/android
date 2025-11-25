@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.annotation.experimental)
 
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.session)
