@@ -1,4 +1,4 @@
-package org.blackcandy.android.data
+package org.blackcandy.shared.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

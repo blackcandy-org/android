@@ -62,6 +62,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.androidx.datastore.preferences)
                 // Add KMP dependencies here
             }
         }

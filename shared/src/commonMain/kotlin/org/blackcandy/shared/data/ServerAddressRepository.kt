@@ -1,4 +1,4 @@
-package org.blackcandy.android.data
+package org.blackcandy.shared.data
 
 import kotlinx.coroutines.flow.Flow
 

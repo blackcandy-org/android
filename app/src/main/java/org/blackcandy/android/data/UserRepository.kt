@@ -8,6 +8,7 @@ import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.plugin
 import kotlinx.coroutines.flow.Flow
 import org.blackcandy.android.api.BlackCandyService
+import org.blackcandy.shared.data.PreferencesDataSource
 import org.blackcandy.shared.models.User
 import org.blackcandy.shared.utils.TaskResult
 
