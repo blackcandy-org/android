@@ -33,12 +33,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import okhttp3.OkHttpClient
-import org.blackcandy.android.api.BlackCandyService
-import org.blackcandy.android.api.BlackCandyServiceImpl
-import org.blackcandy.android.data.CurrentPlaylistRepository
 import org.blackcandy.android.data.EncryptedPreferencesDataSource
-import org.blackcandy.android.data.FavoritePlaylistRepository
-import org.blackcandy.android.data.SystemInfoRepository
 import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.viewmodels.AccountSheetViewModel
@@ -51,8 +46,13 @@ import org.blackcandy.android.viewmodels.PlayerViewModel
 import org.blackcandy.android.viewmodels.WebViewModel
 import org.blackcandy.shared.api.ApiError
 import org.blackcandy.shared.api.ApiException
+import org.blackcandy.shared.api.BlackCandyService
+import org.blackcandy.shared.api.BlackCandyServiceImpl
+import org.blackcandy.shared.data.CurrentPlaylistRepository
+import org.blackcandy.shared.data.FavoritePlaylistRepository
 import org.blackcandy.shared.data.PreferencesDataSource
 import org.blackcandy.shared.data.ServerAddressRepository
+import org.blackcandy.shared.data.SystemInfoRepository
 import org.blackcandy.shared.models.User
 import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
 import org.koin.android.ext.koin.androidContext

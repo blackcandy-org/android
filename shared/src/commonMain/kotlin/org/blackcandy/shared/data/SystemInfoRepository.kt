@@ -1,6 +1,6 @@
-package org.blackcandy.android.data
+package org.blackcandy.shared.data
 
-import org.blackcandy.android.api.BlackCandyService
+import org.blackcandy.shared.api.BlackCandyService
 import org.blackcandy.shared.models.SystemInfo
 import org.blackcandy.shared.utils.TaskResult
 

@@ -1,7 +1,7 @@
-package org.blackcandy.android.data
+package org.blackcandy.shared.data
 
-import org.blackcandy.android.api.BlackCandyService
-import org.blackcandy.android.models.Song
+import org.blackcandy.shared.api.BlackCandyService
+import org.blackcandy.shared.models.Song
 import org.blackcandy.shared.utils.TaskResult
 
 class FavoritePlaylistRepository(

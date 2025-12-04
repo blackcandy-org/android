@@ -1,4 +1,4 @@
-package org.blackcandy.android.api
+package org.blackcandy.shared.api
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -19,10 +19,8 @@ import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.blackcandy.android.models.Song
-import org.blackcandy.shared.api.ApiException
-import org.blackcandy.shared.api.ApiResponse
 import org.blackcandy.shared.models.AuthenticationResponse
+import org.blackcandy.shared.models.Song
 import org.blackcandy.shared.models.SystemInfo
 import org.blackcandy.shared.models.User
 

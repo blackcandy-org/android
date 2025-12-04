@@ -2,6 +2,9 @@ package org.blackcandy.android.media
 
 import android.content.ComponentName
 import android.content.Context
+import android.net.Uri
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -17,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import org.blackcandy.android.models.MusicState
 import org.blackcandy.android.models.PlaybackMode
-import org.blackcandy.android.models.Song
+import org.blackcandy.shared.models.Song
 import kotlin.time.Duration.Companion.milliseconds
 
 class MusicServiceController(
@@ -76,7 +79,7 @@ class MusicServiceController(
     }
 
     fun updatePlaylist(songs: List<Song>) {
-        val mediaItems = songs.map { it.toMediaItem() }
+        val mediaItems = songs.map { toMediaItem(it) }
 
         DiffUtil
             .calculateDiff(
@@ -265,4 +268,19 @@ class MusicServiceController(
 
         _musicState.update { it.copy(currentSong = currentSong) }
     }
+
+    private fun toMediaItem(song: Song): MediaItem =
+        MediaItem
+            .Builder()
+            .setMediaId(song.id.toString())
+            .setUri(song.url)
+            .setMediaMetadata(
+                MediaMetadata
+                    .Builder()
+                    .setTitle(song.name)
+                    .setArtist(song.artistName)
+                    .setAlbumTitle(song.albumName)
+                    .setArtworkUri(Uri.parse(song.albumImageUrl.large))
+                    .build(),
+            ).build()
 }
