@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.blackcandy.android.data.UserRepository
 import org.blackcandy.shared.data.ServerAddressRepository
+import org.blackcandy.shared.data.UserRepository
 import org.blackcandy.shared.models.User
 
 data class AccountSheetUiState(

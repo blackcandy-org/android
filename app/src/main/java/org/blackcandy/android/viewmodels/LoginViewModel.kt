@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.blackcandy.android.R
-import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.shared.data.ServerAddressRepository
 import org.blackcandy.shared.data.SystemInfoRepository
+import org.blackcandy.shared.data.UserRepository
 import org.blackcandy.shared.models.User
 import org.blackcandy.shared.utils.TaskResult
 

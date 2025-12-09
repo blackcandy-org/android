@@ -1,6 +1,5 @@
-package org.blackcandy.android.data
+package org.blackcandy.shared.data
 
-import android.webkit.CookieManager
 import androidx.datastore.core.DataStore
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
@@ -8,17 +7,16 @@ import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.plugin
 import kotlinx.coroutines.flow.Flow
 import org.blackcandy.shared.api.BlackCandyService
-import org.blackcandy.shared.data.PreferencesDataSource
 import org.blackcandy.shared.models.User
+import org.blackcandy.shared.utils.Cookies
 import org.blackcandy.shared.utils.TaskResult
 
 class UserRepository(
     private val httpClient: HttpClient,
     private val service: BlackCandyService,
-    private val cookieManager: CookieManager,
     private val userDataStore: DataStore<User?>,
     private val preferencesDataSource: PreferencesDataSource,
-    private val encryptedPreferencesDataSource: EncryptedPreferencesDataSource,
+    private val encryptedDataSource: EncryptedDataSource,
 ) {
     suspend fun login(
         email: String,
@@ -28,13 +26,9 @@ class UserRepository(
             val response = service.createAuthentication(email, password).orThrow()
             val serverAddress = preferencesDataSource.getServerAddress()
 
-            response.cookies.forEach {
-                cookieManager.setCookie(serverAddress, it)
-            }
-
-            cookieManager.flush()
+            Cookies.update(serverAddress, response.cookies)
             userDataStore.updateData { response.user }
-            encryptedPreferencesDataSource.updateApiToken(response.token)
+            encryptedDataSource.updateApiToken(response.token)
 
             // Clear previous cached auth token in http client
             httpClient
@@ -52,8 +46,8 @@ class UserRepository(
 
     suspend fun logout() {
         service.removeAuthentication()
-        encryptedPreferencesDataSource.removeApiToken()
-        cookieManager.removeAllCookies(null)
+        encryptedDataSource.removeApiToken()
+        Cookies.clean()
         userDataStore.updateData { null }
     }
 

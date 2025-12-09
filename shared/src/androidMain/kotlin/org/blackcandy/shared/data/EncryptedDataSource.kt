@@ -1,24 +1,24 @@
-package org.blackcandy.android.data
+package org.blackcandy.shared.data
 
 import android.content.SharedPreferences
 
-class EncryptedPreferencesDataSource(
+actual class EncryptedDataSource(
     private val encryptedSharedPrefs: SharedPreferences,
 ) {
     companion object {
         private const val API_TOKEN_KEY = "api_token_key"
     }
 
-    fun getApiToken(): String? = encryptedSharedPrefs.getString(API_TOKEN_KEY, null)
+    actual fun getApiToken(): String? = encryptedSharedPrefs.getString(API_TOKEN_KEY, null)
 
-    fun updateApiToken(apiToken: String) {
+    actual fun updateApiToken(apiToken: String) {
         with(encryptedSharedPrefs.edit()) {
             putString(API_TOKEN_KEY, apiToken)
             apply()
         }
     }
 
-    fun removeApiToken() {
+    actual fun removeApiToken() {
         with(encryptedSharedPrefs.edit()) {
             remove(API_TOKEN_KEY)
             apply()

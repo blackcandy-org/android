@@ -33,8 +33,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import okhttp3.OkHttpClient
-import org.blackcandy.android.data.EncryptedPreferencesDataSource
-import org.blackcandy.android.data.UserRepository
 import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.viewmodels.AccountSheetViewModel
 import org.blackcandy.android.viewmodels.HomeViewModel
@@ -49,10 +47,12 @@ import org.blackcandy.shared.api.ApiException
 import org.blackcandy.shared.api.BlackCandyService
 import org.blackcandy.shared.api.BlackCandyServiceImpl
 import org.blackcandy.shared.data.CurrentPlaylistRepository
+import org.blackcandy.shared.data.EncryptedDataSource
 import org.blackcandy.shared.data.FavoritePlaylistRepository
 import org.blackcandy.shared.data.PreferencesDataSource
 import org.blackcandy.shared.data.ServerAddressRepository
 import org.blackcandy.shared.data.SystemInfoRepository
+import org.blackcandy.shared.data.UserRepository
 import org.blackcandy.shared.models.User
 import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
 import org.koin.android.ext.koin.androidContext
@@ -65,7 +65,6 @@ import java.io.OutputStream
 val appModule =
     module {
         single { provideJson() }
-        single { provideCookieManager() }
         single { provideEncryptedSharedPreferences(androidContext()) }
         single(named("PreferencesDataStore")) { provideDataStore(androidContext()) }
         single(named("UserDataStore")) { provideUserDataStore(androidContext()) }
@@ -73,13 +72,13 @@ val appModule =
         single { provideDataSourceFactory(get()) }
 
         single { PreferencesDataSource(get(named("PreferencesDataStore"))) }
-        single { EncryptedPreferencesDataSource(get()) }
+        single { EncryptedDataSource(get()) }
 
         single<BlackCandyService> { BlackCandyServiceImpl(get()) }
         single { MusicServiceController(androidContext()) }
         single { ServerAddressRepository(get()) }
         single { SystemInfoRepository(get()) }
-        single { UserRepository(get(), get(), get(), get(named("UserDataStore")), get(), get()) }
+        single { UserRepository(get(), get(), get(named("UserDataStore")), get(), get()) }
         single { CurrentPlaylistRepository(get()) }
         single { FavoritePlaylistRepository(get()) }
 
@@ -100,7 +99,7 @@ private const val ENCRYPTED_SHARED_PREFERENCES_FILE_NAME = "encrypted_preference
 private fun provideHttpClient(
     json: Json,
     preferencesDataSource: PreferencesDataSource,
-    encryptedPreferencesDataSource: EncryptedPreferencesDataSource,
+    encryptedDataSource: EncryptedDataSource,
 ): HttpClient =
     HttpClient {
         expectSuccess = true
@@ -116,7 +115,7 @@ private fun provideHttpClient(
         install(Auth) {
             bearer {
                 loadTokens {
-                    encryptedPreferencesDataSource.getApiToken()?.let {
+                    encryptedDataSource.getApiToken()?.let {
                         BearerTokens(it, "")
                     }
                 }
@@ -206,8 +205,6 @@ private fun provideUserDataStore(appContext: Context): DataStore<User?> {
     )
 }
 
-private fun provideCookieManager(): CookieManager = CookieManager.getInstance()
-
 private fun provideEncryptedSharedPreferences(appContext: Context): SharedPreferences =
     EncryptedSharedPreferences.create(
         ENCRYPTED_SHARED_PREFERENCES_FILE_NAME,
@@ -218,9 +215,9 @@ private fun provideEncryptedSharedPreferences(appContext: Context): SharedPrefer
     )
 
 @androidx.annotation.OptIn(UnstableApi::class)
-private fun provideDataSourceFactory(encryptedPreferencesDataSource: EncryptedPreferencesDataSource): DataSource.Factory {
+private fun provideDataSourceFactory(encryptedDataSource: EncryptedDataSource): DataSource.Factory {
     val httpClient = OkHttpClient().newBuilder().build()
-    val apiToken = encryptedPreferencesDataSource.getApiToken()
+    val apiToken = encryptedDataSource.getApiToken()
 
     return DataSource.Factory {
         val dataSource =
