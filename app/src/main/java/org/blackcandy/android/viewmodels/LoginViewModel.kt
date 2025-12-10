@@ -9,11 +9,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.blackcandy.android.R
-import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.shared.data.ServerAddressRepository
 import org.blackcandy.shared.data.SystemInfoRepository
 import org.blackcandy.shared.data.UserRepository
+import org.blackcandy.shared.models.AlertMessage
 import org.blackcandy.shared.models.User
 import org.blackcandy.shared.utils.TaskResult
 
@@ -68,7 +67,7 @@ class LoginViewModel(
         }
 
         if (!Patterns.WEB_URL.matcher(serverAddress).matches()) {
-            _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.invalid_server_address)) }
+            _uiState.update { it.copy(alertMessage = AlertMessage.LocalizedString(AlertMessage.DefinedMessages.INVALID_SERVER_ADDRESS)) }
             return
         }
 
@@ -78,7 +77,11 @@ class LoginViewModel(
             when (val result = systemInfoRepository.getSystemInfo()) {
                 is TaskResult.Success -> {
                     if (!result.data.isSupported) {
-                        _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.unsupported_server)) }
+                        _uiState.update {
+                            it.copy(
+                                alertMessage = AlertMessage.LocalizedString(AlertMessage.DefinedMessages.UNSUPPORTED_SERVER),
+                            )
+                        }
                     } else {
                         val responseServerAddress = result.data.serverAddress
 

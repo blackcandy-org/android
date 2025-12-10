@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.blackcandy.android.R
-import org.blackcandy.android.models.PlaybackMode
+import org.blackcandy.shared.media.PlaybackMode
 
 @Composable
 fun PlayerActions(
@@ -33,10 +33,7 @@ fun PlayerActions(
             checked = playbackMode != PlaybackMode.NO_REPEAT,
             onCheckedChange = { _ -> onModeSwitchButtonClicked() },
         ) {
-            Icon(
-                painter = painterResource(playbackMode.iconResourceId),
-                contentDescription = stringResource(playbackMode.titleResourceId),
-            )
+            PlaybackModeIcon(playbackMode)
         }
 
         IconButton(
@@ -65,4 +62,28 @@ fun PlayerActions(
             )
         }
     }
+}
+
+@Composable
+fun PlaybackModeIcon(playbackMode: PlaybackMode) {
+    val iconResourceId =
+        when (playbackMode) {
+            PlaybackMode.NO_REPEAT -> R.drawable.baseline_repeat_24
+            PlaybackMode.REPEAT -> R.drawable.baseline_repeat_24
+            PlaybackMode.REPEAT_ONE -> R.drawable.baseline_repeat_one_24
+            PlaybackMode.SHUFFLE -> R.drawable.baseline_shuffle_24
+        }
+
+    val titleResourceId =
+        when (playbackMode) {
+            PlaybackMode.NO_REPEAT -> R.string.no_repeat_mode
+            PlaybackMode.REPEAT -> R.string.repeat_mode
+            PlaybackMode.REPEAT_ONE -> R.string.repeat_one_mode
+            PlaybackMode.SHUFFLE -> R.string.shuffle_mode
+        }
+
+    Icon(
+        painter = painterResource(iconResourceId),
+        contentDescription = stringResource(titleResourceId),
+    )
 }

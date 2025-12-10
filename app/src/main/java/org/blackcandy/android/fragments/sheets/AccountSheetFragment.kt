@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import org.blackcandy.android.R
 import org.blackcandy.android.compose.account.AccountMenu
 import org.blackcandy.android.databinding.FragmentSheetAccountBinding
-import org.blackcandy.android.models.MenuItem
+import org.blackcandy.android.ui.MenuItem
 import org.blackcandy.android.viewmodels.AccountSheetViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

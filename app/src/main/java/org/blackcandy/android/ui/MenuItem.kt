@@ -1,4 +1,4 @@
-package org.blackcandy.android.models
+package org.blackcandy.android.ui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

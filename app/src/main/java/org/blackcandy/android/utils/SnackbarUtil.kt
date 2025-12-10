@@ -8,7 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
 import com.google.android.material.snackbar.Snackbar
 import org.blackcandy.android.R
-import org.blackcandy.android.models.AlertMessage
+import org.blackcandy.shared.models.AlertMessage
 
 class SnackbarUtil {
     companion object {
@@ -21,7 +21,7 @@ class SnackbarUtil {
             val snackbarText =
                 when (message) {
                     is AlertMessage.String -> message.value
-                    is AlertMessage.StringResource -> stringResource(message.value)
+                    is AlertMessage.LocalizedString -> stringResource(getLocalizedString(message.value))
                 } ?: return
 
             LaunchedEffect(state) {
@@ -40,7 +40,7 @@ class SnackbarUtil {
             val snackbarText =
                 when (message) {
                     is AlertMessage.String -> message.value
-                    is AlertMessage.StringResource -> rootView.context.getString(message.value)
+                    is AlertMessage.LocalizedString -> rootView.context.getString(getLocalizedString(message.value))
                 } ?: return
 
             Snackbar
@@ -54,5 +54,12 @@ class SnackbarUtil {
                     },
                 ).show()
         }
+
+        fun getLocalizedString(definedMessage: AlertMessage.DefinedMessages): Int =
+            when (definedMessage) {
+                AlertMessage.DefinedMessages.UNSUPPORTED_SERVER -> R.string.unsupported_server
+                AlertMessage.DefinedMessages.INVALID_SERVER_ADDRESS -> R.string.invalid_server_address
+                AlertMessage.DefinedMessages.ADDED_TO_PLAYLIST -> R.string.added_to_playlist
+            }
     }
 }

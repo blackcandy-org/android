@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import org.blackcandy.android.models.MusicState
-import org.blackcandy.android.models.PlaybackMode
+import org.blackcandy.shared.media.PlaybackMode
 import org.blackcandy.shared.models.Song
 import kotlin.time.Duration.Companion.milliseconds
 

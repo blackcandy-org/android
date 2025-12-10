@@ -8,11 +8,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.blackcandy.android.R
 import org.blackcandy.android.media.MusicServiceController
-import org.blackcandy.android.models.AlertMessage
 import org.blackcandy.shared.data.CurrentPlaylistRepository
 import org.blackcandy.shared.data.ServerAddressRepository
+import org.blackcandy.shared.models.AlertMessage
 import org.blackcandy.shared.models.Song
 import org.blackcandy.shared.utils.TaskResult
 import org.blackcandy.shared.utils.Theme
@@ -136,7 +135,11 @@ class NavHostViewModel(
                         val songIndex = musicServiceController.addSongToNext(result.data)
                         musicServiceController.playOn(songIndex)
 
-                        _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.added_to_playlist)) }
+                        _uiState.update {
+                            it.copy(
+                                alertMessage = AlertMessage.LocalizedString(AlertMessage.DefinedMessages.ADDED_TO_PLAYLIST),
+                            )
+                        }
                     }
 
                     is TaskResult.Failure -> {
@@ -154,7 +157,7 @@ class NavHostViewModel(
             when (val result = currentPlaylistRepository.addSongToNext(songId, currentSong.id)) {
                 is TaskResult.Success -> {
                     musicServiceController.addSongToNext(result.data)
-                    _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.added_to_playlist)) }
+                    _uiState.update { it.copy(alertMessage = AlertMessage.LocalizedString(AlertMessage.DefinedMessages.ADDED_TO_PLAYLIST)) }
                 }
 
                 is TaskResult.Failure -> {
@@ -169,7 +172,7 @@ class NavHostViewModel(
             when (val result = currentPlaylistRepository.addSongToLast(songId)) {
                 is TaskResult.Success -> {
                     musicServiceController.addSongToLast(result.data)
-                    _uiState.update { it.copy(alertMessage = AlertMessage.StringResource(R.string.added_to_playlist)) }
+                    _uiState.update { it.copy(alertMessage = AlertMessage.LocalizedString(AlertMessage.DefinedMessages.ADDED_TO_PLAYLIST)) }
                 }
 
                 is TaskResult.Failure -> {

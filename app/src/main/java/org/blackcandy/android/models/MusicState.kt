@@ -1,6 +1,7 @@
 package org.blackcandy.android.models
 
 import androidx.media3.common.Player
+import org.blackcandy.shared.media.PlaybackMode
 import org.blackcandy.shared.models.Song
 
 data class MusicState(

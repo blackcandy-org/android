@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import org.blackcandy.android.models.MenuItem
+import org.blackcandy.android.ui.MenuItem
 
 @Composable
 fun AccountMenu(menuItems: List<MenuItem>) {
