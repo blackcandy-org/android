@@ -1,4 +1,4 @@
-package org.blackcandy.android.media
+package org.blackcandy.shared.media
 
 import android.content.ComponentName
 import android.content.Context
@@ -18,19 +18,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
-import org.blackcandy.android.models.MusicState
-import org.blackcandy.shared.media.PlaybackMode
 import org.blackcandy.shared.models.Song
 import kotlin.time.Duration.Companion.milliseconds
 
-class MusicServiceController(
+actual class MusicServiceController(
     private val appContext: Context,
 ) {
     private var controller: MediaController? = null
     private val _musicState = MutableStateFlow(MusicState())
 
-    val musicState = _musicState.asStateFlow()
-    val currentPosition =
+    actual val musicState = _musicState.asStateFlow()
+    actual val currentPosition =
         flow {
             while (currentCoroutineContext().isActive) {
                 val currentPosition = (controller?.currentPosition ?: 0) / 1000.0
@@ -39,7 +37,7 @@ class MusicServiceController(
             }
         }
 
-    fun initMediaController(onInitialized: () -> Unit) {
+    actual fun initMediaController(onInitialized: () -> Unit) {
         val controllerFuture =
             MediaController
                 .Builder(
@@ -56,7 +54,7 @@ class MusicServiceController(
                         events: Player.Events,
                     ) {
                         if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
-                            _musicState.update { it.copy(playbackState = player.playbackState) }
+                            _musicState.update { it.copy(playbackState = toPlaybackState(player.playbackState)) }
 
                             if (player.playbackState == Player.STATE_ENDED) {
                                 player.seekToDefaultPosition(0)
@@ -78,7 +76,7 @@ class MusicServiceController(
         }, MoreExecutors.directExecutor())
     }
 
-    fun updatePlaylist(songs: List<Song>) {
+    actual fun updatePlaylist(songs: List<Song>) {
         val mediaItems = songs.map { toMediaItem(it) }
 
         DiffUtil
@@ -134,44 +132,44 @@ class MusicServiceController(
         _musicState.update { it.copy(playlist = songs) }
     }
 
-    fun play() {
+    actual fun play() {
         controller?.play()
     }
 
-    fun pause() {
+    actual fun pause() {
         controller?.pause()
     }
 
-    fun next() {
+    actual fun next() {
         controller?.run {
             seekToNext()
             play()
         }
     }
 
-    fun previous() {
+    actual fun previous() {
         controller?.run {
             seekToPrevious()
             play()
         }
     }
 
-    fun playOn(index: Int) {
+    actual fun playOn(index: Int) {
         controller?.run {
             seekToDefaultPosition(index)
             play()
         }
     }
 
-    fun seekTo(seconds: Double) {
+    actual fun seekTo(seconds: Double) {
         controller?.seekTo((seconds * 1000).toLong())
     }
 
-    fun clearPlaylist() {
+    actual fun clearPlaylist() {
         updatePlaylist(emptyList())
     }
 
-    fun deleteSongFromPlaylist(song: Song) {
+    actual fun deleteSongFromPlaylist(song: Song) {
         val songs =
             musicState.value.playlist
                 .toMutableList()
@@ -179,7 +177,7 @@ class MusicServiceController(
         updatePlaylist(songs)
     }
 
-    fun updateSongInPlaylist(song: Song) {
+    actual fun updateSongInPlaylist(song: Song) {
         val songs = musicState.value.playlist.map { if (it.id == song.id) song else it }
         updatePlaylist(songs)
 
@@ -188,7 +186,7 @@ class MusicServiceController(
         }
     }
 
-    fun moveSongInPlaylist(
+    actual fun moveSongInPlaylist(
         from: Int,
         to: Int,
     ) {
@@ -199,7 +197,7 @@ class MusicServiceController(
         updatePlaylist(songs)
     }
 
-    fun setPlaybackMode(playbackMode: PlaybackMode) {
+    actual fun setPlaybackMode(playbackMode: PlaybackMode) {
         when (playbackMode) {
             PlaybackMode.NO_REPEAT -> {
                 controller?.run {
@@ -233,9 +231,9 @@ class MusicServiceController(
         _musicState.update { it.copy(playbackMode = playbackMode) }
     }
 
-    fun getSongIndex(songId: Int): Int = musicState.value.playlist.indexOfFirst { it.id == songId }
+    actual fun getSongIndex(songId: Int): Int = musicState.value.playlist.indexOfFirst { it.id == songId }
 
-    fun addSongToNext(song: Song): Int {
+    actual fun addSongToNext(song: Song): Int {
         val currentSong = musicState.value.currentSong
         val songs =
             if (currentSong != null) {
@@ -254,7 +252,7 @@ class MusicServiceController(
         return songs.indexOf(song)
     }
 
-    fun addSongToLast(song: Song) {
+    actual fun addSongToLast(song: Song) {
         val songs =
             musicState.value.playlist
                 .toMutableList()
@@ -283,4 +281,13 @@ class MusicServiceController(
                     .setArtworkUri(Uri.parse(song.albumImageUrl.large))
                     .build(),
             ).build()
+
+    private fun toPlaybackState(playerState: Int): PlaybackState =
+        when (playerState) {
+            Player.STATE_IDLE -> PlaybackState.IDLE
+            Player.STATE_BUFFERING -> PlaybackState.BUFFERING
+            Player.STATE_READY -> PlaybackState.READY
+            Player.STATE_ENDED -> PlaybackState.ENDED
+            else -> PlaybackState.IDLE
+        }
 }

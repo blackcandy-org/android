@@ -1,4 +1,4 @@
-package org.blackcandy.android.media
+package org.blackcandy.shared.media
 
 import android.content.Intent
 import androidx.annotation.OptIn

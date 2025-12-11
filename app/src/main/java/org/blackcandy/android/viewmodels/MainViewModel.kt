@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.blackcandy.android.fragments.navs.LibraryNavHostFragment
-import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.shared.data.CurrentPlaylistRepository
 import org.blackcandy.shared.data.UserRepository
+import org.blackcandy.shared.media.MusicServiceController
 import org.blackcandy.shared.utils.TaskResult
 
 class MainViewModel(

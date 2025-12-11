@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".media.MusicService"
+            android:name="org.blackcandy.shared.media.MusicService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="true">
             <intent-filter>

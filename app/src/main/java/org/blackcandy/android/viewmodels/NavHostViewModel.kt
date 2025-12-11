@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.shared.data.CurrentPlaylistRepository
 import org.blackcandy.shared.data.ServerAddressRepository
+import org.blackcandy.shared.media.MusicServiceController
 import org.blackcandy.shared.models.AlertMessage
 import org.blackcandy.shared.models.Song
 import org.blackcandy.shared.utils.TaskResult

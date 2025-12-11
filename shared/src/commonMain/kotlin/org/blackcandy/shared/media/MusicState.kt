@@ -1,16 +1,14 @@
-package org.blackcandy.android.models
+package org.blackcandy.shared.media
 
-import androidx.media3.common.Player
-import org.blackcandy.shared.media.PlaybackMode
 import org.blackcandy.shared.models.Song
 
 data class MusicState(
     val playlist: List<Song> = emptyList(),
-    val playbackState: Int = Player.STATE_IDLE,
+    val playbackState: PlaybackState = PlaybackState.IDLE,
     val currentSong: Song? = null,
     val isPlaying: Boolean = false,
     val playbackMode: PlaybackMode = PlaybackMode.NO_REPEAT,
 ) {
     val hasCurrentSong: Boolean get() = currentSong != null
-    val isLoading: Boolean get() = playbackState == Player.STATE_BUFFERING
+    val isLoading: Boolean get() = playbackState == PlaybackState.BUFFERING
 }

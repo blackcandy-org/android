@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.blackcandy.android.media.MusicServiceController
-import org.blackcandy.android.models.MusicState
 import org.blackcandy.shared.data.CurrentPlaylistRepository
 import org.blackcandy.shared.data.FavoritePlaylistRepository
+import org.blackcandy.shared.media.MusicServiceController
+import org.blackcandy.shared.media.MusicState
 import org.blackcandy.shared.models.AlertMessage
 import org.blackcandy.shared.utils.TaskResult
 

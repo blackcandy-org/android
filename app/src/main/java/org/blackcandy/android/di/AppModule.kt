@@ -33,7 +33,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import okhttp3.OkHttpClient
-import org.blackcandy.android.media.MusicServiceController
 import org.blackcandy.android.viewmodels.AccountSheetViewModel
 import org.blackcandy.android.viewmodels.HomeViewModel
 import org.blackcandy.android.viewmodels.LoginViewModel
@@ -53,6 +52,7 @@ import org.blackcandy.shared.data.PreferencesDataSource
 import org.blackcandy.shared.data.ServerAddressRepository
 import org.blackcandy.shared.data.SystemInfoRepository
 import org.blackcandy.shared.data.UserRepository
+import org.blackcandy.shared.media.MusicServiceController
 import org.blackcandy.shared.models.User
 import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
 import org.koin.android.ext.koin.androidContext

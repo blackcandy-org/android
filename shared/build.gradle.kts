@@ -67,6 +67,7 @@ kotlin {
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.client.auth)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.koin.androidx.compose)
                 implementation(libs.androidx.datastore.preferences)
                 // Add KMP dependencies here
             }
@@ -83,6 +84,10 @@ kotlin {
                 // Add Android-specific dependencies here. Note that this source set depends on
                 // commonMain by default and will correctly pull the Android artifacts of any KMP
                 // dependencies declared in commonMain.
+                implementation(libs.androidx.media3.exoplayer)
+                implementation(libs.androidx.media3.session)
+                implementation(libs.androidx.media3.datasource.okhttp)
+                implementation(libs.androidx.recyclerview)
             }
         }
 
