@@ -1,6 +1,5 @@
-package org.blackcandy.android.viewmodels
+package org.blackcandy.shared.viewmodels
 
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +14,7 @@ import org.blackcandy.shared.models.AlertMessage
 import org.blackcandy.shared.models.Song
 import org.blackcandy.shared.utils.TaskResult
 import org.blackcandy.shared.utils.Theme
+import org.blackcandy.shared.utils.updateAppTheme
 
 data class NavHostUiState(
     val alertMessage: AlertMessage? = null,
@@ -40,19 +40,7 @@ class NavHostViewModel(
 
     fun updateTheme(theme: Theme) {
         viewModelScope.launch {
-            when (theme) {
-                Theme.DARK -> {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                }
-
-                Theme.LIGHT -> {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                }
-
-                Theme.AUTO -> {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                }
-            }
+            updateAppTheme(theme)
         }
     }
 

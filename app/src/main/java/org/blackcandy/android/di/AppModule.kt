@@ -2,7 +2,6 @@ package org.blackcandy.android.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.webkit.CookieManager
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.Serializer
@@ -33,14 +32,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import okhttp3.OkHttpClient
-import org.blackcandy.android.viewmodels.AccountSheetViewModel
-import org.blackcandy.android.viewmodels.HomeViewModel
-import org.blackcandy.android.viewmodels.LoginViewModel
 import org.blackcandy.android.viewmodels.MainViewModel
-import org.blackcandy.android.viewmodels.MiniPlayerViewModel
-import org.blackcandy.android.viewmodels.NavHostViewModel
-import org.blackcandy.android.viewmodels.PlayerViewModel
-import org.blackcandy.android.viewmodels.WebViewModel
 import org.blackcandy.shared.api.ApiError
 import org.blackcandy.shared.api.ApiException
 import org.blackcandy.shared.api.BlackCandyService
@@ -55,6 +47,14 @@ import org.blackcandy.shared.data.UserRepository
 import org.blackcandy.shared.media.MusicServiceController
 import org.blackcandy.shared.models.User
 import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
+import org.blackcandy.shared.viewmodels.AccountSheetViewModel
+import org.blackcandy.shared.viewmodels.HomeViewModel
+import org.blackcandy.shared.viewmodels.LoginViewModel
+import org.blackcandy.shared.viewmodels.MiniPlayerViewModel
+import org.blackcandy.shared.viewmodels.MusicServiceViewModel
+import org.blackcandy.shared.viewmodels.NavHostViewModel
+import org.blackcandy.shared.viewmodels.PlayerViewModel
+import org.blackcandy.shared.viewmodels.WebViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -83,13 +83,14 @@ val appModule =
         single { FavoritePlaylistRepository(get()) }
 
         viewModel { LoginViewModel(get(), get(), get()) }
-        viewModel { MainViewModel(get(), get(), get()) }
+        viewModel { MainViewModel(get()) }
         viewModel { AccountSheetViewModel(get(), get()) }
         viewModel { NavHostViewModel(get(), get(), get()) }
         viewModel { HomeViewModel(get()) }
         viewModel { MiniPlayerViewModel(get()) }
         viewModel { PlayerViewModel(get(), get(), get()) }
         viewModel { WebViewModel(get()) }
+        viewModel { MusicServiceViewModel(get(), get()) }
     }
 
 private const val DATASTORE_PREFERENCES_NAME = "user_preferences"

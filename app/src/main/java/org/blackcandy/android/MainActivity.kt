@@ -33,6 +33,7 @@ import org.blackcandy.android.compose.player.MiniPlayer
 import org.blackcandy.android.compose.player.PlayerScreen
 import org.blackcandy.android.databinding.ActivityMainBinding
 import org.blackcandy.android.viewmodels.MainViewModel
+import org.blackcandy.shared.viewmodels.MusicServiceViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity :
@@ -44,6 +45,9 @@ class MainActivity :
     }
 
     private val viewModel: MainViewModel by viewModel()
+
+    private val musicServiceViewModel: MusicServiceViewModel by viewModel()
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var playerBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     override lateinit var delegate: TurboActivityDelegate
@@ -76,7 +80,7 @@ class MainActivity :
         binding = ActivityMainBinding.inflate(layoutInflater)
         delegate = TurboActivityDelegate(this, R.id.home_container)
 
-        viewModel.setupMusicServiceController()
+        musicServiceViewModel.setupMusicServiceController()
 
         setupLayout()
         setupNavListener()
@@ -91,7 +95,7 @@ class MainActivity :
     override fun onRestart() {
         super.onRestart()
 
-        viewModel.getCurrentPlaylist()
+        musicServiceViewModel.getCurrentPlaylist()
     }
 
     override fun onDestroy() {

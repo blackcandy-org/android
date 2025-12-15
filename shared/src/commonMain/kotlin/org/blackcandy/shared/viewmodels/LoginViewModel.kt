@@ -1,6 +1,5 @@
-package org.blackcandy.android.viewmodels
+package org.blackcandy.shared.viewmodels
 
-import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,7 +65,7 @@ class LoginViewModel(
             serverAddress = "http://$serverAddress"
         }
 
-        if (!Patterns.WEB_URL.matcher(serverAddress).matches()) {
+        if (!isValidUrl(serverAddress)) {
             _uiState.update { it.copy(alertMessage = AlertMessage.LocalizedString(AlertMessage.DefinedMessages.INVALID_SERVER_ADDRESS)) }
             return
         }
@@ -116,5 +115,10 @@ class LoginViewModel(
 
     fun alertMessageShown() {
         _uiState.update { it.copy(alertMessage = null) }
+    }
+
+    private fun isValidUrl(url: String): Boolean {
+        val urlRegex = Regex("https?://(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)")
+        return urlRegex.matches(url)
     }
 }

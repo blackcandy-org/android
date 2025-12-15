@@ -16,9 +16,9 @@ import org.blackcandy.android.fragments.web.WebFragment
 import org.blackcandy.android.fragments.web.WebHomeFragment
 import org.blackcandy.android.fragments.web.WebLibraryFragment
 import org.blackcandy.android.utils.SnackbarUtil.Companion.showSnackbar
-import org.blackcandy.android.viewmodels.NavHostViewModel
 import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
 import org.blackcandy.shared.utils.Theme
+import org.blackcandy.shared.viewmodels.NavHostViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.reflect.KClass
 
@@ -59,7 +59,7 @@ open class MainNavHostFragment : TurboSessionNavHostFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect {
                     if (it.alertMessage != null) {
-                        showSnackbar(requireActivity(), it.alertMessage) {
+                        showSnackbar(requireActivity(), it.alertMessage!!) {
                             viewModel.alertMessageShown()
                         }
                     }

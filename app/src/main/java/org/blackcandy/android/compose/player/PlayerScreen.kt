@@ -33,7 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.blackcandy.android.R
 import org.blackcandy.android.utils.SnackbarUtil.Companion.ShowSnackbar
-import org.blackcandy.android.viewmodels.PlayerViewModel
+import org.blackcandy.shared.viewmodels.PlayerViewModel
 import org.koin.androidx.compose.koinViewModel
 
 enum class PlayerRoute {

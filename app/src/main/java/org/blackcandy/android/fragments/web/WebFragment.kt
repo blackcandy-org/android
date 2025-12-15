@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import dev.hotwire.turbo.fragments.TurboWebFragment
 import dev.hotwire.turbo.nav.TurboNavGraphDestination
 import org.blackcandy.android.R
-import org.blackcandy.android.viewmodels.WebViewModel
+import org.blackcandy.shared.viewmodels.WebViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @TurboNavGraphDestination(uri = "turbo://fragment/web")

@@ -5,3 +5,5 @@ enum class Theme {
     LIGHT,
     AUTO,
 }
+
+expect fun updateAppTheme(theme: Theme)
