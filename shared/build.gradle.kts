@@ -69,6 +69,9 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.androidx.datastore.preferences)
                 implementation(libs.androidx.lifecycle.viewmodel)
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
                 // Add KMP dependencies here
             }
         }
@@ -76,6 +79,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
+                implementation(libs.koin.test)
             }
         }
 
@@ -88,10 +92,8 @@ kotlin {
                 implementation(libs.androidx.media3.session)
                 implementation(libs.androidx.media3.datasource.okhttp)
                 implementation(libs.androidx.recyclerview)
-
-                // TODO: may need to moved to koin to commonMain after migrated di to shared module,
-                // Right now because MusicService on androidMain is reply on koin, so added here.
-                implementation(libs.koin.androidx.compose)
+                implementation(libs.koin.android)
+                implementation(libs.androidx.security.crypto)
             }
         }
 

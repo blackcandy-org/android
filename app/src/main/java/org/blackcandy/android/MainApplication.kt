@@ -1,7 +1,8 @@
 package org.blackcandy.android
 
 import android.app.Application
-import org.blackcandy.android.di.appModule
+import org.blackcandy.android.di.androidModule
+import org.blackcandy.shared.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -13,7 +14,7 @@ class MainApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@MainApplication)
-            modules(appModule)
+            modules(appModule() + androidModule)
         }
     }
 }
