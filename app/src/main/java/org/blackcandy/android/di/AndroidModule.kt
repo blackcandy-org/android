@@ -12,5 +12,5 @@ val androidModule =
         // After we migrate to use turbo native. it already provide a way to declare bottom tag. so we don't need to declare the library nav host fragment
         // in viewmodel. and only purpose of left for MainViewModel will be get current user. should rename a proper name.
         // After refactoring. we may also don't need this androidModule anymore.
-        viewModel { MainViewModel(get()) }
+        viewModel { MainViewModel(get(), get()) }
     }

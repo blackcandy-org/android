@@ -9,7 +9,7 @@
       ],
       "properties": {
         "context": "default",
-        "uri": "turbo://fragment/web",
+        "uri": "hotwire://fragment/web",
         "pull_to_refresh_enabled": true
       }
     },
@@ -19,7 +19,7 @@
         "^/$"
       ],
       "properties": {
-        "uri": "turbo://fragment/web/home",
+        "uri": "hotwire://fragment/web/home",
         "presentation": "replace_root"
       }
     },
@@ -28,17 +28,8 @@
         "^/library$"
       ],
       "properties": {
-        "uri": "turbo://fragment/web/library",
+        "uri": "hotwire://fragment/web/library",
         "presentation": "replace_root"
-      }
-    },
-    {
-      "patterns": [
-        "^/account$"
-      ],
-      "properties": {
-        "context": "modal",
-        "uri": "turbo://fragment/sheets/account"
       }
     },
     {
@@ -47,7 +38,7 @@
       ],
       "properties": {
         "context": "modal",
-        "uri": "turbo://fragment/web/bottom_sheet",
+        "uri": "hotwire://fragment/web/bottom_sheet",
         "pull_to_refresh_enabled": false
       }
     }

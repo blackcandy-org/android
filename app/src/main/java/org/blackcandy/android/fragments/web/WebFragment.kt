@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dev.hotwire.turbo.fragments.TurboWebFragment
-import dev.hotwire.turbo.nav.TurboNavGraphDestination
+import dev.hotwire.core.turbo.errors.HttpError
+import dev.hotwire.core.turbo.errors.VisitError
+import dev.hotwire.navigation.destinations.HotwireDestinationDeepLink
+import dev.hotwire.navigation.fragments.HotwireWebFragment
 import org.blackcandy.android.R
 import org.blackcandy.shared.viewmodels.WebViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@TurboNavGraphDestination(uri = "turbo://fragment/web")
-open class WebFragment : TurboWebFragment() {
+@HotwireDestinationDeepLink(uri = "hotwire://fragment/web")
+open class WebFragment : HotwireWebFragment() {
     private val viewModel: WebViewModel by viewModel()
 
     override fun onCreateView(
@@ -22,12 +24,12 @@ open class WebFragment : TurboWebFragment() {
 
     override fun onVisitErrorReceived(
         location: String,
-        errorCode: Int,
+        error: VisitError,
     ) {
-        if (errorCode == 401) {
+        if (error is HttpError.ClientError.Unauthorized) {
             viewModel.logout()
         } else {
-            super.onVisitErrorReceived(location, errorCode)
+            super.onVisitErrorReceived(location, error)
         }
     }
 }

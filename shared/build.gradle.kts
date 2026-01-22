@@ -13,7 +13,7 @@ kotlin {
     androidLibrary {
         namespace = "org.blackcandy.shared"
         compileSdk = 36
-        minSdk = 26
+        minSdk = 28
 
         withHostTestBuilder {
         }

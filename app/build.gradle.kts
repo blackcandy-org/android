@@ -7,11 +7,11 @@ plugins {
 
 android {
     namespace = "org.blackcandy.android"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.blackcandy.android"
-        minSdk = 26
+        minSdk = 28
         targetSdk = 34
         versionCode = 3
         versionName = "1.0.0"
@@ -82,6 +82,8 @@ dependencies {
     implementation(libs.ktor.client.auth)
     implementation(libs.coil.compose)
     implementation(libs.reorderable)
+    implementation(libs.hotwire.core)
+    implementation(libs.hotwire.navigation.fragments)
 
     implementation(project(":shared"))
 

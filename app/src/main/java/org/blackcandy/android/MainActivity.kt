@@ -3,12 +3,10 @@ package org.blackcandy.android
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.WindowManager
 import android.widget.FrameLayout
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.view.ViewCompat
@@ -17,15 +15,17 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
-import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
-import dev.hotwire.turbo.activities.TurboActivity
-import dev.hotwire.turbo.delegates.TurboActivityDelegate
+import dev.hotwire.navigation.activities.HotwireActivity
+import dev.hotwire.navigation.navigator.NavigatorConfiguration
+import dev.hotwire.navigation.tabs.HotwireBottomNavigationController
+import dev.hotwire.navigation.tabs.HotwireBottomTab
+import dev.hotwire.navigation.tabs.navigatorConfigurations
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -36,13 +36,8 @@ import org.blackcandy.android.viewmodels.MainViewModel
 import org.blackcandy.shared.viewmodels.MusicServiceViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity :
-    AppCompatActivity(),
-    TurboActivity,
-    OnItemSelectedListener {
-    companion object {
-        private const val SELECTED_NAV_ITEM_ID_KEY = "selected_nav_item_id"
-    }
+class MainActivity : HotwireActivity() {
+    private lateinit var bottomNavigationController: HotwireBottomNavigationController
 
     private val viewModel: MainViewModel by viewModel()
 
@@ -50,7 +45,7 @@ class MainActivity :
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var playerBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
-    override lateinit var delegate: TurboActivityDelegate
+    private lateinit var mainTabs: List<HotwireBottomTab>
 
     private val playerBottomSheetCallback by lazy {
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -78,18 +73,16 @@ class MainActivity :
         }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        delegate = TurboActivityDelegate(this, R.id.home_container)
 
         musicServiceViewModel.setupMusicServiceController()
 
+        setContentView(binding.root)
+
         setupLayout()
-        setupNavListener()
+        setupBottomTabs()
         setupPlayerBottomSheet()
         setupMiniPlayer()
         setupPlayerScreen()
-        restoreSavedState(savedInstanceState)
-
-        setContentView(binding.root)
     }
 
     override fun onRestart() {
@@ -116,25 +109,10 @@ class MainActivity :
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        // Save the selected nav item id to restore it when configuration changed.
-        binding.bottomNav?.let { outState.putInt(SELECTED_NAV_ITEM_ID_KEY, it.selectedItemId) }
-        binding.railNav?.let { outState.putInt(SELECTED_NAV_ITEM_ID_KEY, it.selectedItemId) }
-
-        super.onSaveInstanceState(outState)
+    override fun navigatorConfigurations(): List<NavigatorConfiguration> {
+        mainTabs = buildMainTabs(viewModel.serverAddress)
+        return mainTabs.navigatorConfigurations
     }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean =
-        when (item.itemId) {
-            R.id.nav_menu_home, R.id.nav_menu_library -> {
-                showSelectedNavItem(item.itemId)
-                true
-            }
-
-            else -> {
-                false
-            }
-        }
 
     private fun requireLogin(): Boolean {
         runBlocking { viewModel.currentUserFlow.first() } ?: return true
@@ -150,11 +128,6 @@ class MainActivity :
         }
 
         return false
-    }
-
-    private fun setupNavListener() {
-        binding.bottomNav?.setOnItemSelectedListener(this)
-        binding.railNav?.setOnItemSelectedListener(this)
     }
 
     private fun setupLayout() {
@@ -268,9 +241,13 @@ class MainActivity :
         binding.playerScreenComposeView.alpha = (slideOffset - transitionOffsetThreshold) / transitionOffsetThreshold
     }
 
-    private fun restoreSavedState(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null) {
-            showSelectedNavItem(savedInstanceState.getInt(SELECTED_NAV_ITEM_ID_KEY, R.id.nav_menu_home))
+    private fun setupBottomTabs() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_nav)
+
+        bottomNavigationController = HotwireBottomNavigationController(this, bottomNavigationView)
+        bottomNavigationController.load(mainTabs, viewModel.selectedTabIndex)
+        bottomNavigationController.setOnTabSelectedListener { index, _ ->
+            viewModel.selectedTabIndex = index
         }
     }
 
@@ -279,33 +256,5 @@ class MainActivity :
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         startActivity(intent)
-    }
-
-    private fun showSelectedNavItem(itemId: Int) {
-        when (itemId) {
-            R.id.nav_menu_home -> {
-                binding.homeContainer.isGone = false
-                binding.libraryContainer.isGone = true
-                delegate.currentNavHostFragmentId = R.id.home_container
-            }
-
-            R.id.nav_menu_library -> {
-                val libraryNavFragment =
-                    supportFragmentManager.findFragmentById(viewModel.libraryNav.id)
-
-                // Lazily add the library nav host fragment.
-                if (libraryNavFragment == null) {
-                    supportFragmentManager.commitNow {
-                        add(R.id.library_container, viewModel.libraryNav)
-                    }
-
-                    delegate.registerNavHostFragment(R.id.library_container)
-                }
-
-                binding.homeContainer.isGone = true
-                binding.libraryContainer.isGone = false
-                delegate.currentNavHostFragmentId = R.id.library_container
-            }
-        }
     }
 }
