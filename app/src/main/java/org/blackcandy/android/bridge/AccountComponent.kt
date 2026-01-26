@@ -1,7 +1,6 @@
 package org.blackcandy.android.bridge
 
 import androidx.compose.ui.platform.ComposeView
-import androidx.fragment.app.Fragment
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -11,24 +10,24 @@ import dev.hotwire.core.bridge.Message
 import dev.hotwire.navigation.destinations.HotwireDestination
 import org.blackcandy.android.R
 import org.blackcandy.android.compose.account.AccountMenu
+import org.blackcandy.android.fragments.web.WebFragment
 import org.blackcandy.android.ui.MenuItem
 import org.blackcandy.shared.viewmodels.WebViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.getValue
 
 class AccountComponent(
     name: String,
     private val delegate: BridgeDelegate<HotwireDestination>,
 ) : BridgeComponent<HotwireDestination>(name, delegate) {
-    private val viewModel: WebViewModel by fragment.viewModel()
-
-    private val fragment: Fragment
-        get() = delegate.destination.fragment
+    private val fragment: WebFragment
+        get() = delegate.destination.fragment as WebFragment
 
     private val toolbar: MaterialToolbar?
         get() = fragment.view?.findViewById(R.id.toolbar)
 
     private val menuItems: MutableList<MenuItem> = mutableListOf()
+
+    private val viewModel: WebViewModel
+        get() = fragment.viewModel
 
     private lateinit var bottomSheet: BottomSheetDialog
 

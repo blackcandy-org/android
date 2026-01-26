@@ -6,13 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import dev.hotwire.navigation.destinations.HotwireDestinationDeepLink
 import org.blackcandy.android.databinding.FragmentWebHomeBinding
-import org.blackcandy.shared.viewmodels.HomeViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @HotwireDestinationDeepLink(uri = "hotwire://fragment/web/home")
 class WebHomeFragment : WebFragment() {
-    private val viewModel: HomeViewModel by viewModel()
-
     @Suppress("ktlint:standard:backing-property-naming")
     private var _binding: FragmentWebHomeBinding? = null
 

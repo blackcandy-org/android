@@ -27,12 +27,9 @@ import org.blackcandy.shared.data.ServerAddressRepository
 import org.blackcandy.shared.data.SystemInfoRepository
 import org.blackcandy.shared.data.UserRepository
 import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
-import org.blackcandy.shared.viewmodels.AccountSheetViewModel
-import org.blackcandy.shared.viewmodels.HomeViewModel
 import org.blackcandy.shared.viewmodels.LoginViewModel
 import org.blackcandy.shared.viewmodels.MiniPlayerViewModel
 import org.blackcandy.shared.viewmodels.MusicServiceViewModel
-import org.blackcandy.shared.viewmodels.NavHostViewModel
 import org.blackcandy.shared.viewmodels.PlayerViewModel
 import org.blackcandy.shared.viewmodels.WebViewModel
 import org.koin.core.module.dsl.viewModel
@@ -53,12 +50,9 @@ val commonModule =
         single { FavoritePlaylistRepository(get()) }
 
         viewModel { LoginViewModel(get(), get(), get()) }
-        viewModel { AccountSheetViewModel(get(), get()) }
-        viewModel { NavHostViewModel(get(), get(), get()) }
-        viewModel { HomeViewModel(get()) }
         viewModel { MiniPlayerViewModel(get()) }
         viewModel { PlayerViewModel(get(), get(), get()) }
-        viewModel { WebViewModel(get()) }
+        viewModel { WebViewModel(get(), get(), get()) }
         viewModel { MusicServiceViewModel(get(), get()) }
     }
 

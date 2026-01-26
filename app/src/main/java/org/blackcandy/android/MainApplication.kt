@@ -9,7 +9,12 @@ import dev.hotwire.navigation.config.defaultFragmentDestination
 import dev.hotwire.navigation.config.registerBridgeComponents
 import dev.hotwire.navigation.config.registerFragmentDestinations
 import org.blackcandy.android.bridge.AccountComponent
+import org.blackcandy.android.bridge.AlbumComponent
+import org.blackcandy.android.bridge.FlashComponent
+import org.blackcandy.android.bridge.PlaylistComponent
 import org.blackcandy.android.bridge.SearchComponent
+import org.blackcandy.android.bridge.SongsComponent
+import org.blackcandy.android.bridge.ThemeComponent
 import org.blackcandy.android.di.androidModule
 import org.blackcandy.android.fragments.web.WebBottomSheetFragment
 import org.blackcandy.android.fragments.web.WebFragment
@@ -35,6 +40,10 @@ class MainApplication : Application() {
     }
 
     private fun configureApp() {
+        Hotwire.config.applicationUserAgentPrefix = "${BLACK_CANDY_USER_AGENT};"
+        Hotwire.config.jsonConverter = KotlinXJsonConverter()
+        Hotwire.defaultFragmentDestination = WebFragment::class
+
         Hotwire.loadPathConfiguration(
             context = this,
             location =
@@ -43,8 +52,6 @@ class MainApplication : Application() {
                 ),
         )
 
-        Hotwire.config.applicationUserAgentPrefix = "${BLACK_CANDY_USER_AGENT};"
-        Hotwire.defaultFragmentDestination = WebFragment::class
         Hotwire.registerFragmentDestinations(
             WebFragment::class,
             WebHomeFragment::class,
@@ -55,8 +62,11 @@ class MainApplication : Application() {
         Hotwire.registerBridgeComponents(
             BridgeComponentFactory("account", ::AccountComponent),
             BridgeComponentFactory("search", ::SearchComponent),
+            BridgeComponentFactory("album", ::AlbumComponent),
+            BridgeComponentFactory("flash", ::FlashComponent),
+            BridgeComponentFactory("playlist", ::PlaylistComponent),
+            BridgeComponentFactory("songs", ::SongsComponent),
+            BridgeComponentFactory("theme", ::ThemeComponent),
         )
-
-        Hotwire.config.jsonConverter = KotlinXJsonConverter()
     }
 }
