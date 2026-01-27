@@ -21,7 +21,6 @@ kotlinxSerializationJson = "1.5.1"
 ktor = "2.3.4"
 media3 = "1.3.1"
 reorderable = "1.3.3"
-turbo = "7.0.3"
 kotlin = "2.2.0"
 androidGradlePlugin = "8.13.1"
 kotlinStdlib = "2.2.0"
@@ -72,7 +71,6 @@ ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref =
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name ="ktor-serialization-kotlinx-json", version.ref = "ktor" }
 reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version.ref = "reorderable" }
-turbo = { group = "dev.hotwire", name = "turbo", version.ref = "turbo" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
