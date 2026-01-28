@@ -62,7 +62,6 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.okhttp)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.client.auth)
@@ -88,6 +87,7 @@ kotlin {
                 // Add Android-specific dependencies here. Note that this source set depends on
                 // commonMain by default and will correctly pull the Android artifacts of any KMP
                 // dependencies declared in commonMain.
+                implementation(libs.ktor.client.okhttp)
                 implementation(libs.androidx.media3.exoplayer)
                 implementation(libs.androidx.media3.session)
                 implementation(libs.androidx.media3.datasource.okhttp)
@@ -107,6 +107,7 @@ kotlin {
 
         iosMain {
             dependencies {
+                implementation(libs.ktor.client.darwin)
                 // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
                 // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
                 // part of KMP’s default source set hierarchy. Note that this source set depends

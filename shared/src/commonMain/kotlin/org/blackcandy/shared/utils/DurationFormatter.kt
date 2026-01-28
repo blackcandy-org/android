@@ -6,7 +6,10 @@ class DurationFormatter {
     companion object {
         fun string(duration: Double): String {
             duration.seconds.toComponents { minutes, seconds, _ ->
-                return "%02d:%02d".format(minutes, seconds)
+                val mm = minutes.toString().padStart(2, '0')
+                val ss = seconds.toString().padStart(2, '0')
+
+                return "$mm:$ss"
             }
         }
     }

@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "BlackCandy"
-include(":app")
+include(":androidApp")
 include(":shared")
