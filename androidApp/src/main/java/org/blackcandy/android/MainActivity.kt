@@ -32,7 +32,7 @@ import kotlinx.coroutines.runBlocking
 import org.blackcandy.android.compose.player.MiniPlayer
 import org.blackcandy.android.compose.player.PlayerScreen
 import org.blackcandy.android.databinding.ActivityMainBinding
-import org.blackcandy.android.viewmodels.MainViewModel
+import org.blackcandy.shared.viewmodels.MainViewModel
 import org.blackcandy.shared.viewmodels.MusicServiceViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -115,7 +115,7 @@ class MainActivity : HotwireActivity() {
     }
 
     private fun requireLogin(): Boolean {
-        runBlocking { viewModel.currentUserFlow.first() } ?: return true
+        viewModel.currentUser ?: return true
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

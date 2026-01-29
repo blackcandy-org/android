@@ -28,6 +28,7 @@ import org.blackcandy.shared.data.SystemInfoRepository
 import org.blackcandy.shared.data.UserRepository
 import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
 import org.blackcandy.shared.viewmodels.LoginViewModel
+import org.blackcandy.shared.viewmodels.MainViewModel
 import org.blackcandy.shared.viewmodels.MiniPlayerViewModel
 import org.blackcandy.shared.viewmodels.MusicServiceViewModel
 import org.blackcandy.shared.viewmodels.PlayerViewModel
@@ -45,10 +46,11 @@ val commonModule =
         single<BlackCandyService> { BlackCandyServiceImpl(get()) }
         single { ServerAddressRepository(get()) }
         single { SystemInfoRepository(get()) }
-        single { UserRepository(get(), get(), get(named("UserDataStore")), get(), get()) }
+        single { UserRepository(get(), get(), get(), get()) }
         single { CurrentPlaylistRepository(get()) }
         single { FavoritePlaylistRepository(get()) }
 
+        viewModel { MainViewModel(get(), get()) }
         viewModel { LoginViewModel(get(), get(), get()) }
         viewModel { MiniPlayerViewModel(get()) }
         viewModel { PlayerViewModel(get(), get(), get()) }

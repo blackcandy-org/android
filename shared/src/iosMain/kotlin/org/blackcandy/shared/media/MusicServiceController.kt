@@ -43,7 +43,10 @@ actual class MusicServiceController {
     actual fun updateSongInPlaylist(song: Song) {
     }
 
-    actual fun moveSongInPlaylist(from: Int, to: Int) {
+    actual fun moveSongInPlaylist(
+        from: Int,
+        to: Int,
+    ) {
     }
 
     actual fun setPlaybackMode(playbackMode: PlaybackMode) {
@@ -59,5 +62,4 @@ actual class MusicServiceController {
 
     actual fun addSongToLast(song: Song) {
     }
-
 }

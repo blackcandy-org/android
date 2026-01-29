@@ -14,7 +14,6 @@ import org.blackcandy.shared.utils.TaskResult
 class UserRepository(
     private val httpClient: HttpClient,
     private val service: BlackCandyService,
-    private val userDataStore: DataStore<User?>,
     private val preferencesDataSource: PreferencesDataSource,
     private val encryptedDataSource: EncryptedDataSource,
 ) {
@@ -27,7 +26,7 @@ class UserRepository(
             val serverAddress = preferencesDataSource.getServerAddress()
 
             Cookies.update(serverAddress, response.cookies)
-            userDataStore.updateData { response.user }
+            preferencesDataSource.updateCurrentUser(response.user)
             encryptedDataSource.updateApiToken(response.token)
 
             // Clear previous cached auth token in http client
@@ -48,8 +47,10 @@ class UserRepository(
         service.removeAuthentication()
         encryptedDataSource.removeApiToken()
         Cookies.clean()
-        userDataStore.updateData { null }
+        preferencesDataSource.updateCurrentUser(null)
     }
 
-    fun getCurrentUserFlow(): Flow<User?> = userDataStore.data
+    suspend fun getCurrentUser(): User? = preferencesDataSource.getCurrentUser()
+
+    fun getCurrentUserFlow(): Flow<User?> = preferencesDataSource.getCurrentUserFlow()
 }
