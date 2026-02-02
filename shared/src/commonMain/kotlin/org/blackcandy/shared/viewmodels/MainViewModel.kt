@@ -18,7 +18,6 @@ class MainViewModel(
             userRepository.getCurrentUser()
         }
 
-
     val serverAddress =
         runBlocking {
             serverAddressRepository.getServerAddress()

@@ -23,7 +23,6 @@ class PreferencesDataSource(
 
     suspend fun getCurrentUser(): User? = dataStore.data.first()[CURRENT_USER_KEY]?.let { Json.decodeFromString(it) }
 
-
     suspend fun updateServerAddress(serverAddress: String) {
         dataStore.edit { it[SERVER_ADDRESS_KEY] = serverAddress }
     }

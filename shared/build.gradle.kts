@@ -118,3 +118,9 @@ kotlin {
         }
     }
 }
+
+skie {
+    features {
+        enableSwiftUIObservingPreview = true
+    }
+}
