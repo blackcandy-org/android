@@ -1,21 +1,31 @@
 import SwiftUI
 
 struct LoginAuthenticationForm: View {
-    @State var email = ""
-    @State var password = ""
+    let email: String
+    let password: String
+    let onLoginButtonClicked: (() -> Void)
+    let onEmailChanged: ((String) -> Void)
+    let onPasswordChanged: ((String) -> Void)
 
     var body: some View {
         Form {
             Section {
-                TextField("label.email", text: $email)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .keyboardType(.emailAddress)
+                TextField("label.email", text: Binding(
+                    get: { email },
+                    set: { email in onEmailChanged(email) }
+                ))
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
+                .keyboardType(.emailAddress)
 
-                SecureField("label.password", text: $password)
+                SecureField("label.password", text: Binding(
+                    get: { password },
+                    set: { password in onPasswordChanged(password) }
+                ))
             }
 
             Button(action: {
+                onLoginButtonClicked()
             }, label: {
                 Text("label.login")
             })

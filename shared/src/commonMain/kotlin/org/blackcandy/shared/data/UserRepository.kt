@@ -20,7 +20,7 @@ class UserRepository(
     suspend fun login(
         email: String,
         password: String,
-    ): TaskResult<Unit> {
+    ): TaskResult<String> {
         try {
             val response = service.createAuthentication(email, password).orThrow()
             val serverAddress = preferencesDataSource.getServerAddress()
@@ -37,7 +37,7 @@ class UserRepository(
                 .first()
                 .clearToken()
 
-            return TaskResult.Success(Unit)
+            return TaskResult.Success(serverAddress)
         } catch (e: Exception) {
             return TaskResult.Failure(e.message)
         }

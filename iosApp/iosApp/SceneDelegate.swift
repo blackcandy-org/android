@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
 
         if isLoggedIn {
-            window.rootViewController = MainViewController()
+            window.rootViewController = MainViewController(serverAddress: viewModel.serverAddress)
         } else {
             window.rootViewController = LoginViewController()
         }

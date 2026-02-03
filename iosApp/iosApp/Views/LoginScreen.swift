@@ -4,6 +4,8 @@ import sharedKit
 struct LoginScreen: View {
     @State var isAuthenticationFormVisible: Bool = false
     @State var serverAddress: String?
+    @State var email: String = ""
+    @State var password: String = ""
     @State var showingAlert = false
     @State var alertMessage: AlertMessage?
 
@@ -23,7 +25,21 @@ struct LoginScreen: View {
                 )
 
                 NavigationLink(
-                    destination: LoginAuthenticationForm(),
+                    destination: LoginAuthenticationForm(
+                        email: email,
+                        password: password,
+                        onLoginButtonClicked: {
+                            viewModel.login(onSuccess: { serverAddress in
+                                changeRootViewController(viewController: MainViewController(serverAddress: serverAddress))
+                            })
+                        },
+                        onEmailChanged: { email in
+                            viewModel.updateEmail(email: email)
+                        },
+                        onPasswordChanged: { password in
+                            viewModel.updatePassword(password: password)
+                        }
+                    ),
                     isActive: $isAuthenticationFormVisible,
                     label: { EmptyView() }
                 )
@@ -36,6 +52,8 @@ struct LoginScreen: View {
         })
         .collect(flow: viewModel.uiState) { state in
             serverAddress = state.serverAddress
+            email = state.email
+            password = state.password
 
             if let message = state.alertMessage {
                 alertMessage = message

@@ -188,9 +188,6 @@
         }
       }
     },
-    "OK" : {
-
-    },
     "text.added_to_playlist" : {
       "extractionState" : "manual",
       "localizations" : {
