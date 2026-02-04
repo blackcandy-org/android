@@ -28,9 +28,10 @@ class WebViewModel(
 
     val uiState = _uiState.asStateFlow()
 
-    fun logout() {
+    fun logout(onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
             userRepository.logout()
+            onSuccess()
         }
     }
 

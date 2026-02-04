@@ -1,14 +1,13 @@
 package org.blackcandy.shared.media
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.blackcandy.shared.models.Song
 
 actual class MusicServiceController {
-    actual val musicState: StateFlow<MusicState>
-        get() = TODO("Not yet implemented")
-    actual val currentPosition: Flow<Double>
-        get() = TODO("Not yet implemented")
+    actual val musicState: StateFlow<MusicState> = MutableStateFlow(MusicState())
+    actual val currentPosition: Flow<Double> = MutableStateFlow(0.0)
 
     actual fun initMediaController(onInitialized: () -> Unit) {
     }
@@ -52,13 +51,9 @@ actual class MusicServiceController {
     actual fun setPlaybackMode(playbackMode: PlaybackMode) {
     }
 
-    actual fun getSongIndex(songId: Int): Int {
-        TODO("Not yet implemented")
-    }
+    actual fun getSongIndex(songId: Int): Int = 0
 
-    actual fun addSongToNext(song: Song): Int {
-        TODO("Not yet implemented")
-    }
+    actual fun addSongToNext(song: Song): Int = 0
 
     actual fun addSongToLast(song: Song) {
     }

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import kotlinx.cinterop.ExperimentalForeignApi
 import okio.Path.Companion.toPath
 import org.blackcandy.shared.data.EncryptedDataSource
+import org.blackcandy.shared.media.MusicServiceController
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import platform.Foundation.NSDocumentDirectory
@@ -17,6 +18,7 @@ actual val platformModule =
     module {
         single(named("PreferencesDataStore")) { provideDataStore() }
         single { EncryptedDataSource() }
+        single { MusicServiceController() }
     }
 
 private const val DATASTORE_PREFERENCES_NAME = "user.preferences_pb"
