@@ -1,0 +1,12 @@
+{
+  "rules": [
+    {
+      "patterns": [
+        "^/dialog/*"
+      ],
+      "properties": {
+        "context": "modal"
+      }
+    }
+  ]
+}

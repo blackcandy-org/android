@@ -15,7 +15,6 @@ struct MenuItem: Identifiable {
     }
 }
 
-
 extension MenuItem {
     enum ItemType {
         case normal

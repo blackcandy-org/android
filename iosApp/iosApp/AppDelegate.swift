@@ -30,12 +30,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func configureHotwire() {
         Hotwire.config.applicationUserAgentPrefix = "\(BLACK_CANDY_USER_AGENT);"
 
+        Hotwire.loadPathConfiguration(from: [
+            .file(Bundle.main.url(forResource: "configuration", withExtension: "json")!)
+        ])
+
         Hotwire.config.defaultViewController = { url in
             WebViewController(url: url)
         }
 
         Hotwire.registerBridgeComponents([
-            AccountComponent.self
+            AccountComponent.self,
+            SearchComponent.self
         ])
     }
 }
