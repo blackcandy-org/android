@@ -11,7 +11,7 @@ import dev.hotwire.navigation.destinations.HotwireDestination
 import org.blackcandy.android.R
 import org.blackcandy.android.compose.account.AccountMenu
 import org.blackcandy.android.fragments.web.WebFragment
-import org.blackcandy.android.ui.MenuItem
+import org.blackcandy.android.utils.MenuItem
 import org.blackcandy.shared.viewmodels.WebViewModel
 
 class AccountComponent(

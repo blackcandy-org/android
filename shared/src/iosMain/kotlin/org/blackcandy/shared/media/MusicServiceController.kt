@@ -2,17 +2,24 @@ package org.blackcandy.shared.media
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import org.blackcandy.shared.models.Song
 
 actual class MusicServiceController {
-    actual val musicState: StateFlow<MusicState> = MutableStateFlow(MusicState())
+    private val _musicState = MutableStateFlow(MusicState())
+
+    actual val musicState = _musicState.asStateFlow()
+
     actual val currentPosition: Flow<Double> = MutableStateFlow(0.0)
 
     actual fun initMediaController(onInitialized: () -> Unit) {
+        onInitialized()
     }
 
     actual fun updatePlaylist(songs: List<Song>) {
+        _musicState.update { it.copy(playlist = songs) }
+        _musicState.update { it.copy(currentSong = songs.firstOrNull()) }
     }
 
     actual fun play() {

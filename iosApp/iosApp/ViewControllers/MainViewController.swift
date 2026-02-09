@@ -1,7 +1,11 @@
 import UIKit
 import HotwireNative
+import LNPopupUI
+import sharedKit
 
 class MainViewController: UISplitViewController, UISplitViewControllerDelegate {
+    private let musicServiceViewModel: MusicServiceViewModel = KoinHelper().getMusicServiceViewModel()
+
     init(serverAddress: String) {
         super.init(style: .doubleColumn)
 
@@ -14,9 +18,14 @@ class MainViewController: UISplitViewController, UISplitViewControllerDelegate {
         let tabs = buildMainTabs(serverAddress: serverAddress)
 
         tabBarController.load(tabs)
+        tabBarController.presentPopupBar {
+            PlayerScreen()
+        }
 
         setViewController(tabBarController, for: .secondary)
         setViewController(tabBarController, for: .compact)
+
+        musicServiceViewModel.setupMusicServiceController()
     }
 
     required init?(coder: NSCoder) {

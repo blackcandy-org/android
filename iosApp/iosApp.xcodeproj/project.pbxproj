@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		646F4A7B2F35C74300A4FAFB /* LNPopupUI in Frameworks */ = {isa = PBXBuildFile; productRef = 646F4A7A2F35C74300A4FAFB /* LNPopupUI */; };
 		64D93BEB2F2AFACF00B13EAA /* HotwireNative in Frameworks */ = {isa = PBXBuildFile; productRef = 64D93BEA2F2AFACF00B13EAA /* HotwireNative */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				64D93BEB2F2AFACF00B13EAA /* HotwireNative in Frameworks */,
+				646F4A7B2F35C74300A4FAFB /* LNPopupUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +87,7 @@
 			name = iosApp;
 			packageProductDependencies = (
 				64D93BEA2F2AFACF00B13EAA /* HotwireNative */,
+				646F4A7A2F35C74300A4FAFB /* LNPopupUI */,
 			);
 			productName = iosApp;
 			productReference = 64ADE25F2F29ACA5002615D0 /* iosApp.app */;
@@ -116,6 +119,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				64D93BE92F2AFACF00B13EAA /* XCRemoteSwiftPackageReference "hotwire-native-ios" */,
+				646F4A792F35C74300A4FAFB /* XCRemoteSwiftPackageReference "LNPopupUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 64ADE2602F29ACA5002615D0 /* Products */;
@@ -367,6 +371,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		646F4A792F35C74300A4FAFB /* XCRemoteSwiftPackageReference "LNPopupUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LeoNatan/LNPopupUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 		64D93BE92F2AFACF00B13EAA /* XCRemoteSwiftPackageReference "hotwire-native-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hotwired/hotwire-native-ios";
@@ -378,6 +390,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		646F4A7A2F35C74300A4FAFB /* LNPopupUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 646F4A792F35C74300A4FAFB /* XCRemoteSwiftPackageReference "LNPopupUI" */;
+			productName = LNPopupUI;
+		};
 		64D93BEA2F2AFACF00B13EAA /* HotwireNative */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 64D93BE92F2AFACF00B13EAA /* XCRemoteSwiftPackageReference "hotwire-native-ios" */;

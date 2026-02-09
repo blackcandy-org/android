@@ -7,13 +7,15 @@ import kotlinx.cinterop.interpretObjCPointer
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
-import platform.CoreFoundation.CFDictionaryRef
-import platform.CoreFoundation.CFTypeRef
+import platform.CoreFoundation.CFDictionaryAddValue
+import platform.CoreFoundation.CFDictionaryCreateMutable
+import platform.CoreFoundation.CFRelease
 import platform.CoreFoundation.CFTypeRefVar
 import platform.CoreFoundation.kCFBooleanTrue
+import platform.CoreFoundation.kCFTypeDictionaryKeyCallBacks
+import platform.CoreFoundation.kCFTypeDictionaryValueCallBacks
 import platform.Foundation.CFBridgingRetain
 import platform.Foundation.NSData
-import platform.Foundation.NSDictionary
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.create
@@ -36,56 +38,66 @@ actual class EncryptedDataSource {
         private const val API_TOKEN_KEY = "org.blackcandy.api_token_key"
     }
 
-    private fun CFTypeRef?.asNSObject(): Any? = this?.let { interpretObjCPointer<Any>(it.rawValue) }
-
     actual fun getApiToken(): String? {
-        val query =
-            mapOf<Any?, Any?>(
-                kSecClass.asNSObject() to kSecClassGenericPassword.asNSObject(),
-                kSecAttrAccount.asNSObject() to API_TOKEN_KEY,
-                kSecReturnData.asNSObject() to kCFBooleanTrue.asNSObject(),
-                kSecMatchLimit.asNSObject() to kSecMatchLimitOne.asNSObject(),
-            ) as NSDictionary
+        val query = CFDictionaryCreateMutable(null, 0, kCFTypeDictionaryKeyCallBacks.ptr, kCFTypeDictionaryValueCallBacks.ptr)
+        val keyRef = CFBridgingRetain(API_TOKEN_KEY as Any as NSString)
 
-        return memScoped {
-            val result = alloc<CFTypeRefVar>()
-            val cfQuery = CFBridgingRetain(query) as CFDictionaryRef
-            val status = SecItemCopyMatching(cfQuery, result.ptr)
+        CFDictionaryAddValue(query, kSecClass, kSecClassGenericPassword)
+        CFDictionaryAddValue(query, kSecAttrAccount, keyRef)
+        CFDictionaryAddValue(query, kSecReturnData, kCFBooleanTrue)
+        CFDictionaryAddValue(query, kSecMatchLimit, kSecMatchLimitOne)
 
-            if (status == errSecSuccess) {
-                val data = result.value?.let { interpretObjCPointer<NSData>(it.rawValue) }
-                data?.let {
-                    NSString.create(it, NSUTF8StringEncoding)?.toString()
+        val result =
+            memScoped {
+                val resultVar = alloc<CFTypeRefVar>()
+                val status = SecItemCopyMatching(query, resultVar.ptr)
+
+                if (status == errSecSuccess) {
+                    val data = resultVar.value?.let { interpretObjCPointer<NSData>(it.rawValue) }
+                    data?.let {
+                        NSString.create(it, NSUTF8StringEncoding)?.toString()
+                    }
+                } else {
+                    null
                 }
-            } else {
-                null
             }
-        }
+
+        CFRelease(query)
+        CFRelease(keyRef)
+
+        return result
     }
 
     actual fun updateApiToken(apiToken: String) {
-        removeApiToken()
-
         val apiTokenData = (apiToken as Any as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: return
-        val query =
-            mapOf<Any?, Any?>(
-                kSecClass.asNSObject() to kSecClassGenericPassword.asNSObject(),
-                kSecAttrAccount.asNSObject() to API_TOKEN_KEY,
-                kSecValueData.asNSObject() to apiTokenData,
-            ) as NSDictionary
 
-        val cfQuery = CFBridgingRetain(query) as CFDictionaryRef
-        SecItemAdd(cfQuery, null)
+        val query = CFDictionaryCreateMutable(null, 0, kCFTypeDictionaryKeyCallBacks.ptr, kCFTypeDictionaryValueCallBacks.ptr)
+        val keyRef = CFBridgingRetain(API_TOKEN_KEY as Any as NSString)
+        val valueRef = CFBridgingRetain(apiTokenData)
+
+        CFDictionaryAddValue(query, kSecClass, kSecClassGenericPassword)
+        CFDictionaryAddValue(query, kSecAttrAccount, keyRef)
+
+        SecItemDelete(query)
+
+        CFDictionaryAddValue(query, kSecValueData, valueRef)
+        SecItemAdd(query, null)
+
+        CFRelease(query)
+        CFRelease(keyRef)
+        CFRelease(valueRef)
     }
 
     actual fun removeApiToken() {
-        val query =
-            mapOf<Any?, Any?>(
-                kSecClass.asNSObject() to kSecClassGenericPassword.asNSObject(),
-                kSecAttrAccount.asNSObject() to API_TOKEN_KEY,
-            ) as NSDictionary
+        val query = CFDictionaryCreateMutable(null, 0, kCFTypeDictionaryKeyCallBacks.ptr, kCFTypeDictionaryValueCallBacks.ptr)
+        val keyRef = CFBridgingRetain(API_TOKEN_KEY as Any as NSString)
 
-        val cfQuery = CFBridgingRetain(query) as CFDictionaryRef
-        SecItemDelete(cfQuery)
+        CFDictionaryAddValue(query, kSecClass, kSecClassGenericPassword)
+        CFDictionaryAddValue(query, kSecAttrAccount, keyRef)
+
+        SecItemDelete(query)
+
+        CFRelease(query)
+        CFRelease(keyRef)
     }
 }

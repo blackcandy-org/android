@@ -28,15 +28,19 @@ struct AlertMessageCover {
 }
 
 extension View {
-    @ViewBuilder func alertMessage(_ message: AlertMessage?, isPresented: Binding<Bool>, onShown: @escaping () -> Void) -> some View {
+    @ViewBuilder func alertMessage(_ message: AlertMessage?, onShown: @escaping () -> Void) -> some View {
+        let alertMessage = AlertMessageCover.toString(message)
+
         alert(
-            AlertMessageCover.toString(message),
-            isPresented: isPresented
-        ) {
-            Button("label.ok", role: .cancel) {
-                onShown()
-            }
-        }
+            alertMessage,
+            isPresented: Binding(
+                get: { !alertMessage.isEmpty },
+                set: { presented in
+                    print(presented)
+                    if !presented { onShown() }
+                }
+            )
+        ) {}
     }
 
 }
