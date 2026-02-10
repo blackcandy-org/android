@@ -2,26 +2,26 @@ import SwiftUI
 import sharedKit
 
 struct LoginScreen: View {
-    @State var isAuthenticationFormVisible: Bool = false
-
     private let viewModel: LoginViewModel = KoinHelper().getLoginViewModel()
+
+    @State private var path = NavigationPath()
 
     var body: some View {
         Observing(viewModel.uiState) { uiState in
-            NavigationView {
-                VStack {
-                    LoginConnectionForm(
-                        serverAddress: uiState.serverAddress ?? "",
-                        onConnectButtonClicked: {
-                            viewModel.checkSystemInfo(onSuccess: { isAuthenticationFormVisible = true })
-                        },
-                        onServerAddressChanged: { serverAddress in
-                            viewModel.updateServerAddress(serverAddress: serverAddress)
-                        }
-                    )
-
-                    NavigationLink(
-                        destination: LoginAuthenticationForm(
+            NavigationStack(path: $path) {
+                LoginConnectionForm(
+                    serverAddress: uiState.serverAddress ?? "",
+                    onConnectButtonClicked: {
+                        viewModel.checkSystemInfo(onSuccess: { path.append(Route.authentication) })
+                    },
+                    onServerAddressChanged: { serverAddress in
+                        viewModel.updateServerAddress(serverAddress: serverAddress)
+                    }
+                )
+                .navigationDestination(for: Route.self) { route in
+                    switch route {
+                    case .authentication:
+                        LoginAuthenticationForm(
                             email: uiState.email,
                             password: uiState.password,
                             onLoginButtonClicked: {
@@ -35,11 +35,8 @@ struct LoginScreen: View {
                             onPasswordChanged: { password in
                                 viewModel.updatePassword(password: password)
                             }
-                        ),
-                        isActive: $isAuthenticationFormVisible,
-                        label: { EmptyView() }
-                    )
-                    .hidden()
+                        )
+                    }
                 }
             }
             .navigationViewStyle(.stack)
@@ -47,5 +44,11 @@ struct LoginScreen: View {
                 viewModel.alertMessageShown()
             })
         }
+    }
+}
+
+extension LoginScreen {
+    enum Route: Hashable {
+        case authentication
     }
 }

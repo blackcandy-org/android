@@ -5,15 +5,33 @@ import sharedKit
 struct PlayerScreen: View {
     private let viewModel: PlayerViewModel = KoinHelper().getPlayerViewModel()
 
+    @State private var path = NavigationPath()
     @State private var albumImage: UIImage?
     @State private var currentSong: Song?
     @State private var isPlaying = false
 
     var body: some View {
         Observing(viewModel.uiState) { uiState in
-            FullPlayer(
-                currentSong: uiState.musicState.currentSong
-            )
+            NavigationStack(path: $path) {
+                FullPlayer(
+                    currentSong: uiState.musicState.currentSong,
+                    currentPosition: uiState.currentPosition,
+                    playbackMode: uiState.musicState.playbackMode,
+                    onPlaylistButtonClicked: { path.append(Route.playlist) }
+                )
+                .navigationDestination(for: Route.self) { route in
+                    switch route {
+                    case .playlist:
+                        PlayerPlaylist(
+                            playlist: uiState.musicState.playlist,
+                            currentSong: uiState.musicState.currentSong,
+                            onItemClicked: { _ in },
+                            onItemSweepToDismiss: { _ in },
+                            onItemMoved: {_, _ in }
+                        )
+                    }
+                }
+            }
         }
         .popupTitle(currentSong?.name ?? String(localized: "label.not_playing"))
         .popupImage(albumImage != nil ? Image(uiImage: albumImage!) : nil)
@@ -69,5 +87,11 @@ struct PlayerScreen: View {
             currentSong = state.musicState.currentSong
             isPlaying = state.musicState.isPlaying
         }
+    }
+}
+
+extension PlayerScreen {
+    enum Route: Hashable {
+        case playlist
     }
 }
