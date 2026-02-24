@@ -67,7 +67,11 @@ actual class MusicServiceController(
                         }
 
                         if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
-                            _musicState.update { it.copy(isPlaying = player.isPlaying) }
+                            if (player.isPlaying) {
+                                _musicState.update { it.copy(playbackState = PlaybackState.PLAYING) }
+                            } else {
+                                _musicState.update { it.copy(playbackState = PlaybackState.PAUSED) }
+                            }
                         }
                     }
                 },

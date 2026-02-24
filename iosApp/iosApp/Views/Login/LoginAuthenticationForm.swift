@@ -12,7 +12,7 @@ struct LoginAuthenticationForm: View {
             Section {
                 TextField("label.email", text: Binding(
                     get: { email },
-                    set: { email in onEmailChanged(email) }
+                    set: { onEmailChanged($0) }
                 ))
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled(true)
@@ -20,7 +20,7 @@ struct LoginAuthenticationForm: View {
 
                 SecureField("label.password", text: Binding(
                     get: { password },
-                    set: { password in onPasswordChanged(password) }
+                    set: { onPasswordChanged($0) }
                 ))
             }
 

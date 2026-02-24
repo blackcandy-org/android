@@ -18,7 +18,7 @@ actual val platformModule =
     module {
         single(named("PreferencesDataStore")) { provideDataStore() }
         single { EncryptedDataSource() }
-        single { MusicServiceController() }
+        single { MusicServiceController(get()) }
     }
 
 private const val DATASTORE_PREFERENCES_NAME = "user.preferences_pb"

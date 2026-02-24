@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct PlayerSliderView: UIViewRepresentable {
+struct PlayerSlider: UIViewRepresentable {
   @Binding var value: Double
 
   class Coordinator {

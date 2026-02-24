@@ -10,7 +10,7 @@ struct LoginConnectionForm: View {
             Section(content: {
                 TextField("label.server_address", text: Binding(
                     get: { serverAddress },
-                    set: { serverAddress in onServerAddressChanged(serverAddress) }
+                    set: { onServerAddressChanged($0) }
                 ))
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled(true)

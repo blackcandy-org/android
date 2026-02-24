@@ -2,8 +2,8 @@ import SwiftUI
 import sharedKit
 
 struct PlayerControl: View {
-    let isPlaying = false
-    let isLoading = false
+    let isPlaying: Bool
+    let isLoading: Bool
     let currentPosition: Double
     let duration: Double
     let enabled = true
@@ -16,13 +16,12 @@ struct PlayerControl: View {
     var body: some View {
         let progressValue = duration > 0 ? (currentPosition / duration) : 0
         let currentPositionText = enabled ? DurationFormatter.companion.string(duration: currentPosition) : NONE_DURATION_TEXT
-        let durationText = enabled ? DurationFormatter.companion.string(duration: currentPosition) : NONE_DURATION_TEXT
+        let durationText = enabled ? DurationFormatter.companion.string(duration: duration) : NONE_DURATION_TEXT
 
         VStack {
-            PlayerSliderView(value: Binding(
+            PlayerSlider(value: Binding(
                 get: { progressValue },
-                set: { value in onSeek(value) }
-            ))
+                set: { onSeek($0) }))
 
             HStack {
                 if isLoading {

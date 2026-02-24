@@ -48,11 +48,9 @@ struct PlayerActions: View {
                 },
                 label: {
                     Image(systemName: "list.bullet")
-                        // .tint(viewStore.isPlaylistVisible ? .white : .primary)
                 }
             )
             .padding(CustomStyle.spacing(.narrow))
-            // .background(viewStore.isPlaylistVisible ? Color.accentColor : .clear)
             .cornerRadius(CustomStyle.cornerRadius(.medium))
         }
     }
@@ -70,5 +68,6 @@ struct PlayerActions: View {
         }
 
         return Image(systemName: iconName)
+            .tint(mode == .noRepeat ? .primary : .white)
     }
 }

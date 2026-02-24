@@ -19,7 +19,6 @@ data class PlayerUiState(
     val musicState: MusicState = MusicState(),
     val currentPosition: Double = 0.0,
     val alertMessage: AlertMessage? = null,
-    val isPlaylistsVisible: Boolean = false,
 )
 
 class PlayerViewModel(
@@ -65,6 +64,13 @@ class PlayerViewModel(
         musicServiceController.seekTo(seconds)
     }
 
+    fun seekToRatio(ratio: Double) {
+        val duration =
+            uiState.value.musicState.currentSong
+                ?.duration ?: return
+        seekTo(duration * ratio)
+    }
+
     fun playOn(songId: Int) {
         val index =
             uiState.value.musicState.playlist
@@ -76,7 +82,6 @@ class PlayerViewModel(
     }
 
     fun clearPlaylist() {
-        _uiState.update { it.copy(isPlaylistsVisible = false) }
         musicServiceController.clearPlaylist()
 
         viewModelScope.launch {
@@ -158,10 +163,6 @@ class PlayerViewModel(
                 }
             }
         }
-    }
-
-    fun setPlaylistVisibility(isVisible: Boolean) {
-        _uiState.update { it.copy(isPlaylistsVisible = isVisible) }
     }
 
     fun alertMessageShown() {

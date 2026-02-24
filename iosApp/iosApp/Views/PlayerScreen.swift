@@ -17,7 +17,16 @@ struct PlayerScreen: View {
                     currentSong: uiState.musicState.currentSong,
                     currentPosition: uiState.currentPosition,
                     playbackMode: uiState.musicState.playbackMode,
-                    onPlaylistButtonClicked: { path.append(Route.playlist) }
+                    isPlaying: uiState.musicState.isPlaying,
+                    isLoading: uiState.musicState.isLoading,
+                    onPreviousButtonClicked: { viewModel.previous() },
+                    onNextButtonClicked: { viewModel.next() },
+                    onPlayButtonClicked: { viewModel.play() },
+                    onPauseButtonClicked: { viewModel.pause() },
+                    onPlaylistButtonClicked: { path.append(Route.playlist) },
+                    onModeSwitchButtonClicked: {  viewModel.nextMode() },
+                    onFavoriteButtonClicked: { viewModel.toggleFavorite() },
+                    onSeek: { viewModel.seekToRatio(ratio: $0) }
                 )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
