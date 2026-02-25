@@ -176,7 +176,7 @@ class WebViewModel(
     }
 
     private fun playSongs(songs: List<Song>) {
-        musicServiceController.updatePlaylist(songs)
+        musicServiceController.updateSongs(songs)
         musicServiceController.playOn(0)
     }
 
@@ -184,7 +184,7 @@ class WebViewModel(
         songs: List<Song>,
         songId: Int,
     ) {
-        musicServiceController.updatePlaylist(songs)
+        musicServiceController.updateSongs(songs)
 
         val index = musicServiceController.getSongIndex(songId)
 

@@ -80,7 +80,7 @@ actual class MusicServiceController(
         }, MoreExecutors.directExecutor())
     }
 
-    actual fun updatePlaylist(songs: List<Song>) {
+    actual fun updateSongs(songs: List<Song>) {
         val mediaItems = songs.map { toMediaItem(it) }
 
         DiffUtil
@@ -170,7 +170,7 @@ actual class MusicServiceController(
     }
 
     actual fun clearPlaylist() {
-        updatePlaylist(emptyList())
+        updateSongs(emptyList())
     }
 
     actual fun deleteSongFromPlaylist(song: Song) {
@@ -178,12 +178,12 @@ actual class MusicServiceController(
             musicState.value.playlist
                 .toMutableList()
                 .apply { remove(song) }
-        updatePlaylist(songs)
+        updateSongs(songs)
     }
 
     actual fun updateSongInPlaylist(song: Song) {
         val songs = musicState.value.playlist.map { if (it.id == song.id) song else it }
-        updatePlaylist(songs)
+        updateSongs(songs)
 
         if (song.id.toString() == controller?.currentMediaItem?.mediaId) {
             updateCurrentSong()
@@ -198,7 +198,7 @@ actual class MusicServiceController(
             musicState.value.playlist
                 .toMutableList()
                 .apply { add(to, removeAt(from)) }
-        updatePlaylist(songs)
+        updateSongs(songs)
     }
 
     actual fun setPlaybackMode(playbackMode: PlaybackMode) {
@@ -251,7 +251,7 @@ actual class MusicServiceController(
                     .apply { add(0, song) }
             }
 
-        updatePlaylist(songs)
+        updateSongs(songs)
 
         return songs.indexOf(song)
     }
@@ -261,7 +261,7 @@ actual class MusicServiceController(
             musicState.value.playlist
                 .toMutableList()
                 .apply { add(song) }
-        updatePlaylist(songs)
+        updateSongs(songs)
     }
 
     private fun updateCurrentSong() {

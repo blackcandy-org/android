@@ -20,7 +20,7 @@ class MusicServiceViewModel(
     fun getCurrentPlaylist() {
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.getSongs()) {
-                is TaskResult.Success -> musicServiceController.updatePlaylist(result.data)
+                is TaskResult.Success -> musicServiceController.updateSongs(result.data)
                 is TaskResult.Failure -> Unit
             }
         }

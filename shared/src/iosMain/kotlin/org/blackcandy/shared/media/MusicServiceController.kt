@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.blackcandy.shared.data.EncryptedDataSource
+import org.blackcandy.shared.models.Playlist
 import org.blackcandy.shared.models.Song
 import org.blackcandy.shared.utils.BLACK_CANDY_USER_AGENT
 import platform.AVFoundation.AVPlayer
@@ -47,6 +48,8 @@ actual class MusicServiceController(
     private var playToEndObserver: NSObjectProtocol? = null
     private var timeObserver: Any? = null
 
+    private var playlist = Playlist()
+
     private val hasCurrentItem get() = player.currentItem !== null
 
     private val currentIndex: Int
@@ -69,12 +72,15 @@ actual class MusicServiceController(
         onInitialized()
     }
 
-    actual fun updatePlaylist(songs: List<Song>) {
-        songs.firstOrNull()?.let { song ->
-            _musicState.update { it.copy(currentSong = song) }
+    actual fun updateSongs(songs: List<Song>) {
+        if (musicState.value.currentSong == null || currentIndex == -1) {
+            songs.firstOrNull()?.let { song ->
+                _musicState.update { it.copy(currentSong = song) }
+            }
         }
 
-        _musicState.update { it.copy(playlist = songs) }
+        playlist.update(songs)
+        updatePlaylist()
     }
 
     actual fun play() {
@@ -98,7 +104,7 @@ actual class MusicServiceController(
     }
 
     actual fun playOn(index: Int) {
-        val song = musicState.value.playlist.getOrNull(index) ?: return
+        val song = playlist.songs.getOrNull(index) ?: return
 
         _musicState.update { it.copy(currentSong = song) }
 
@@ -127,20 +133,18 @@ actual class MusicServiceController(
     }
 
     actual fun clearPlaylist() {
-        updatePlaylist(emptyList())
+        playlist.clear()
+        updatePlaylist()
     }
 
     actual fun deleteSongFromPlaylist(song: Song) {
-        val songs =
-            musicState.value.playlist
-                .toMutableList()
-                .apply { remove(song) }
-        updatePlaylist(songs)
+        playlist.remove(song)
+        updatePlaylist()
     }
 
     actual fun updateSongInPlaylist(song: Song) {
-        val songs = musicState.value.playlist.map { if (it.id == song.id) song else it }
-        updatePlaylist(songs)
+        playlist.updateSong(song)
+        updatePlaylist()
 
         if (song.id == musicState.value.currentSong?.id) {
             updateCurrentSong()
@@ -151,44 +155,35 @@ actual class MusicServiceController(
         from: Int,
         to: Int,
     ) {
-        val songs =
-            musicState.value.playlist
-                .toMutableList()
-                .apply { add(to, removeAt(from)) }
-        updatePlaylist(songs)
+        playlist.move(from, to)
+        updatePlaylist()
     }
 
     actual fun setPlaybackMode(playbackMode: PlaybackMode) {
+        playlist.isShuffled = playbackMode == PlaybackMode.SHUFFLE
         _musicState.update { it.copy(playbackMode = playbackMode) }
     }
 
-    actual fun getSongIndex(songId: Int): Int = musicState.value.playlist.indexOfFirst { it.id == songId }
+    actual fun getSongIndex(songId: Int): Int = playlist.songs.indexOfFirst { it.id == songId }
 
     actual fun addSongToNext(song: Song): Int {
         val currentSong = musicState.value.currentSong
-        val songs =
-            if (currentSong != null) {
-                val index = musicState.value.playlist.indexOf(currentSong)
-                musicState.value.playlist
-                    .toMutableList()
-                    .apply { add(index + 1, song) }
-            } else {
-                musicState.value.playlist
-                    .toMutableList()
-                    .apply { add(0, song) }
-            }
 
-        updatePlaylist(songs)
+        if (currentSong != null) {
+            val index = playlist.songs.indexOf(currentSong)
+            playlist.insert(song, index + 1)
+        } else {
+            playlist.insert(song, 0)
+        }
 
-        return songs.indexOf(song)
+        updatePlaylist()
+
+        return playlist.songs.indexOf(song)
     }
 
     actual fun addSongToLast(song: Song) {
-        val songs =
-            musicState.value.playlist
-                .toMutableList()
-                .apply { add(song) }
-        updatePlaylist(songs)
+        playlist.append(song)
+        updatePlaylist()
     }
 
     private fun stop() {
@@ -205,6 +200,10 @@ actual class MusicServiceController(
     private fun updateCurrentSong() {
         val currentSong = musicState.value.playlist.find { it.id == musicState.value.currentSong?.id }
         _musicState.update { it.copy(currentSong = currentSong) }
+    }
+
+    private fun updatePlaylist() {
+        _musicState.update { it.copy(playlist = playlist.orderedSongs) }
     }
 
     private fun setupStatusObservers() {

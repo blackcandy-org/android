@@ -10,7 +10,7 @@ expect class MusicServiceController {
 
     fun initMediaController(onInitialized: () -> Unit)
 
-    fun updatePlaylist(songs: List<Song>)
+    fun updateSongs(songs: List<Song>)
 
     fun play()
 
