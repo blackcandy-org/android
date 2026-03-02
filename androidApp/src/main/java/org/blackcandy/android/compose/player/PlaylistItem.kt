@@ -33,10 +33,10 @@ fun PlaylistItem(
     song: Song,
     isCurrent: Boolean,
     scope: ReorderableItemScope,
-    onSweepToDismiss: (Int) -> Unit,
-    onClicked: (Int) -> Unit,
-    onMoveStarted: (Int) -> Unit,
-    onMoveEnded: (Int) -> Unit,
+    onSweepToDismiss: (Long) -> Unit,
+    onClicked: (Long) -> Unit,
+    onMoveStarted: (Long) -> Unit,
+    onMoveEnded: (Long) -> Unit,
 ) {
     val dismissState =
         rememberSwipeToDismissBoxState(

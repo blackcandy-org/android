@@ -34,9 +34,9 @@ struct PlayerScreen: View {
                         PlayerPlaylist(
                             playlist: uiState.musicState.playlist,
                             currentSong: uiState.musicState.currentSong,
-                            onItemClicked: { _ in },
-                            onItemSweepToDismiss: { _ in },
-                            onItemMoved: {_, _ in }
+                            onItemClicked: { viewModel.playOn(songId: $0) },
+                            onItemSweepToDismiss: { viewModel.removeSongFromPlaylist(songId: $0) },
+                            onItemMoved: { from, to in viewModel.moveSongInPlaylist(from: Int32(from), to: Int32(to)) }
                         )
                     }
                 }

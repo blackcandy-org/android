@@ -49,7 +49,7 @@ class WebViewModel(
         }
     }
 
-    fun playAlbum(albumId: Int) {
+    fun playAlbum(albumId: Long) {
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.replaceWithAlbumSongs(albumId)) {
                 is TaskResult.Success -> {
@@ -64,8 +64,8 @@ class WebViewModel(
     }
 
     fun playAlbumBeginWith(
-        albumId: Int,
-        songId: Int,
+        albumId: Long,
+        songId: Long,
     ) {
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.replaceWithAlbumSongs(albumId)) {
@@ -80,7 +80,7 @@ class WebViewModel(
         }
     }
 
-    fun playPlaylist(playlistId: Int) {
+    fun playPlaylist(playlistId: Long) {
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.replaceWithPlaylistSongs(playlistId)) {
                 is TaskResult.Success -> {
@@ -95,8 +95,8 @@ class WebViewModel(
     }
 
     fun playPlaylistBeginWith(
-        playlistId: Int,
-        songId: Int,
+        playlistId: Long,
+        songId: Long,
     ) {
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.replaceWithPlaylistSongs(playlistId)) {
@@ -111,7 +111,7 @@ class WebViewModel(
         }
     }
 
-    fun playNow(songId: Int) {
+    fun playNow(songId: Long) {
         viewModelScope.launch {
             val index = musicServiceController.getSongIndex(songId)
 
@@ -143,7 +143,7 @@ class WebViewModel(
         }
     }
 
-    fun playNext(songId: Int) {
+    fun playNext(songId: Long) {
         viewModelScope.launch {
             val currentSong = musicServiceController.musicState.value.currentSong ?: return@launch
 
@@ -160,7 +160,7 @@ class WebViewModel(
         }
     }
 
-    fun playLast(songId: Int) {
+    fun playLast(songId: Long) {
         viewModelScope.launch {
             when (val result = currentPlaylistRepository.addSongToLast(songId)) {
                 is TaskResult.Success -> {
@@ -182,7 +182,7 @@ class WebViewModel(
 
     private fun playSongsBeginWith(
         songs: List<Song>,
-        songId: Int,
+        songId: Long,
     ) {
         musicServiceController.updateSongs(songs)
 

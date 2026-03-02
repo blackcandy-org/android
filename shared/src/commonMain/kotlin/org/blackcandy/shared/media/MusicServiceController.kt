@@ -37,7 +37,7 @@ expect class MusicServiceController {
 
     fun setPlaybackMode(playbackMode: PlaybackMode)
 
-    fun getSongIndex(songId: Int): Int
+    fun getSongIndex(songId: Long): Int
 
     fun addSongToNext(song: Song): Int
 

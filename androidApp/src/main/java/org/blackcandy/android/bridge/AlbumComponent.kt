@@ -37,7 +37,7 @@ class AlbumComponent(
 
     @Serializable
     data class AlbumData(
-        val albumId: Int,
-        val songId: Int?,
+        val albumId: Long,
+        val songId: Long?,
     )
 }

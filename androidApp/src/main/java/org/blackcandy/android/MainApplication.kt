@@ -47,7 +47,7 @@ class MainApplication : Application() {
             context = this,
             location =
                 PathConfiguration.Location(
-                    assetFilePath = "json/configuration.json",
+                    assetFilePath = "json/path-configuration.json",
                 ),
         )
 

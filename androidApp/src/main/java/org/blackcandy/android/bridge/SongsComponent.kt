@@ -43,6 +43,6 @@ class SongsComponent(
 
     @Serializable
     data class SongsData(
-        val songId: Int,
+        val songId: Long,
     )
 }

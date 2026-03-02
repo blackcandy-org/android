@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Song(
-    val id: Int,
+    val id: Long,
     val name: String,
     val duration: Double,
     val url: String,

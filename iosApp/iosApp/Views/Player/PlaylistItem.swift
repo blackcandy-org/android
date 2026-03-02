@@ -4,7 +4,7 @@ import sharedKit
 struct PlaylistItem: View {
     let song: Song
     let isCurrent: Bool
-    let onClicked: ((Int32) -> Void)
+    let onClicked: ((Int64) -> Void)
 
     var body: some View {
         HStack {

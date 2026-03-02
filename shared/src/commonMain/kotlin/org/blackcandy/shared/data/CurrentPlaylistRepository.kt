@@ -11,23 +11,23 @@ class CurrentPlaylistRepository(
 
     suspend fun removeAllSongs(): TaskResult<Unit> = service.removeAllSongsFromCurrentPlaylist().asResult()
 
-    suspend fun removeSong(songId: Int): TaskResult<Unit> = service.removeSongFromCurrentPlaylist(songId).asResult()
+    suspend fun removeSong(songId: Long): TaskResult<Unit> = service.removeSongFromCurrentPlaylist(songId).asResult()
 
     suspend fun moveSong(
-        songId: Int,
-        destinationSongId: Int,
+        songId: Long,
+        destinationSongId: Long,
     ): TaskResult<Unit> = service.moveSongInCurrentPlaylist(songId, destinationSongId).asResult()
 
-    suspend fun replaceWithAlbumSongs(albumId: Int): TaskResult<List<Song>> =
+    suspend fun replaceWithAlbumSongs(albumId: Long): TaskResult<List<Song>> =
         service.replaceCurrentPlaylistWithAlbumSongs(albumId).asResult()
 
-    suspend fun replaceWithPlaylistSongs(playlistId: Int): TaskResult<List<Song>> =
+    suspend fun replaceWithPlaylistSongs(playlistId: Long): TaskResult<List<Song>> =
         service.replaceCurrentPlaylistWithPlaylistSongs(playlistId).asResult()
 
     suspend fun addSongToNext(
-        songId: Int,
-        currentSongId: Int,
+        songId: Long,
+        currentSongId: Long,
     ): TaskResult<Song> = service.addSongToCurrentPlaylist(songId, currentSongId, null).asResult()
 
-    suspend fun addSongToLast(songId: Int): TaskResult<Song> = service.addSongToCurrentPlaylist(songId, null, "last").asResult()
+    suspend fun addSongToLast(songId: Long): TaskResult<Song> = service.addSongToCurrentPlaylist(songId, null, "last").asResult()
 }

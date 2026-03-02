@@ -235,7 +235,7 @@ actual class MusicServiceController(
         _musicState.update { it.copy(playbackMode = playbackMode) }
     }
 
-    actual fun getSongIndex(songId: Int): Int = musicState.value.playlist.indexOfFirst { it.id == songId }
+    actual fun getSongIndex(songId: Long): Int = musicState.value.playlist.indexOfFirst { it.id == songId }
 
     actual fun addSongToNext(song: Song): Int {
         val currentSong = musicState.value.currentSong

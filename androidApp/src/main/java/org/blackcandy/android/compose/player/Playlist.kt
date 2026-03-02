@@ -27,8 +27,8 @@ fun Playlist(
     modifier: Modifier = Modifier,
     playlist: List<Song>,
     currentSong: Song?,
-    onItemClicked: (Int) -> Unit,
-    onItemSweepToDismiss: (Int) -> Unit,
+    onItemClicked: (Long) -> Unit,
+    onItemSweepToDismiss: (Long) -> Unit,
     onItemMoved: (Int, Int) -> Unit,
 ) {
     if (playlist.isEmpty()) {

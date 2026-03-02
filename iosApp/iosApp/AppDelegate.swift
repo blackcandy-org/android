@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Hotwire.config.applicationUserAgentPrefix = "\(BLACK_CANDY_USER_AGENT);"
 
         Hotwire.loadPathConfiguration(from: [
-            .file(Bundle.main.url(forResource: "configuration", withExtension: "json")!)
+            .file(Bundle.main.url(forResource: "path-configuration", withExtension: "json")!)
         ])
 
         Hotwire.config.defaultViewController = { url in

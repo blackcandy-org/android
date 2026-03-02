@@ -19,6 +19,7 @@ import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import org.blackcandy.shared.models.AuthenticationResponse
 import org.blackcandy.shared.models.Song
 import org.blackcandy.shared.models.SystemInfo
@@ -36,26 +37,26 @@ interface BlackCandyService {
 
     suspend fun getSongsFromCurrentPlaylist(): ApiResponse<List<Song>>
 
-    suspend fun addSongToFavorite(songId: Int): ApiResponse<Song>
+    suspend fun addSongToFavorite(songId: Long): ApiResponse<Song>
 
-    suspend fun removeSongFromFavorite(songId: Int): ApiResponse<Song>
+    suspend fun removeSongFromFavorite(songId: Long): ApiResponse<Song>
 
     suspend fun removeAllSongsFromCurrentPlaylist(): ApiResponse<Unit>
 
-    suspend fun removeSongFromCurrentPlaylist(songId: Int): ApiResponse<Unit>
+    suspend fun removeSongFromCurrentPlaylist(songId: Long): ApiResponse<Unit>
 
     suspend fun moveSongInCurrentPlaylist(
-        songId: Int,
-        destinationSongId: Int,
+        songId: Long,
+        destinationSongId: Long,
     ): ApiResponse<Unit>
 
-    suspend fun replaceCurrentPlaylistWithAlbumSongs(albumId: Int): ApiResponse<List<Song>>
+    suspend fun replaceCurrentPlaylistWithAlbumSongs(albumId: Long): ApiResponse<List<Song>>
 
-    suspend fun replaceCurrentPlaylistWithPlaylistSongs(playlistId: Int): ApiResponse<List<Song>>
+    suspend fun replaceCurrentPlaylistWithPlaylistSongs(playlistId: Long): ApiResponse<List<Song>>
 
     suspend fun addSongToCurrentPlaylist(
-        songId: Int,
-        currentSongId: Int?,
+        songId: Long,
+        currentSongId: Long?,
         location: String?,
     ): ApiResponse<Song>
 }
@@ -98,7 +99,7 @@ class BlackCandyServiceImpl(
             val userElement = Json.parseToJsonElement(response.bodyAsText()).jsonObject["user"]!!
 
             val token = userElement.jsonObject["api_token"]?.jsonPrimitive.toString()
-            val id = userElement.jsonObject["id"]?.jsonPrimitive?.int!!
+            val id = userElement.jsonObject["id"]?.jsonPrimitive?.long!!
             val userEmail = userElement.jsonObject["email"]?.jsonPrimitive.toString()
             val isAdmin = userElement.jsonObject["is_admin"]?.jsonPrimitive?.boolean!!
             val cookies = response.headers.getAll(HttpHeaders.SetCookie)!!
@@ -125,7 +126,7 @@ class BlackCandyServiceImpl(
             client.get("current_playlist/songs").body()
         }
 
-    override suspend fun addSongToFavorite(songId: Int): ApiResponse<Song> =
+    override suspend fun addSongToFavorite(songId: Long): ApiResponse<Song> =
         handleResponse {
             client
                 .post("favorite_playlist/songs") {
@@ -133,7 +134,7 @@ class BlackCandyServiceImpl(
                 }.body()
         }
 
-    override suspend fun removeSongFromFavorite(songId: Int): ApiResponse<Song> =
+    override suspend fun removeSongFromFavorite(songId: Long): ApiResponse<Song> =
         handleResponse {
             client.delete("favorite_playlist/songs/$songId").body()
         }
@@ -143,14 +144,14 @@ class BlackCandyServiceImpl(
             client.delete("current_playlist/songs").body()
         }
 
-    override suspend fun removeSongFromCurrentPlaylist(songId: Int): ApiResponse<Unit> =
+    override suspend fun removeSongFromCurrentPlaylist(songId: Long): ApiResponse<Unit> =
         handleResponse {
             client.delete("current_playlist/songs/$songId").body()
         }
 
     override suspend fun moveSongInCurrentPlaylist(
-        songId: Int,
-        destinationSongId: Int,
+        songId: Long,
+        destinationSongId: Long,
     ): ApiResponse<Unit> =
         handleResponse {
             client
@@ -159,19 +160,19 @@ class BlackCandyServiceImpl(
                 }.body()
         }
 
-    override suspend fun replaceCurrentPlaylistWithAlbumSongs(albumId: Int): ApiResponse<List<Song>> =
+    override suspend fun replaceCurrentPlaylistWithAlbumSongs(albumId: Long): ApiResponse<List<Song>> =
         handleResponse {
             client.put("current_playlist/songs/albums/$albumId").body()
         }
 
-    override suspend fun replaceCurrentPlaylistWithPlaylistSongs(playlistId: Int): ApiResponse<List<Song>> =
+    override suspend fun replaceCurrentPlaylistWithPlaylistSongs(playlistId: Long): ApiResponse<List<Song>> =
         handleResponse {
             client.put("current_playlist/songs/playlists/$playlistId").body()
         }
 
     override suspend fun addSongToCurrentPlaylist(
-        songId: Int,
-        currentSongId: Int?,
+        songId: Long,
+        currentSongId: Long?,
         location: String?,
     ): ApiResponse<Song> =
         handleResponse {

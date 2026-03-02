@@ -71,7 +71,7 @@ class PlayerViewModel(
         seekTo(duration * ratio)
     }
 
-    fun playOn(songId: Int) {
+    fun playOn(songId: Long) {
         val index =
             uiState.value.musicState.playlist
                 .indexOfFirst { it.id == songId }
@@ -97,7 +97,7 @@ class PlayerViewModel(
         }
     }
 
-    fun removeSongFromPlaylist(songId: Int) {
+    fun removeSongFromPlaylist(songId: Long) {
         val song =
             uiState.value.musicState.playlist
                 .firstOrNull { it.id == songId } ?: return

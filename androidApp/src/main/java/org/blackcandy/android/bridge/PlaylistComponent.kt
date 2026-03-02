@@ -37,7 +37,7 @@ class PlaylistComponent(
 
     @Serializable
     data class PlaylistData(
-        val playlistId: Int,
-        val songId: Int?,
+        val playlistId: Long,
+        val songId: Long?,
     )
 }
