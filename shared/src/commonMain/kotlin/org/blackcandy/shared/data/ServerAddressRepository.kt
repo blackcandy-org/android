@@ -1,0 +1,15 @@
+package org.blackcandy.shared.data
+
+import kotlinx.coroutines.flow.Flow
+
+class ServerAddressRepository(
+    private val preferencesDataSource: PreferencesDataSource,
+) {
+    suspend fun getServerAddress(): String = preferencesDataSource.getServerAddress()
+
+    suspend fun updateServerAddress(serverAddress: String) {
+        preferencesDataSource.updateServerAddress(serverAddress)
+    }
+
+    fun getServerAddressFlow(): Flow<String> = preferencesDataSource.getServerAddressFlow()
+}

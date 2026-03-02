@@ -1,0 +1,51 @@
+{
+  "originHash" : "c934e3f415804af178edbaf337acb013353f68bba543040ca63250647e54d41a",
+  "pins" : [
+    {
+      "identity" : "alertkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sparrowcode/AlertKit",
+      "state" : {
+        "revision" : "3b73be8db5a7e7efaf474c6ed919f5a437d843c9",
+        "version" : "5.1.9"
+      }
+    },
+    {
+      "identity" : "hotwire-native-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hotwired/hotwire-native-ios",
+      "state" : {
+        "revision" : "595dba37c4918afd0e2d470109bc0c356d6e9afe",
+        "version" : "1.2.2"
+      }
+    },
+    {
+      "identity" : "lnpopupcontroller",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LeoNatan/LNPopupController.git",
+      "state" : {
+        "revision" : "1609e4c6473c6f854b9e24ca6547af33da9014c8",
+        "version" : "4.3.7"
+      }
+    },
+    {
+      "identity" : "lnpopupui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LeoNatan/LNPopupUI",
+      "state" : {
+        "revision" : "28a129a09e6057f9d07ef4e748d858acf427c161",
+        "version" : "3.0.0"
+      }
+    },
+    {
+      "identity" : "lnswiftuiutils",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LeoNatan/LNSwiftUIUtils.git",
+      "state" : {
+        "revision" : "181a95b992f84d99a14c562c86e8ebef3cbcdca9",
+        "version" : "1.1.5"
+      }
+    }
+  ],
+  "version" : 3
+}

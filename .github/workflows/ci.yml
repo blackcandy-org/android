@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  test_lint:
+  android_lint:
      runs-on: ubuntu-latest
      steps:
       - uses: actions/checkout@v3
@@ -12,10 +12,18 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
       - run: |
-          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.0.1/ktlint && chmod a+x ktlint && sudo mv ktlint /usr/local/bin/
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.8.0/ktlint && chmod a+x ktlint && sudo mv ktlint /usr/local/bin/
 
       - name: Kotlin lint
         run: ktlint
 
-      - name: Android Lint
-        run: ./gradlew lint
+  ios_lint:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          brew install swiftlint
+      - name: Lint
+        run: |
+          swiftlint

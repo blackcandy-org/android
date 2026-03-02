@@ -17,3 +17,9 @@ local.properties
 .idea
 /app/release/
 /fastlane/report.xml
+.kotlin
+xcuserdata/
+iosApp.xcconfig
+*.zip
+*.ipa
+Config.xcconfig

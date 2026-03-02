@@ -2,9 +2,9 @@ module Fastlane
   module Actions
     class GetVersionNameAction < Action
       def self.run(params)
-        File.open("app/build.gradle", "r") do |file|
+        File.open("app/build.gradle.kts", "r") do |file|
            version_name_line = file.find { |line| line.include?("versionName") }
-           matched_data = version_name_line&.match(/versionName\s+"(.+)"/)
+           matched_data = version_name_line&.match(/versionName\s+=\s+"(.+)"/)
 
            matched_data[1] if matched_data
         end
