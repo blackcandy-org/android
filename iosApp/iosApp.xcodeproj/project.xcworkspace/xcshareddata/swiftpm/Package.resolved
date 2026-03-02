@@ -1,6 +1,15 @@
 {
-  "originHash" : "d188413bb6cdb3bcd359b60173898d2ad2fd8332a285dda182d506d02306bb23",
+  "originHash" : "c934e3f415804af178edbaf337acb013353f68bba543040ca63250647e54d41a",
   "pins" : [
+    {
+      "identity" : "alertkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sparrowcode/AlertKit",
+      "state" : {
+        "revision" : "3b73be8db5a7e7efaf474c6ed919f5a437d843c9",
+        "version" : "5.1.9"
+      }
+    },
     {
       "identity" : "hotwire-native-ios",
       "kind" : "remoteSourceControl",

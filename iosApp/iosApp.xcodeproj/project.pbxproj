@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		646F4A7B2F35C74300A4FAFB /* LNPopupUI in Frameworks */ = {isa = PBXBuildFile; productRef = 646F4A7A2F35C74300A4FAFB /* LNPopupUI */; };
 		64A715B82F50360B00E61A28 /* LNPopupUI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 646F4A7A2F35C74300A4FAFB /* LNPopupUI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		64A7160D2F55823100E61A28 /* AlertKit in Frameworks */ = {isa = PBXBuildFile; productRef = 64A7160C2F55823100E61A28 /* AlertKit */; };
 		64D93BEB2F2AFACF00B13EAA /* HotwireNative in Frameworks */ = {isa = PBXBuildFile; productRef = 64D93BEA2F2AFACF00B13EAA /* HotwireNative */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +59,7 @@
 			files = (
 				64D93BEB2F2AFACF00B13EAA /* HotwireNative in Frameworks */,
 				646F4A7B2F35C74300A4FAFB /* LNPopupUI in Frameworks */,
+				64A7160D2F55823100E61A28 /* AlertKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,6 +106,7 @@
 			packageProductDependencies = (
 				64D93BEA2F2AFACF00B13EAA /* HotwireNative */,
 				646F4A7A2F35C74300A4FAFB /* LNPopupUI */,
+				64A7160C2F55823100E61A28 /* AlertKit */,
 			);
 			productName = iosApp;
 			productReference = 64ADE25F2F29ACA5002615D0 /* iosApp.app */;
@@ -136,6 +139,7 @@
 			packageReferences = (
 				64D93BE92F2AFACF00B13EAA /* XCRemoteSwiftPackageReference "hotwire-native-ios" */,
 				646F4A792F35C74300A4FAFB /* XCRemoteSwiftPackageReference "LNPopupUI" */,
+				64A7160B2F55823100E61A28 /* XCRemoteSwiftPackageReference "AlertKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 64ADE2602F29ACA5002615D0 /* Products */;
@@ -407,6 +411,14 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		64A7160B2F55823100E61A28 /* XCRemoteSwiftPackageReference "AlertKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparrowcode/AlertKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.9;
+			};
+		};
 		64D93BE92F2AFACF00B13EAA /* XCRemoteSwiftPackageReference "hotwire-native-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hotwired/hotwire-native-ios";
@@ -422,6 +434,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 646F4A792F35C74300A4FAFB /* XCRemoteSwiftPackageReference "LNPopupUI" */;
 			productName = LNPopupUI;
+		};
+		64A7160C2F55823100E61A28 /* AlertKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 64A7160B2F55823100E61A28 /* XCRemoteSwiftPackageReference "AlertKit" */;
+			productName = AlertKit;
 		};
 		64D93BEA2F2AFACF00B13EAA /* HotwireNative */ = {
 			isa = XCSwiftPackageProductDependency;

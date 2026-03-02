@@ -40,7 +40,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Hotwire.registerBridgeComponents([
             AccountComponent.self,
-            SearchComponent.self
+            SearchComponent.self,
+            ThemeComponent.self,
+            FlashComponent.self,
+            AlbumComponent.self,
+            PlaylistComponent.self,
+            SongsComponent.self
         ])
     }
 }
