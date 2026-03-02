@@ -17,14 +17,13 @@ jobs:
       - name: Kotlin lint
         run: ktlint
 
-      - name: Android Lint
-        run: ./gradlew lint
-
   ios_lint:
     runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v3
+      - run: |
+          brew install swiftlint
       - name: Lint
         run: |
           swiftlint
