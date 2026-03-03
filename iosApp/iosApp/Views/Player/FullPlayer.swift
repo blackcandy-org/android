@@ -2,6 +2,7 @@ import SwiftUI
 import sharedKit
 
 struct FullPlayer: View {
+    let isCompactMode: Bool
     let currentSong: Song?
     let currentPosition: Double
     let playbackMode: PlaybackMode
@@ -11,14 +12,16 @@ struct FullPlayer: View {
     let onNextButtonClicked: (() -> Void)
     let onPlayButtonClicked: (() -> Void)
     let onPauseButtonClicked: (() -> Void)
-    let onPlaylistButtonClicked: (() -> Void)
+    let onPlaylistButtonClicked: (() -> Void)?
     let onModeSwitchButtonClicked: (() -> Void)
     let onFavoriteButtonClicked: (() -> Void)
     let onSeek: ((Double) -> Void)
 
     var body: some View {
         VStack {
-            Spacer()
+            if isCompactMode {
+                Spacer()
+            }
 
             PlayerArt(imageURL: currentSong?.albumImageUrl.large)
                 .padding(.bottom, CustomStyle.spacing(.extraWide))
@@ -38,7 +41,9 @@ struct FullPlayer: View {
             )
             .padding(.horizontal, CustomStyle.spacing(.large))
 
-            Spacer()
+            if isCompactMode {
+                Spacer()
+            }
 
             PlayerActions(
                 playbackMode: playbackMode,

@@ -5,6 +5,7 @@ import sharedKit
 struct PlayerScreen: View {
     private let viewModel: PlayerViewModel = KoinHelper().getPlayerViewModel()
 
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State private var path = NavigationPath()
     @State private var albumImage: UIImage?
     @State private var currentSong: Song?
@@ -12,25 +13,34 @@ struct PlayerScreen: View {
 
     var body: some View {
         Observing(viewModel.uiState) { uiState in
-            NavigationStack(path: $path) {
-                FullPlayer(
-                    currentSong: uiState.musicState.currentSong,
-                    currentPosition: uiState.currentPosition,
-                    playbackMode: uiState.musicState.playbackMode,
-                    isPlaying: uiState.musicState.isPlaying,
-                    isLoading: uiState.musicState.isLoading,
-                    onPreviousButtonClicked: { viewModel.previous() },
-                    onNextButtonClicked: { viewModel.next() },
-                    onPlayButtonClicked: { viewModel.play() },
-                    onPauseButtonClicked: { viewModel.pause() },
-                    onPlaylistButtonClicked: { path.append(Route.playlist) },
-                    onModeSwitchButtonClicked: {  viewModel.nextMode() },
-                    onFavoriteButtonClicked: { viewModel.toggleFavorite() },
-                    onSeek: { viewModel.seekToRatio(ratio: $0) }
-                )
-                .navigationDestination(for: Route.self) { route in
-                    switch route {
-                    case .playlist:
+            if horizontalSizeClass == .regular {
+                HStack(spacing: CustomStyle.spacing(.ultraWide)) {
+                    FullPlayer(
+                        isCompactMode: false,
+                        currentSong: uiState.musicState.currentSong,
+                        currentPosition: uiState.currentPosition,
+                        playbackMode: uiState.musicState.playbackMode,
+                        isPlaying: uiState.musicState.isPlaying,
+                        isLoading: uiState.musicState.isLoading,
+                        onPreviousButtonClicked: { viewModel.previous() },
+                        onNextButtonClicked: { viewModel.next() },
+                        onPlayButtonClicked: { viewModel.play() },
+                        onPauseButtonClicked: { viewModel.pause() },
+                        onPlaylistButtonClicked: nil,
+                        onModeSwitchButtonClicked: { viewModel.nextMode() },
+                        onFavoriteButtonClicked: { viewModel.toggleFavorite() },
+                        onSeek: { viewModel.seekToRatio(ratio: $0) }
+                    )
+
+                    VStack {
+                        HStack {
+                            Text("label.tracks(\(uiState.musicState.playlist.count))")
+                            Spacer()
+                            EditButton()
+                        }
+                        .padding(CustomStyle.spacing(.medium))
+                        .cornerRadius(CustomStyle.cornerRadius(.large))
+
                         PlayerPlaylist(
                             playlist: uiState.musicState.playlist,
                             currentSong: uiState.musicState.currentSong,
@@ -38,6 +48,40 @@ struct PlayerScreen: View {
                             onItemSweepToDismiss: { viewModel.removeSongFromPlaylist(songId: $0) },
                             onItemMoved: { from, to in viewModel.moveSongInPlaylist(from: Int32(from), to: Int32(to)) }
                         )
+
+                    }
+
+                    .frame(maxHeight: CustomStyle.playlistMaxHeight)
+                }
+            } else {
+                NavigationStack(path: $path) {
+                    FullPlayer(
+                        isCompactMode: true,
+                        currentSong: uiState.musicState.currentSong,
+                        currentPosition: uiState.currentPosition,
+                        playbackMode: uiState.musicState.playbackMode,
+                        isPlaying: uiState.musicState.isPlaying,
+                        isLoading: uiState.musicState.isLoading,
+                        onPreviousButtonClicked: { viewModel.previous() },
+                        onNextButtonClicked: { viewModel.next() },
+                        onPlayButtonClicked: { viewModel.play() },
+                        onPauseButtonClicked: { viewModel.pause() },
+                        onPlaylistButtonClicked: { path.append(Route.playlist) },
+                        onModeSwitchButtonClicked: { viewModel.nextMode() },
+                        onFavoriteButtonClicked: { viewModel.toggleFavorite() },
+                        onSeek: { viewModel.seekToRatio(ratio: $0) }
+                    )
+                    .navigationDestination(for: Route.self) { route in
+                        switch route {
+                        case .playlist:
+                            PlayerPlaylist(
+                                playlist: uiState.musicState.playlist,
+                                currentSong: uiState.musicState.currentSong,
+                                onItemClicked: { viewModel.playOn(songId: $0) },
+                                onItemSweepToDismiss: { viewModel.removeSongFromPlaylist(songId: $0) },
+                                onItemMoved: { from, to in viewModel.moveSongInPlaylist(from: Int32(from), to: Int32(to)) }
+                            )
+                        }
                     }
                 }
             }
@@ -46,6 +90,17 @@ struct PlayerScreen: View {
         .popupImage(albumImage != nil ? Image(uiImage: albumImage!) : nil)
         .popupBarButtons {
             ToolbarItemGroup(placement: .popupBar) {
+                if horizontalSizeClass == .regular {
+                    Button(
+                        action: {
+                            viewModel.previous()
+                        },
+                        label: {
+                            Image(systemName: "backward.fill")
+                                .tint(.primary)
+                        }
+                    )
+                }
                 Button(
                     action: {
                         if isPlaying {
