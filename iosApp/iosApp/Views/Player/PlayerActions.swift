@@ -6,7 +6,7 @@ struct PlayerActions: View {
     let isFavorited: Bool
     let onModeSwitchButtonClicked: (() -> Void)
     let onFavoriteButtonClicked: (() -> Void)
-    let onPlaylistButtonClicked: (() -> Void)
+    let onPlaylistButtonClicked: (() -> Void)?
 
     var body: some View {
         HStack {
@@ -40,18 +40,20 @@ struct PlayerActions: View {
             )
             .padding(CustomStyle.spacing(.narrow))
 
-            Spacer()
+            if let onPlaylistButtonClicked {
+                Spacer()
 
-            Button(
-                action: {
-                    onPlaylistButtonClicked()
-                },
-                label: {
-                    Image(systemName: "list.bullet")
-                }
-            )
-            .padding(CustomStyle.spacing(.narrow))
-            .cornerRadius(CustomStyle.cornerRadius(.medium))
+                Button(
+                    action: {
+                        onPlaylistButtonClicked()
+                    },
+                    label: {
+                        Image(systemName: "list.bullet")
+                    }
+                )
+                .padding(CustomStyle.spacing(.narrow))
+                .cornerRadius(CustomStyle.cornerRadius(.medium))
+            }
         }
     }
 

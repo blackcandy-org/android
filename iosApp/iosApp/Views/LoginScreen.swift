@@ -18,6 +18,7 @@ struct LoginScreen: View {
                         viewModel.updateServerAddress(serverAddress: serverAddress)
                     }
                 )
+                .frame(maxWidth: CustomStyle.loginFormMaxWidth)
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                     case .authentication:
@@ -36,6 +37,7 @@ struct LoginScreen: View {
                                 viewModel.updatePassword(password: password)
                             }
                         )
+                        .frame(maxWidth: CustomStyle.loginFormMaxWidth)
                     }
                 }
             }
