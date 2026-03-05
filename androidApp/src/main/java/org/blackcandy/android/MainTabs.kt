@@ -1,11 +1,11 @@
 package org.blackcandy.android
 
 import dev.hotwire.navigation.navigator.NavigatorConfiguration
-import dev.hotwire.navigation.tabs.HotwireBottomTab
+import dev.hotwire.navigation.tabs.HotwireTab
 
-fun buildMainTabs(serverAddress: String): List<HotwireBottomTab> =
+fun buildMainTabs(serverAddress: String): List<HotwireTab> =
     listOf(
-        HotwireBottomTab(
+        HotwireTab(
             title = "Home",
             iconResId = R.drawable.baseline_home_24,
             configuration =
@@ -15,7 +15,7 @@ fun buildMainTabs(serverAddress: String): List<HotwireBottomTab> =
                     navigatorHostId = R.id.home_container,
                 ),
         ),
-        HotwireBottomTab(
+        HotwireTab(
             title = "Library",
             iconResId = R.drawable.baseline_library_music_24,
             configuration =
