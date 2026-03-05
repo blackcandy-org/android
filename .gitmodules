@@ -1,0 +1,4 @@
+[submodule "lib/hotwire-native-android"]
+	path = lib/hotwire-native-android
+	url = https://github.com/aidewoode/hotwire-native-android.git
+	branch = feat/extend_navigtion_bar

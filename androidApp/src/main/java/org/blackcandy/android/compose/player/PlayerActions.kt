@@ -21,7 +21,7 @@ fun PlayerActions(
     isFavorited: Boolean,
     onModeSwitchButtonClicked: () -> Unit,
     onFavoriteButtonClicked: () -> Unit,
-    onPlaylistButtonClicked: () -> Unit,
+    onPlaylistButtonClicked: (() -> Unit)? = null,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -53,13 +53,15 @@ fun PlayerActions(
             }
         }
 
-        IconButton(
-            onClick = onPlaylistButtonClicked,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.baseline_format_list_bulleted_24),
-                contentDescription = stringResource(R.string.playlist),
-            )
+        if (onPlaylistButtonClicked != null) {
+            IconButton(
+                onClick = onPlaylistButtonClicked,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.baseline_format_list_bulleted_24),
+                    contentDescription = stringResource(R.string.playlist),
+                )
+            }
         }
     }
 }

@@ -17,4 +17,5 @@
     <dimen name="player_layout_size_on_large_screen">340dp</dimen>
     <dimen name="player_content_max_width">400dp</dimen>
     <dimen name="login_form_max_width">500dp</dimen>
+    <dimen name="playlist_max_height">550dp</dimen>
 </resources>

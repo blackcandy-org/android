@@ -19,12 +19,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.navigation.NavigationBarView
 import dev.hotwire.navigation.activities.HotwireActivity
 import dev.hotwire.navigation.navigator.NavigatorConfiguration
-import dev.hotwire.navigation.tabs.HotwireBottomNavigationController
-import dev.hotwire.navigation.tabs.HotwireBottomTab
+import dev.hotwire.navigation.tabs.HotwireNavigationController
+import dev.hotwire.navigation.tabs.HotwireTab
 import dev.hotwire.navigation.tabs.navigatorConfigurations
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -37,7 +37,7 @@ import org.blackcandy.shared.viewmodels.MusicServiceViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : HotwireActivity() {
-    private lateinit var bottomNavigationController: HotwireBottomNavigationController
+    private lateinit var navigationController: HotwireNavigationController
 
     private val viewModel: MainViewModel by viewModel()
 
@@ -45,7 +45,7 @@ class MainActivity : HotwireActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var playerBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
-    private lateinit var mainTabs: List<HotwireBottomTab>
+    private lateinit var mainTabs: List<HotwireTab>
 
     private val playerBottomSheetCallback by lazy {
         object : BottomSheetBehavior.BottomSheetCallback() {
@@ -242,11 +242,12 @@ class MainActivity : HotwireActivity() {
     }
 
     private fun setupBottomTabs() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        val navigationView: NavigationBarView =
+            findViewById(R.id.bottom_nav) ?: findViewById(R.id.rail_nav)
 
-        bottomNavigationController = HotwireBottomNavigationController(this, bottomNavigationView)
-        bottomNavigationController.load(mainTabs, viewModel.selectedTabIndex)
-        bottomNavigationController.setOnTabSelectedListener { index, _ ->
+        navigationController = HotwireNavigationController(this, navigationView)
+        navigationController.load(mainTabs, viewModel.selectedTabIndex)
+        navigationController.setOnTabSelectedListener { index, _ ->
             viewModel.selectedTabIndex = index
         }
     }

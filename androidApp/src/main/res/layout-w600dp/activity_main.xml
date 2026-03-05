@@ -25,7 +25,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/library_container"
-            android:visibility="gone"
+            android:name="dev.hotwire.navigation.navigator.NavigatorHost"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>

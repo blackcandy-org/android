@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +21,8 @@ import org.blackcandy.shared.models.Song
 fun FullPlayer(
     modifier: Modifier = Modifier,
     windowSizeClass: WindowSizeClass,
+    inWideLayout: Boolean = false,
+    inCompactHeight: Boolean = false,
     currentSong: Song?,
     isPlaying: Boolean,
     isLoading: Boolean,
@@ -34,12 +35,9 @@ fun FullPlayer(
     onSeek: (Double) -> Unit,
     onModeSwitchButtonClicked: () -> Unit,
     onFavoriteButtonClicked: () -> Unit,
-    onPlaylistButtonClicked: () -> Unit,
+    onPlaylistButtonClicked: (() -> Unit)? = null,
 ) {
-    if (
-        windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact &&
-        windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
-    ) {
+    if (inCompactHeight) {
         PlayerHorizontalLayout(
             modifier = modifier,
             currentSong = currentSong,
@@ -59,6 +57,7 @@ fun FullPlayer(
     } else {
         PlayerVerticalLayout(
             modifier = modifier,
+            inWideLayout = inWideLayout,
             currentSong = currentSong,
             isPlaying = isPlaying,
             isLoading = isLoading,
@@ -92,7 +91,7 @@ fun PlayerHorizontalLayout(
     onSeek: (Double) -> Unit,
     onModeSwitchButtonClicked: () -> Unit,
     onFavoriteButtonClicked: () -> Unit,
-    onPlaylistButtonClicked: () -> Unit,
+    onPlaylistButtonClicked: (() -> Unit)? = null,
 ) {
     Row(
         modifier =
@@ -153,6 +152,7 @@ fun PlayerHorizontalLayout(
 @Composable
 fun PlayerVerticalLayout(
     modifier: Modifier,
+    inWideLayout: Boolean,
     currentSong: Song?,
     isPlaying: Boolean,
     isLoading: Boolean,
@@ -165,7 +165,7 @@ fun PlayerVerticalLayout(
     onSeek: (Double) -> Unit,
     onModeSwitchButtonClicked: () -> Unit,
     onFavoriteButtonClicked: () -> Unit,
-    onPlaylistButtonClicked: () -> Unit,
+    onPlaylistButtonClicked: (() -> Unit)? = null,
     isExpandedHeight: Boolean,
 ) {
     Column(
@@ -175,7 +175,9 @@ fun PlayerVerticalLayout(
                 .fillMaxWidth()
                 .padding(horizontal = dimensionResource(R.dimen.padding_small)),
     ) {
-        Spacer(modifier = Modifier.weight(1f))
+        if (!inWideLayout) {
+            Spacer(modifier = Modifier.weight(1f))
+        }
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -195,7 +197,7 @@ fun PlayerVerticalLayout(
                 modifier =
                     Modifier
                         .widthIn(max = dimensionResource(R.dimen.player_content_max_width))
-                        .padding(top = dimensionResource(R.dimen.padding_small)),
+                        .padding(vertical = dimensionResource(R.dimen.padding_small)),
                 isPlaying = isPlaying,
                 isLoading = isLoading,
                 largeIcon = true,
@@ -210,7 +212,9 @@ fun PlayerVerticalLayout(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        if (!inWideLayout) {
+            Spacer(modifier = Modifier.weight(1f))
+        }
 
         PlayerActions(
             modifier =
