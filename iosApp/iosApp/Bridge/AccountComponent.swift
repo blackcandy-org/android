@@ -32,7 +32,6 @@ class AccountComponent: BridgeComponent {
         default:
             break
         }
-
     }
 
     private func handleConnectEvent() {

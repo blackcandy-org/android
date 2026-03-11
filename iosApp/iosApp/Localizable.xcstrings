@@ -144,6 +144,17 @@
         }
       }
     },
+    "label.retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
     "label.server_address" : {
       "extractionState" : "manual",
       "localizations" : {

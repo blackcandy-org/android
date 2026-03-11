@@ -38,6 +38,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             WebViewController(url: url)
         }
 
+        Hotwire.config.makeCustomErrorView = { error, handler in
+            CustomErrorScreen(error: error, handler: handler)
+        }
+
         Hotwire.registerBridgeComponents([
             AccountComponent.self,
             SearchComponent.self,

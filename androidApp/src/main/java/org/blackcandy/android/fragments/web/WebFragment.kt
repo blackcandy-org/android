@@ -4,15 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import dev.hotwire.core.turbo.errors.HttpError
 import dev.hotwire.core.turbo.errors.VisitError
 import dev.hotwire.navigation.destinations.HotwireDestinationDeepLink
 import dev.hotwire.navigation.fragments.HotwireWebFragment
 import kotlinx.coroutines.launch
 import org.blackcandy.android.R
+import org.blackcandy.android.compose.CustomErrorScreen
 import org.blackcandy.android.utils.SnackbarUtil.Companion.showSnackbar
 import org.blackcandy.shared.viewmodels.WebViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,4 +56,17 @@ open class WebFragment : HotwireWebFragment() {
             super.onVisitErrorReceived(location, error)
         }
     }
+
+    override fun createErrorView(error: VisitError): View =
+        ComposeView(requireContext()).apply {
+            setContent {
+                Mdc3Theme {
+                    CustomErrorScreen(
+                        errorDescription = error.description().orEmpty(),
+                        onRetry = { refresh() },
+                        onLogout = { viewModel.logout() },
+                    )
+                }
+            }
+        }
 }
