@@ -179,7 +179,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport JAVA_HOME=\"/Applications/Android Studio.app/Contents/jbr/Contents/Home\"\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\n# Type a script or drag a script file from your workspace to insert its path.\nexport JAVA_HOME=\"/Applications/Android Studio.app/Contents/jbr/Contents/Home\"\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -424,7 +424,7 @@
 			repositoryURL = "https://github.com/hotwired/hotwire-native-ios";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.2;
+				minimumVersion = "1.3.0-beta";
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
